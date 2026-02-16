@@ -49,8 +49,8 @@ export function LoanApplication() {
     const newErrors: Record<string, string> = {};
     
     const amount = parseFloat(formData.amount);
-    if (!amount || amount < 10000 || amount > 500000) {
-      newErrors.amount = 'Loan amount must be between ₹10,000 and ₹5,00,000';
+    if (!amount || amount < 10000 || amount > 5000000) {
+      newErrors.amount = 'Loan amount must be between Kshs. 10,000 and Kshs. 5,000,000';
     }
     
     if (!formData.purpose.trim()) newErrors.purpose = 'Purpose is required';
@@ -224,13 +224,13 @@ export function LoanApplication() {
             <CardContent className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="amount">Loan Amount (₹) *</Label>
+                  <Label htmlFor="amount">Loan Amount (Kshs.) *</Label>
                   <Input
                     id="amount"
                     type="number"
                     value={formData.amount}
                     onChange={(e) => handleChange('amount', e.target.value)}
-                    placeholder="10,000 - 5,00,000"
+                    placeholder="10,000 - 5,000,000"
                     className={errors.amount ? 'border-red-500' : ''}
                   />
                   {errors.amount && <p className="text-sm text-red-500 mt-1">{errors.amount}</p>}
@@ -276,7 +276,7 @@ export function LoanApplication() {
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Estimated Monthly EMI</p>
-                      <p className="text-xl font-semibold text-[#2D5016]">₹{calculateEMI().toLocaleString('en-IN')}</p>
+                      <p className="text-xl font-semibold text-[#2D5016]">Kshs. {calculateEMI().toLocaleString('en-IN')}</p>
                     </div>
                   </div>
                 </div>
