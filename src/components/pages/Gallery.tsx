@@ -8,29 +8,29 @@ export function Gallery() {
 
   const galleryImages = [
     {
-      src: 'https://images.unsplash.com/photo-1751358016973-88b94f5ca474?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrZW55YW4lMjBwZW9wbGUlMjBzbWlsaW5nJTIwaGFwcHklMjBncm91cHxlbnwxfHx8fDE3NzAxODk0MDF8MA&ixlib=rb-4.1.0&q=80&w=1080',
+      src: "src/assets/photoone.jpg",
       title: 'Community Gathering',
-      description: 'Members celebrating successful loan disbursement'
+      description: 'Youth SHG Members receiving an award'
     },
     {
-      src: 'https://images.unsplash.com/photo-1759162165431-533eed77db79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYXZpbmdzJTIwbW9uZXklMjBoYW5kc3xlbnwxfHx8fDE3NzAxNTA1MDh8MA&ixlib=rb-4.1.0&q=80&w=1080',
-      title: 'Savings Collection',
-      description: 'Monthly savings drive at our community center'
+      src: 'src/assets/phototwo.jpg',
+      title: 'Outdoor Activities',
+      description: 'Youth SHG members participating in deanery games'
     },
     {
-      src: 'https://images.unsplash.com/photo-1640119259111-acc19f7c38f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrZW55YW4lMjB3b21lbiUyMGdyb3VwJTIwY29tbXVuaXR5JTIwbWVldGluZ3xlbnwxfHx8fDE3NzAxODkzOTl8MA&ixlib=rb-4.1.0&q=80&w=1080',
-      title: 'Women Empowerment',
-      description: 'Financial literacy workshop for women members'
+      src: 'src/assets/photothree.jpg',
+      title: 'Prayer',
+      description: 'Members embarking in a word of prayer'
     },
     {
-      src: 'https://images.unsplash.com/photo-1601071733462-d0bbb6ee7a02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrZW55YW4lMjB2aWxsYWdlJTIwY29tbXVuaXR5JTIwZ2F0aGVyaW5nfGVufDF8fHx8MTc3MDE4OTQwMHww&ixlib=rb-4.1.0&q=80&w=1080',
-      title: 'Village Outreach',
-      description: 'Expanding our services to rural communities'
+      src: 'src/assets/photofour.jpg',
+      title: 'Team Building',
+      description: 'SHG members in a team building activity'
     },
     {
-      src: 'https://images.unsplash.com/photo-1536539754812-56b166f0e89b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrZW55YSUyMGxhbmRzY2FwZSUyMHNhdmFubmFoJTIwYmFja2dyb3VuZHxlbnwxfHx8fDE3NzAxODk0MDB8MA&ixlib=rb-4.1.0&q=80&w=1080',
-      title: 'Our Beautiful Kenya',
-      description: 'The land we call home'
+      src: 'src/assets/photofive.jpg',
+      title: 'First AGM Meetup',
+      description: 'SHG members taking a photo after first AGM'
     },
     {
       src: 'https://images.unsplash.com/photo-1745847768380-2caeadbb3b71?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoYW5kc2hha2UlMjBidXNpbmVzcyUyMGFncmVlbWVudHxlbnwxfHx8fDE3NzAxMzQzODl8MA&ixlib=rb-4.1.0&q=80&w=1080',

@@ -31,7 +31,7 @@ export function Landing() {
     if (!isVisible) return;
     
     // Animated counter
-    const targets = { members: 250, savings: 12500000, loans: 180 };
+    const targets = { members: 280, savings: 60000000, loans: 200 };
     const duration = 2000;
     const steps = 60;
     const increment = {
@@ -281,8 +281,9 @@ export function Landing() {
             <div>
               <h3 className="text-xl mb-4">Contact Us</h3>
               <div className="space-y-2 text-gray-300">
-                <p>Email: contact@stgabrielshg.org</p>
-                <p>Phone: +254 712 345 678</p>
+                <p>Address: P.O. BOX 741- 00618 NAIROBI</p>
+                <p>Email: shg@thomecaritasnairobi.org</p>
+                <p>Phone: O7188925O6</p>
                 <p>Office Hours: Mon-Fri, 9 AM - 5 PM</p>
               </div>
             </div>
