@@ -291,7 +291,7 @@ export function LoanApplication() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="income">Monthly Income (₹) *</Label>
+                <Label htmlFor="income">Monthly Income (Kshs. ) *</Label>
                 <Input
                   id="income"
                   type="number"
@@ -317,7 +317,7 @@ export function LoanApplication() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-[#2D5016]">Guarantor Details</CardTitle>
-                <p className="text-sm text-gray-600 mt-2">Required for loans above ₹1,00,000</p>
+                <p className="text-sm text-gray-600 mt-2">Required for loans above Kshs 1,000,000</p>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
