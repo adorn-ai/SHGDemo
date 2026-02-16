@@ -17,13 +17,16 @@ import { getSession } from './lib/auth';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const session = getSession();
+
   if (!session) {
-    return <Navigate to="/admin-hghgj23-new" replace />;
+    return <Navigate to="/admin" replace />;
   }
+
   return <>{children}</>;
 }
 
 export const router = createBrowserRouter([
+  // Public Routes
   {
     path: '/',
     Component: Root,
@@ -35,26 +38,43 @@ export const router = createBrowserRouter([
       { path: 'apply-loan', Component: LoanApplication },
     ],
   },
-  {
-    path: '/admin-hghgj23-new',
-    Component: AdminLogin,
-  },
+
+  // Admin Routes
   {
     path: '/admin',
-    element: (
-      <ProtectedRoute>
-        <AdminLayout />
-      </ProtectedRoute>
-    ),
     children: [
-      { index: true, Component: Dashboard },
-      { path: 'members', Component: Members },
-      { path: 'loans', Component: Loans },
-      { path: 'reports', Component: Reports },
-      { path: 'audit', Component: Audit },
-      { path: 'settings', Component: Settings },
+      // Login Page
+      {
+        index: true,
+        Component: AdminLogin,
+      },
+
+      // Protected Admin Area
+      {
+        element: (
+          <ProtectedRoute>
+            <AdminLayout />
+          </ProtectedRoute>
+        ),
+        children: [
+          { path: 'dashboard', Component: Dashboard },
+          { path: 'members', Component: Members },
+          { path: 'loans', Component: Loans },
+          { path: 'reports', Component: Reports },
+          { path: 'audit', Component: Audit },
+          { path: 'settings', Component: Settings },
+        ],
+      },
     ],
   },
+
+  // Old Secret Route → Redirect
+  {
+    path: '/admin-hghgj23-new',
+    element: <Navigate to="/admin" replace />,
+  },
+
+  // Catch All
   {
     path: '*',
     element: <Navigate to="/" replace />,

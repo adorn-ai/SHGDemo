@@ -19,7 +19,7 @@ export function AdminLogin() {
     const user = login(email, password);
     if (user) {
       toast.success(`Welcome back, ${user.name}!`);
-      navigate('/admin');
+      navigate('/admin/dashboard');
     } else {
       toast.error('Invalid credentials. Please try again.');
     }
