@@ -62,14 +62,14 @@ export function Members() {
   };
 
   return (
-    <div className="space-y-4 md:space-y-6 w-full max-w-full overflow-hidden">
+    <div className="space-y-4 md:space-y-6 w-full max-w-full">
       <div className="px-4 md:px-0 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl md:text-3xl text-[#2D5016]">Members</h1>
           <p className="text-sm md:text-base text-gray-600">Manage member registrations and information</p>
         </div>
-        <Button onClick={exportToCSV} className="bg-[#2D5016] hover:bg-[#4A7C2C] w-full md:w-auto">
-          <Download className="mr-2" size={16} />
+        <Button onClick={exportToCSV} className="bg-[#2D5016] hover:bg-[#4A7C2C] shrink-0" size="sm">
+          <Download className="mr-1" size={14} />
           Export
         </Button>
       </div>
@@ -109,26 +109,28 @@ export function Members() {
           </TabsList>
         </div>
 
-        <TabsContent value="all" className="space-y-4 px-4 md:px-0">
+        <TabsContent value="all" className="space-y-4">
           {/* Search Bar */}
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <Search className="text-gray-400 flex-shrink-0" size={20} />
-                <Input
-                  placeholder="Search by name, ID, email..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="text-sm md:text-base border-0 focus:ring-0 p-0"
-                />
-              </div>
-            </CardContent>
-          </Card>
+          <div className="px-4 md:px-0">
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-2">
+                  <Search className="text-gray-400 flex-shrink-0" size={20} />
+                  <Input
+                    placeholder="Search by name, ID, email..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="text-sm md:text-base border-0 focus:ring-0 p-0"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Scrollable Table */}
-          <div className="w-full -mx-4 px-4 md:mx-0 md:px-0">
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse bg-white border rounded-lg" style={{ minWidth: '800px' }}>
+          <div className="px-4 md:px-0">
+            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', borderRadius: '0.5rem', border: '1px solid #e5e7eb' }}>
+            <table className="border-collapse bg-white" style={{ minWidth: '800px', width: '100%' }}>
                 <thead className="bg-gray-50">
                   <tr className="border-b">
                     <th className="px-4 py-3 text-left text-xs md:text-sm font-medium whitespace-nowrap">Member ID</th>
@@ -154,7 +156,7 @@ export function Members() {
                         <td className="px-4 py-3 text-xs md:text-sm whitespace-nowrap">{member.firstName} {member.lastName}</td>
                         <td className="px-4 py-3 text-xs md:text-sm whitespace-nowrap">{member.email}</td>
                         <td className="px-4 py-3 text-xs md:text-sm whitespace-nowrap">{member.phone}</td>
-                        <td className="px-4 py-3 text-xs md:text-sm whitespace-nowrap">{new Date(member.joinDate).toLocaleDateString('en-IN')}</td>
+                        <td className="px-4 py-3 text-xs md:text-sm whitespace-nowrap">{new Date(member.joinDate).toLocaleDateString('en-KE')}</td>
                         <td className="px-4 py-3">
                           <Badge className="bg-green-600 text-xs whitespace-nowrap">Active</Badge>
                         </td>
@@ -221,7 +223,7 @@ export function Members() {
                           </div>
                           <div className="flex items-center space-x-2 text-gray-600 sm:col-span-2">
                             <Calendar size={14} className="flex-shrink-0" />
-                            <span>Applied: {new Date(member.joinDate).toLocaleDateString('en-IN')}</span>
+                            <span>Applied: {new Date(member.joinDate).toLocaleDateString('en-KE')}</span>
                           </div>
                         </div>
 
@@ -323,7 +325,7 @@ export function Members() {
                   </div>
                   <div>
                     <p className="text-gray-600">Join Date</p>
-                    <p className="font-medium">{new Date(selectedMember.joinDate).toLocaleDateString('en-IN')}</p>
+                    <p className="font-medium">{new Date(selectedMember.joinDate).toLocaleDateString('en-KE')}</p>
                   </div>
                 </div>
               </div>

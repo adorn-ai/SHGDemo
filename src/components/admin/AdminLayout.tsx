@@ -13,7 +13,6 @@ export function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
-  // Sample notifications
   const notifications = [
     {
       id: '1',
@@ -57,7 +56,7 @@ export function AdminLayout() {
 
   const handleLogout = () => {
     logout();
-    navigate('/admin-hghgj23-new');
+    navigate('/admin');
   };
 
   const roleColors = {
@@ -67,7 +66,7 @@ export function AdminLayout() {
   };
 
   const navigation = [
-    { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
+    { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
     { name: 'Members', path: '/admin/members', icon: Users },
     { name: 'Loans', path: '/admin/loans', icon: FileText },
     { name: 'Reports', path: '/admin/reports', icon: BarChart3 },

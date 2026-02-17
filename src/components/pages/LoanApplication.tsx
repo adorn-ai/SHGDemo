@@ -807,16 +807,8 @@ export function LoanApplication() {
             </CardContent>
           </Card>
 
-          {/* Submit Buttons */}
-          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:space-x-4 pt-4">
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => navigate('/')}
-              className="w-full sm:w-auto"
-            >
-              Cancel
-            </Button>
+          {/* Submit Button */}
+          <div className="flex justify-center pt-4">
             <Button 
               type="submit" 
               className="bg-[#2D5016] hover:bg-[#4A7C2C] w-full sm:w-auto"

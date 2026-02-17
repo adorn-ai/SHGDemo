@@ -126,9 +126,9 @@ export function Loans() {
   };
 
   const LoanTable = ({ loans: loanList }: { loans: any[] }) => (
-    <div className="w-full -mx-4 px-4 md:mx-0 md:px-0">
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse bg-white border rounded-lg" style={{ minWidth: '900px' }}>
+    <div className="px-4 md:px-0">
+      <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', borderRadius: '0.5rem', border: '1px solid #e5e7eb' }}>
+        <table className="border-collapse bg-white" style={{ minWidth: '900px', width: '100%' }}>
           <thead className="bg-gray-50">
             <tr className="border-b">
               <th className="px-4 py-3 text-left text-xs md:text-sm font-medium whitespace-nowrap">Loan ID</th>
@@ -158,12 +158,12 @@ export function Loans() {
                       <p className="text-xs text-gray-500 whitespace-nowrap">{loan.memberId}</p>
                     </div>
                   </td>
-                  <td className="px-4 py-3 font-semibold text-xs md:text-sm whitespace-nowrap">KES {loan.amount.toLocaleString('en-IN')}</td>
+                  <td className="px-4 py-3 font-semibold text-xs md:text-sm whitespace-nowrap">KES {loan.amount.toLocaleString('en-KE')}</td>
                   <td className="px-4 py-3">
                     <div className="max-w-[150px] text-xs md:text-sm truncate">{loan.purpose}</div>
                   </td>
                   <td className="px-4 py-3 text-xs md:text-sm whitespace-nowrap">{loan.term} mo</td>
-                  <td className="px-4 py-3 text-xs md:text-sm whitespace-nowrap">{new Date(loan.applicationDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' })}</td>
+                  <td className="px-4 py-3 text-xs md:text-sm whitespace-nowrap">{new Date(loan.applicationDate).toLocaleDateString('en-KE', { day: '2-digit', month: 'short', year: '2-digit' })}</td>
                   <td className="px-4 py-3 whitespace-nowrap">{getStatusBadge(loan.status)}</td>
                   <td className="px-4 py-3">
                     <Button
@@ -187,7 +187,7 @@ export function Loans() {
   );
 
   return (
-    <div className="space-y-4 md:space-y-6 w-full max-w-full overflow-hidden">
+    <div className="space-y-4 md:space-y-6 w-full max-w-full">
       <div className="px-4 md:px-0">
         <h1 className="text-2xl md:text-3xl text-[#2D5016]">Loan Applications</h1>
         <p className="text-sm md:text-base text-gray-600">Review and manage loan applications</p>
@@ -246,27 +246,27 @@ export function Loans() {
           </TabsList>
         </div>
 
-        <TabsContent value="all" className="px-4 md:px-0">
+        <TabsContent value="all">
           <LoanTable loans={allLoans} />
         </TabsContent>
 
-        <TabsContent value="treasurer" className="px-4 md:px-0">
+        <TabsContent value="treasurer">
           <LoanTable loans={treasurerLoans} />
         </TabsContent>
 
-        <TabsContent value="secretary" className="px-4 md:px-0">
+        <TabsContent value="secretary">
           <LoanTable loans={secretaryLoans} />
         </TabsContent>
 
-        <TabsContent value="chairman" className="px-4 md:px-0">
+        <TabsContent value="chairman">
           <LoanTable loans={chairmanLoans} />
         </TabsContent>
 
-        <TabsContent value="approved" className="px-4 md:px-0">
+        <TabsContent value="approved">
           <LoanTable loans={approvedLoans} />
         </TabsContent>
 
-        <TabsContent value="rejected" className="px-4 md:px-0">
+        <TabsContent value="rejected">
           <LoanTable loans={rejectedLoans} />
         </TabsContent>
       </Tabs>
@@ -299,7 +299,7 @@ export function Loans() {
                     </div>
                     <div>
                       <p className="text-gray-600">Monthly Income</p>
-                      <p className="font-semibold">KES {selectedLoan.income.toLocaleString('en-IN')}</p>
+                      <p className="font-semibold">KES {selectedLoan.income.toLocaleString('en-KE')}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -321,11 +321,11 @@ export function Loans() {
                     </div>
                     <div>
                       <p className="text-gray-600">Application Date</p>
-                      <p className="font-semibold">{new Date(selectedLoan.applicationDate).toLocaleDateString('en-IN')}</p>
+                      <p className="font-semibold">{new Date(selectedLoan.applicationDate).toLocaleDateString('en-KE')}</p>
                     </div>
                     <div>
                       <p className="text-gray-600">Loan Amount</p>
-                      <p className="font-semibold text-base md:text-lg">KES {selectedLoan.amount.toLocaleString('en-IN')}</p>
+                      <p className="font-semibold text-base md:text-lg">KES {selectedLoan.amount.toLocaleString('en-KE')}</p>
                     </div>
                     <div>
                       <p className="text-gray-600">Term</p>
@@ -337,7 +337,7 @@ export function Loans() {
                     </div>
                     <div>
                       <p className="text-gray-600">Monthly EMI</p>
-                      <p className="font-semibold">KES {selectedLoan.monthlyEmi.toLocaleString('en-IN')}</p>
+                      <p className="font-semibold">KES {selectedLoan.monthlyEmi.toLocaleString('en-KE')}</p>
                     </div>
                     <div className="sm:col-span-2">
                       <p className="text-gray-600 mb-1">Purpose</p>
@@ -479,7 +479,7 @@ export function Loans() {
                             <p className="font-semibold text-xs md:text-sm">{c.userName}</p>
                             <Badge className="text-xs capitalize">{c.userRole}</Badge>
                             <p className="text-xs text-gray-500">
-                              {new Date(c.timestamp).toLocaleString('en-IN')}
+                              {new Date(c.timestamp).toLocaleString('en-KE')}
                             </p>
                           </div>
                           <p className="text-xs md:text-sm text-gray-700 break-words">{c.text}</p>

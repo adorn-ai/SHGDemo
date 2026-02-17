@@ -1,13 +1,24 @@
 import { Member, Loan, Activity } from './types';
 
+const DATA_VERSION = 'v2_ke'; // bump this to force re-init and clear stale data
+
 const STORAGE_KEYS = {
   MEMBERS: 'stgabriel_members',
   LOANS: 'stgabriel_loans',
   ACTIVITIES: 'stgabriel_activities',
+  VERSION: 'stgabriel_data_version',
 };
 
 // Initialize with sample data
 function initializeData() {
+  // If version doesn't match, wipe all data and re-seed with Kenyan data
+  if (localStorage.getItem(STORAGE_KEYS.VERSION) !== DATA_VERSION) {
+    localStorage.removeItem(STORAGE_KEYS.MEMBERS);
+    localStorage.removeItem(STORAGE_KEYS.LOANS);
+    localStorage.removeItem(STORAGE_KEYS.ACTIVITIES);
+    localStorage.setItem(STORAGE_KEYS.VERSION, DATA_VERSION);
+  }
+
   if (!localStorage.getItem(STORAGE_KEYS.MEMBERS)) {
     const sampleMembers: Member[] = [
       // Active members with Kenyan names
@@ -150,7 +161,7 @@ function initializeData() {
         id: `loan-approved-${i + 1}`,
         loanId: `LN${new Date().getFullYear() - 1}${String(100 + i).slice(-3)}`,
         memberId: `STG${String(i + 8).padStart(4, '0')}`,
-        memberName: `Member ${i + 8}`,
+        memberName: ['Esther Atieno', 'James Kariuki', 'Lucy Wambui', 'Daniel Onyango', 'Mercy Chebet', 'John Omondi', 'Alice Muthoni', 'Moses Kiplagat', 'Jane Wangari', 'Paul Okello', 'Grace Wanjiru', 'Joseph Kimani'][i],
         amount: 50000 + i * 10000,
         purpose: ['Business', 'Education', 'Medical', 'Agriculture', 'House'][i % 5],
         term: [12, 24, 36][i % 3],
@@ -170,7 +181,7 @@ function initializeData() {
         id: `loan-rejected-${i + 1}`,
         loanId: `LN${new Date().getFullYear() - 1}${String(200 + i).slice(-3)}`,
         memberId: `STG${String(i + 10).padStart(4, '0')}`,
-        memberName: `Member ${i + 10}`,
+        memberName: ['Alice Muthoni', 'Moses Kiplagat', 'Jane Wangari', 'Paul Okello', 'Mercy Chebet'][i],
         amount: 100000 + i * 20000,
         purpose: ['Luxury Purchase', 'Speculation', 'Non-essential'][i % 3],
         term: 12,
@@ -202,14 +213,26 @@ function initializeData() {
       {
         id: 'act-2',
         type: 'loan_approved',
-        description: 'Loan of Ksh 50,000 approved for Aisha Juma',
+        description: 'Loan of KES 50,000 approved for Grace Wanjiru',
         timestamp: new Date(Date.now() - 172800000).toISOString(),
       },
       {
         id: 'act-3',
         type: 'loan_applied',
-        description: 'Micheal Ochieng applied for a loan of Kshs. 750,000',
+        description: 'Joseph Kimani applied for a loan of KES 100,000',
         timestamp: new Date(Date.now() - 259200000).toISOString(),
+      },
+      {
+        id: 'act-4',
+        type: 'member_joined',
+        description: 'Peter Mwangi completed membership registration',
+        timestamp: new Date(Date.now() - 345600000).toISOString(),
+      },
+      {
+        id: 'act-5',
+        type: 'loan_approved',
+        description: 'Loan of KES 75,000 approved for Ruth Njeri',
+        timestamp: new Date(Date.now() - 432000000).toISOString(),
       },
     ];
     localStorage.setItem(STORAGE_KEYS.ACTIVITIES, JSON.stringify(sampleActivities));

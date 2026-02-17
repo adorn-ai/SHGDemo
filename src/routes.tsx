@@ -39,39 +39,28 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // Admin Routes
+  // Admin Login (standalone, no layout)
   {
     path: '/admin',
-    children: [
-      // Login Page
-      {
-        index: true,
-        Component: AdminLogin,
-      },
-
-      // Protected Admin Area
-      {
-        element: (
-          <ProtectedRoute>
-            <AdminLayout />
-          </ProtectedRoute>
-        ),
-        children: [
-          { path: 'dashboard', Component: Dashboard },
-          { path: 'members', Component: Members },
-          { path: 'loans', Component: Loans },
-          { path: 'reports', Component: Reports },
-          { path: 'audit', Component: Audit },
-          { path: 'settings', Component: Settings },
-        ],
-      },
-    ],
+    Component: AdminLogin,
   },
 
-  // Old Secret Route → Redirect
+  // Protected Admin Area
   {
-    path: '/admin-hghgj23-new',
-    element: <Navigate to="/admin" replace />,
+    path: '/admin',
+    element: (
+      <ProtectedRoute>
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      { path: 'dashboard', Component: Dashboard },
+      { path: 'members', Component: Members },
+      { path: 'loans', Component: Loans },
+      { path: 'reports', Component: Reports },
+      { path: 'audit', Component: Audit },
+      { path: 'settings', Component: Settings },
+    ],
   },
 
   // Catch All

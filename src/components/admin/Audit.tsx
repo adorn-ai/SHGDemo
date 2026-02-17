@@ -40,17 +40,42 @@ export function Audit() {
   ];
 
   const exportReport = () => {
-    toast.success('Audit report exported successfully');
+    const rows: string[][] = [
+      ['St Gabriel SHG – Internal Audit Report'],
+      [`Generated: ${new Date().toLocaleDateString('en-KE')}`],
+      [],
+      ['AUDIT RECORDS'],
+      ['ID', 'Type', 'Auditor', 'Date', 'Status', 'Findings', 'Recommendations'],
+      ...audits.map(a => [
+        a.id, a.type, a.auditor,
+        new Date(a.date).toLocaleDateString('en-KE'),
+        a.status, a.findings, a.recommendation,
+      ]),
+      [],
+      ['UPCOMING AUDIT SCHEDULE'],
+      ['Type', 'Scheduled Date', 'Auditor', 'Status'],
+      ['Quarterly Financial Review', '2026-03-01', 'John Kamau', 'Scheduled'],
+      ['Loan Portfolio Assessment', '2026-02-15', 'Michael Ochieng', 'Scheduled'],
+    ];
+    const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `StGabriel_AuditReport_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('Audit report downloaded successfully');
   };
 
   return (
-    <div className="space-y-6 w-full">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 px-4 md:px-6">
+    <div className="space-y-4 md:space-y-6 w-full max-w-full overflow-hidden">
+      <div className="px-4 md:px-0 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl text-[#2D5016]">Internal Audit</h1>
           <p className="text-sm md:text-base text-gray-600">Review and track all internal audits</p>
         </div>
-        <Button onClick={exportReport} className="bg-[#2D5016] hover:bg-[#4A7C2C]">
+        <Button onClick={exportReport} size="sm" className="bg-[#2D5016] hover:bg-[#4A7C2C] shrink-0">
           <Download className="mr-2" size={16} />
           Export Report
         </Button>
@@ -124,12 +149,12 @@ export function Audit() {
                   <h4 className="font-semibold text-[#2D5016] mb-2 text-sm md:text-base">Recommendations</h4>
                   <p className="text-sm md:text-base text-gray-700">{audit.recommendation}</p>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-2 pt-2">
-                  <Button size="sm" variant="outline" className="border-[#2D5016] text-[#2D5016] w-full sm:w-auto">
+                <div className="flex flex-row gap-2 pt-2">
+                  <Button size="sm" variant="outline" className="border-[#2D5016] text-[#2D5016]">
                     <Eye className="mr-2" size={16} />
                     View Details
                   </Button>
-                  <Button size="sm" variant="outline" className="border-[#2D5016] text-[#2D5016] w-full sm:w-auto">
+                  <Button size="sm" variant="outline" className="border-[#2D5016] text-[#2D5016]">
                     <Download className="mr-2" size={16} />
                     Download
                   </Button>
@@ -146,9 +171,8 @@ export function Audit() {
           <CardTitle className="text-[#2D5016] text-base md:text-lg">Upcoming Audit Schedule</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="w-full overflow-x-auto">
-            <div className="min-w-[700px]">
-              <Table>
+          <div className="overflow-x-auto">
+            <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="whitespace-nowrap">Type</TableHead>
@@ -172,7 +196,6 @@ export function Audit() {
                 </TableRow>
               </TableBody>
             </Table>
-            </div>
           </div>
         </CardContent>
       </Card>
