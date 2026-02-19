@@ -3,32 +3,39 @@ import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/button';
 
+// Import local images so Vite bundles them correctly (works on Vercel)
+import photoOne from '../../assets/photoone.jpg';
+import photoTwo from '../../assets/phototwo.jpg';
+import photoThree from '../../assets/photothree.jpg';
+import photoFour from '../../assets/photofour.jpg';
+import photoFive from '../../assets/photofive.jpg';
+
 export function Gallery() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
   const galleryImages = [
     {
-      src: "src/assets/photoone.jpg",
+      src: photoOne,
       title: 'Community Gathering',
       description: 'Youth SHG Members receiving an award'
     },
     {
-      src: 'src/assets/phototwo.jpg',
+      src: photoTwo,
       title: 'Outdoor Activities',
       description: 'Youth SHG members participating in deanery games'
     },
     {
-      src: 'src/assets/photothree.jpg',
+      src: photoThree,
       title: 'Prayer',
       description: 'Members embarking in a word of prayer'
     },
     {
-      src: 'src/assets/photofour.jpg',
+      src: photoFour,
       title: 'Team Building',
       description: 'SHG members in a team building activity'
     },
     {
-      src: 'src/assets/photofive.jpg',
+      src: photoFive,
       title: 'First AGM Meetup',
       description: 'SHG members taking a photo after first AGM'
     },
@@ -101,7 +108,6 @@ export function Gallery() {
               <X size={32} />
             </Button>
 
-            {/* Previous Button */}
             <Button
               onClick={handlePrevious}
               variant="ghost"
@@ -111,7 +117,6 @@ export function Gallery() {
               <ChevronLeft size={48} />
             </Button>
 
-            {/* Next Button */}
             <Button
               onClick={handleNext}
               variant="ghost"

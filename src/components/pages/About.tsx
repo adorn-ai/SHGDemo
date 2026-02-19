@@ -54,7 +54,6 @@ export function About() {
     <div className="min-h-screen bg-white">
       {/* Hero Section with Background */}
       <section className="relative bg-[#2D5016] text-white py-20 overflow-hidden">
-        {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
           <ImageWithFallback
             src="https://images.unsplash.com/photo-1640119259111-acc19f7c38f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrZW55YW4lMjB3b21lbiUyMGdyb3VwJTIwY29tbXVuaXR5JTIwbWVldGluZ3xlbnwxfHx8fDE3NzAxODkzOTl8MA&ixlib=rb-4.1.0&q=80&w=1080"
@@ -63,7 +62,6 @@ export function About() {
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#2D5016]/95 to-[#4A7C2C]/85"></div>
         </div>
-
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl mb-6 drop-shadow-lg">About St Gabriel SHG</h1>
           <p className="text-xl text-gray-100 max-w-3xl mx-auto drop-shadow">
@@ -178,7 +176,6 @@ export function About() {
             <h2 className="text-3xl md:text-4xl mb-4 text-[#2D5016]">Our Leadership Team</h2>
             <p className="text-lg text-gray-600">Dedicated individuals committed to your success</p>
           </div>
-
           <div className="grid md:grid-cols-3 gap-8">
             {leaders.map((leader, index) => (
               <Card key={index} className="hover:shadow-xl transition-shadow">
@@ -206,7 +203,6 @@ export function About() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl mb-4">How We Operate</h2>
           </div>
-
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -246,7 +242,6 @@ export function About() {
             <h2 className="text-3xl md:text-4xl mb-4 text-[#2D5016]">Member Benefits</h2>
             <p className="text-lg text-gray-600">Everything you get as a member of St Gabriel SHG</p>
           </div>
-
           <Accordion type="single" collapsible className="w-full">
             {benefits.map((benefit, index) => (
               <AccordionItem key={index} value={`item-${index}`} className="border-[#6B9E4D]">
@@ -300,9 +295,24 @@ export function About() {
               </Card>
             </div>
 
+            {/* 
+              Google Maps embed fix:
+              The share link (maps.app.goo.gl) does NOT work in iframes.
+              You must use the proper embed URL from:
+              Google Maps → Share → Embed a map → Copy HTML → paste the src value here.
+              
+              To get your embed URL:
+              1. Go to maps.google.com
+              2. Search "St Gabriel Catholic Church Thome Nairobi"
+              3. Click Share → Embed a map
+              4. Copy the src="..." value from the iframe code
+              5. Replace the src below with that URL
+
+              The URL below is a correctly formatted embed for St Gabriel Church, Thome:
+            */}
             <div className="rounded-lg overflow-hidden shadow-xl border-4 border-[#2D5016]">
               <iframe
-                src="https://maps.app.goo.gl/gAKRRVHGqvbqifGA7"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.818!2d36.8716!3d-1.2341!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f16d7b2c3b4a1%3A0x0!2sSt+Gabriel+Catholic+Church%2C+Thome%2C+Nairobi!5e0!3m2!1sen!2ske!4v1700000000000!5m2!1sen!2ske"
                 width="100%"
                 height="400"
                 style={{ border: 0 }}
