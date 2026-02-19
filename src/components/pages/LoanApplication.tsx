@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Checkbox } from '../ui/checkbox';
 import { toast } from 'sonner@2.0.3';
 import { getMember, saveLoan } from '../../lib/store';
-import { AlertCircle, CheckCircle, Users } from 'lucide-react';
+import { AlertCircle, CheckCircle, Users, Download } from 'lucide-react';
 
 export function LoanApplication() {
   const navigate = useNavigate();
@@ -203,6 +203,17 @@ export function LoanApplication() {
           <div className="text-center mb-6 md:mb-8">
             <h1 className="text-3xl md:text-4xl mb-2 md:mb-4 text-[#2D5016]">Loan Application</h1>
             <p className="text-base md:text-lg text-gray-600">Caritas Nairobi - St Gabriel SHG</p>
+            {/* Download Manual Form Button */}
+            <div className="mt-3">
+              <a
+                href="/LOAN-APPLICATION-FORM.pdf"
+                download="Loan-Application-Form.pdf"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#2D5016] hover:bg-[#4A7C2C] text-white text-xs font-medium rounded-md transition-colors"
+              >
+                <Download size={13} />
+                Download Form (Fill Manually)
+              </a>
+            </div>
           </div>
 
           <Card>
@@ -254,6 +265,17 @@ export function LoanApplication() {
         <div className="text-center mb-4 md:mb-8">
           <h1 className="text-2xl md:text-4xl mb-2 text-[#2D5016]">Loan Application Form</h1>
           <p className="text-sm md:text-base text-gray-600">Caritas Nairobi - Social Promotion Registered Trustees</p>
+          {/* Download Manual Form Button */}
+          <div className="mt-3">
+            <a
+              href="/LOAN-APPLICATION-FORM.pdf"
+              download="Loan-Application-Form.pdf"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#2D5016] hover:bg-[#4A7C2C] text-white text-xs font-medium rounded-md transition-colors"
+            >
+              <Download size={13} />
+              Download Form (Fill Manually)
+            </a>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">

@@ -31,15 +31,15 @@ function initializeData() {
         phone: `07${String(10000000 + i * 111111).slice(0, 8)}`,
         dateOfBirth: `19${70 + (i % 30)}-0${(i % 9) + 1}-${10 + (i % 20)}`,
         gender: i % 2 === 0 ? 'Female' : 'Male',
-        address: `House ${i + 1}, Estate ${i % 5 + 1}`,
+        address: `House ${i + 1}, Estate ${i % 5 + 1}, Nairobi`,
         city: 'Nairobi',
         state: 'Nairobi County',
-        pincode: `0010${i % 10}`,
-        aadharNumber: `${1000 + i} ${2000 + i} ${3000 + i}`,
-        panNumber: `KRA${i}${1000 + i}K`,
+        pincode: ['00100', '00200', '00300', '00400', '00500'][i % 5],
+        aadharNumber: `${10000000 + i * 111111}`, // National ID (7-8 digits)
+        panNumber: `KRA${10000000 + i * 111111}`, // KRA PIN
         bankName: ['Equity Bank', 'KCB', 'Cooperative Bank', 'Barclays', 'Standard Chartered'][i % 5],
-        accountNumber: `${10000000000 + i * 1000000}`,
-        ifscCode: `EQUI000${100 + i}`,
+        accountNumber: `${1000000000 + i * 10000000}`,
+        ifscCode: ['Nairobi West', 'Westlands', 'Thika Road', 'Karen', 'Mombasa Road'][i % 5], // Bank branch
         nomineeName: `Nominee ${i + 1}`,
         nomineeRelation: ['Spouse', 'Son', 'Daughter', 'Parent'][i % 4],
         joinDate: `202${i % 4}-0${(i % 9) + 1}-15`,
@@ -55,15 +55,15 @@ function initializeData() {
         phone: `07${String(20000000 + i * 222222).slice(0, 8)}`,
         dateOfBirth: `19${85 + i}-06-${10 + i}`,
         gender: i % 2 === 0 ? 'Female' : 'Male',
-        address: `New House ${i + 1}, Pending Estate`,
+        address: `New House ${i + 1}, Pending Estate, Nairobi`,
         city: 'Nairobi',
         state: 'Nairobi County',
         pincode: `0020${i}`,
-        aadharNumber: `${5000 + i} ${6000 + i} ${7000 + i}`,
-        panNumber: `PEND${i}${5000 + i}P`,
+        aadharNumber: `${50000000 + i * 111111}`, // National ID
+        panNumber: `KRA${50000000 + i * 111111}`, // KRA PIN
         bankName: ['Equity Bank', 'KCB', 'Cooperative Bank'][i % 3],
-        accountNumber: `${20000000000 + i * 1000000}`,
-        ifscCode: `PEND000${200 + i}`,
+        accountNumber: `${2000000000 + i * 10000000}`,
+        ifscCode: ['Karen', 'Westlands', 'Thika Road'][i % 3], // Bank branch
         nomineeName: `Nominee Pending ${i + 1}`,
         nomineeRelation: ['Spouse', 'Parent'][i % 2],
         joinDate: new Date().toISOString().split('T')[0],
@@ -85,11 +85,13 @@ function initializeData() {
         purpose: ['Business Expansion', 'Home Renovation', 'Education'][i],
         term: [12, 24, 18][i],
         interestRate: 12,
-        monthlyEmi: 0,
+        monthlyEmi: [Math.round(50000/12), Math.round(100000/24), Math.round(75000/18)][i],
         applicationDate: new Date(Date.now() - i * 86400000).toISOString().split('T')[0],
         status: 'treasurer_review' as const,
         treasurerStatus: 'pending' as const,
         income: [30000, 45000, 35000][i],
+        guarantorName: ['Peter Mwangi', 'Faith Nyambura', 'David Ochieng'][i],
+        guarantorPhone: ['0712345001', '0723456002', '0734567003'][i],
         comments: [],
       })),
       // Secretary review (2 loans)
@@ -102,13 +104,15 @@ function initializeData() {
         purpose: ['Medical Emergency', 'Business Start'][i],
         term: [12, 36][i],
         interestRate: 12,
-        monthlyEmi: 0,
+        monthlyEmi: [Math.round(80000/12), Math.round(120000/36)][i],
         applicationDate: new Date(Date.now() - (i + 4) * 86400000).toISOString().split('T')[0],
         status: 'secretary_review' as const,
         treasurerStatus: 'approved' as const,
         secretaryStatus: 'pending' as const,
         treasurerComment: 'Financials verified. Income is sufficient.',
         income: [40000, 50000][i],
+        guarantorName: ['Ruth Njeri', 'Samuel Kamau'][i],
+        guarantorPhone: ['0745678004', '0756789005'][i],
         comments: [{
           id: 'c1',
           userId: '3',
@@ -128,7 +132,7 @@ function initializeData() {
         purpose: ['Wedding', 'House Purchase'][i],
         term: [24, 60][i],
         interestRate: 12,
-        monthlyEmi: 0,
+        monthlyEmi: [Math.round(90000/24), Math.round(150000/60)][i],
         applicationDate: new Date(Date.now() - (i + 8) * 86400000).toISOString().split('T')[0],
         status: 'chairman_review' as const,
         treasurerStatus: 'approved' as const,
@@ -137,6 +141,8 @@ function initializeData() {
         treasurerComment: 'Financial documents in order.',
         secretaryComment: 'Member has good track record.',
         income: [45000, 60000][i],
+        guarantorName: ['Esther Atieno', 'James Kariuki'][i],
+        guarantorPhone: ['0767890006', '0778901007'][i],
         comments: [
           {
             id: 'c2',
@@ -166,7 +172,7 @@ function initializeData() {
         purpose: ['Business', 'Education', 'Medical', 'Agriculture', 'House'][i % 5],
         term: [12, 24, 36][i % 3],
         interestRate: 12,
-        monthlyEmi: 0,
+        monthlyEmi: Math.round((50000 + i * 10000) / [12, 24, 36][i % 3]),
         applicationDate: new Date(Date.now() - (i + 30) * 86400000).toISOString().split('T')[0],
         status: 'approved' as const,
         treasurerStatus: 'approved' as const,
@@ -186,7 +192,7 @@ function initializeData() {
         purpose: ['Luxury Purchase', 'Speculation', 'Non-essential'][i % 3],
         term: 12,
         interestRate: 12,
-        monthlyEmi: 0,
+        monthlyEmi: Math.round((100000 + i * 20000) / 12),
         applicationDate: new Date(Date.now() - (i + 60) * 86400000).toISOString().split('T')[0],
         status: 'rejected' as const,
         treasurerStatus: i % 2 === 0 ? 'rejected' as const : 'approved' as const,
@@ -306,4 +312,18 @@ export function addActivity(activity: Omit<Activity, 'id'>): void {
     id: `act-${Date.now()}`,
   });
   localStorage.setItem(STORAGE_KEYS.ACTIVITIES, JSON.stringify(activities.slice(0, 50)));
+}
+
+export function addMember(member: Member): void {
+  const members = getMembers();
+
+  // Prevent duplicate email
+  const exists = members.some(
+    m => m.email.toLowerCase() === member.email.toLowerCase()
+  );
+
+  if (exists) return;
+
+  members.push(member);
+  localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members));
 }

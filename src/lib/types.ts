@@ -29,12 +29,14 @@ export interface Member {
   nomineeName: string;
   nomineeRelation: string;
   joinDate: string;
-  status: 'active' | 'pending' | 'inactive';
-  kycDocuments?: {
-    aadhar?: string;
-    photo?: string;
-    bankProof?: string;
-    pan?: string;
+  status: 'pending' | 'active' | 'inactive';
+  documents?: {
+    passportPhoto?: string;
+    passportPhotoName?: string;
+    nationalIdCopy?: string;
+    nationalIdCopyName?: string;
+    kraCertificate?: string;
+    kraCertificateName?: string;
   };
 }
 

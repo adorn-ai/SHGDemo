@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Textarea } from '../ui/textarea';
 import { toast } from 'sonner@2.0.3';
 import { saveMember } from '../../lib/store';
-import { CheckCircle, Upload, FileText, User } from 'lucide-react';
+import { CheckCircle, Upload, FileText, User, Download } from 'lucide-react';
 
 export function MemberRegistration() {
   const navigate = useNavigate();
@@ -55,21 +55,30 @@ export function MemberRegistration() {
   const [uploadedFiles, setUploadedFiles] = useState<{
     passportPhoto?: File;
     nationalIdCopy?: File;
+    kraCertificate?: File;
   }>({});
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleFileUpload = (field: 'passportPhoto' | 'nationalIdCopy', file: File | undefined) => {
+  const handleFileUpload = (field: 'passportPhoto' | 'nationalIdCopy' | 'kraCertificate', file: File | undefined) => {
     if (file) {
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         toast.error('File size must be less than 5MB');
         return;
       }
-      // Validate file type
-      const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      // Validate file type based on field
+      let validTypes: string[];
+      if (field === 'passportPhoto') {
+        validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      } else {
+        // For ID and KRA certificate, allow images and PDFs
+        validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+      }
+      
       if (!validTypes.includes(file.type)) {
-        toast.error('Only JPG and PNG files are allowed');
+        const allowedFormats = field === 'passportPhoto' ? 'JPG and PNG' : 'JPG, PNG, and PDF';
+        toast.error(`Only ${allowedFormats} files are allowed`);
         return;
       }
       setUploadedFiles({ ...uploadedFiles, [field]: file });
@@ -125,7 +134,7 @@ export function MemberRegistration() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validate()) {
@@ -133,36 +142,71 @@ export function MemberRegistration() {
       return;
     }
 
-    const member = {
-      id: `member-${Date.now()}`,
-      memberId: `PENDING${Date.now()}`,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      email: formData.email,
-      phone: formData.phone,
-      dateOfBirth: formData.dateOfBirth,
-      gender: formData.gender,
-      address: formData.physicalAddress,
-      city: 'N/A',
-      state: 'N/A',
-      pincode: '000000',
-      aadharNumber: formData.nationalId,
-      panNumber: 'N/A',
-      bankName: formData.bankName,
-      accountNumber: formData.accountNumber,
-      ifscCode: 'N/A',
-      nomineeName: formData.nomineeName,
-      nomineeRelation: formData.nomineeRelationship,
-      joinDate: new Date().toISOString().split('T')[0],
-      status: 'pending' as const,
+    // Convert files to Base64
+    const convertToBase64 = (file: File): Promise<string> => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+      });
     };
 
-    saveMember(member);
-    toast.success('Registration submitted successfully! Your application is under review.');
-    
-    setTimeout(() => {
-      navigate('/');
-    }, 2000);
+    try {
+      // Convert uploaded files to Base64
+      const passportPhotoBase64 = uploadedFiles.passportPhoto 
+        ? await convertToBase64(uploadedFiles.passportPhoto)
+        : undefined;
+      const nationalIdCopyBase64 = uploadedFiles.nationalIdCopy
+        ? await convertToBase64(uploadedFiles.nationalIdCopy)
+        : undefined;
+      const kraCertificateBase64 = uploadedFiles.kraCertificate
+        ? await convertToBase64(uploadedFiles.kraCertificate)
+        : undefined;
+
+      const member = {
+        id: `member-${Date.now()}`,
+        memberId: `PENDING${Date.now()}`,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        dateOfBirth: formData.dateOfBirth,
+        gender: formData.gender,
+        address: formData.physicalAddress,
+        city: 'Nairobi',
+        state: 'Nairobi County',
+        pincode: formData.postalAddress.split('-')[0] || '00100',
+        aadharNumber: formData.nationalId,
+        panNumber: `KRA${formData.nationalId}`,
+        bankName: formData.bankName,
+        accountNumber: formData.accountNumber,
+        ifscCode: formData.bankBranch,
+        nomineeName: formData.nomineeName,
+        nomineeRelation: formData.nomineeRelationship,
+        joinDate: new Date().toISOString().split('T')[0],
+        status: 'pending' as const,
+        // Document fields
+        documents: {
+          passportPhoto: passportPhotoBase64,
+          passportPhotoName: uploadedFiles.passportPhoto?.name,
+          nationalIdCopy: nationalIdCopyBase64,
+          nationalIdCopyName: uploadedFiles.nationalIdCopy?.name,
+          kraCertificate: kraCertificateBase64,
+          kraCertificateName: uploadedFiles.kraCertificate?.name,
+        }
+      };
+
+      saveMember(member);
+      toast.success('Registration submitted successfully! Your application is under review.');
+      
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+    } catch (error) {
+      console.error('Error converting files:', error);
+      toast.error('Error uploading documents. Please try again.');
+    }
   };
 
   const handleChange = (field: string, value: string) => {
@@ -182,6 +226,17 @@ export function MemberRegistration() {
           <h1 className="text-3xl md:text-4xl mb-2 md:mb-4 text-[#2D5016]">Membership Application Form</h1>
           <p className="text-base md:text-lg text-gray-600">St Gabriel Self Help Group</p>
           <p className="text-sm text-gray-500 mt-2">Complete all fields marked with *</p>
+          {/* Download Manual Form Button */}
+          <div className="mt-3">
+            <a
+              href="/MEMBERSHIP APPLICATION FORM (2).pdf"
+              download="Membership-Application-Form.pdf"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#2D5016] hover:bg-[#4A7C2C] text-white text-xs font-medium rounded-md transition-colors"
+            >
+              <Download size={13} />
+              Download Form (Fill Manually)
+            </a>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
@@ -596,19 +651,24 @@ export function MemberRegistration() {
             </CardContent>
           </Card>
 
-          {/* National ID Copy Upload */}
+          {/* KYC Documents */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-[#2D5016] text-base md:text-lg">Supporting Documents</CardTitle>
+              <CardTitle className="text-[#2D5016] text-base md:text-lg">KYC Documents</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-gray-600">
+                Please upload clear copies of your identification and tax documents
+              </p>
+
+              {/* National ID Copy */}
               <div className="border-2 border-dashed border-[#6B9E4D] rounded-lg p-4 hover:bg-gray-50 transition-colors">
                 <Label htmlFor="nationalIdCopy" className="cursor-pointer">
                   <div className="flex items-center space-x-3">
                     <Upload className="text-[#2D5016]" size={24} />
                     <div className="flex-1">
                       <p className="font-medium text-[#2D5016]">National ID Copy (Optional)</p>
-                      <p className="text-sm text-gray-600">Upload a scanned copy (JPG, PNG - Max 5MB)</p>
+                      <p className="text-sm text-gray-600">Upload a scanned copy (JPG, PNG, PDF - Max 5MB)</p>
                     </div>
                     {uploadedFiles.nationalIdCopy && (
                       <FileText className="text-green-600" size={24} />
@@ -618,13 +678,46 @@ export function MemberRegistration() {
                 <Input
                   id="nationalIdCopy"
                   type="file"
-                  accept="image/jpeg,image/png,image/jpg"
+                  accept="image/jpeg,image/png,image/jpg,application/pdf"
                   onChange={(e) => handleFileUpload('nationalIdCopy', e.target.files?.[0])}
                   className="hidden"
                 />
                 {uploadedFiles.nationalIdCopy && (
                   <p className="text-sm text-green-600 mt-2">✓ {uploadedFiles.nationalIdCopy.name}</p>
                 )}
+              </div>
+
+              {/* KRA Tax Pin Certificate */}
+              <div className="border-2 border-dashed border-[#6B9E4D] rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                <Label htmlFor="kraCertificate" className="cursor-pointer">
+                  <div className="flex items-center space-x-3">
+                    <Upload className="text-[#2D5016]" size={24} />
+                    <div className="flex-1">
+                      <p className="font-medium text-[#2D5016]">KRA Tax Pin Certificate (Optional)</p>
+                      <p className="text-sm text-gray-600">Upload KRA certificate (JPG, PNG, PDF - Max 5MB)</p>
+                    </div>
+                    {uploadedFiles.kraCertificate && (
+                      <FileText className="text-green-600" size={24} />
+                    )}
+                  </div>
+                </Label>
+                <Input
+                  id="kraCertificate"
+                  type="file"
+                  accept="image/jpeg,image/png,image/jpg,application/pdf"
+                  onChange={(e) => handleFileUpload('kraCertificate', e.target.files?.[0])}
+                  className="hidden"
+                />
+                {uploadedFiles.kraCertificate && (
+                  <p className="text-sm text-green-600 mt-2">✓ {uploadedFiles.kraCertificate.name}</p>
+                )}
+              </div>
+
+              <div className="p-3 md:p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-xs md:text-sm text-blue-800">
+                  <CheckCircle className="inline mr-2" size={16} />
+                  <strong>Note:</strong> While these documents are optional for initial registration, providing them speeds up your membership approval process.
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -648,16 +741,8 @@ export function MemberRegistration() {
             </CardContent>
           </Card>
 
-          {/* Submit Buttons */}
-          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:space-x-4 pt-4">
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => navigate('/')}
-              className="w-full sm:w-auto"
-            >
-              Cancel
-            </Button>
+          {/* Submit Button */}
+          <div className="flex justify-center pt-4">
             <Button 
               type="submit" 
               className="bg-[#2D5016] hover:bg-[#4A7C2C] w-full sm:w-auto"

@@ -309,7 +309,6 @@ export function Loans() {
               <Card className="border-t-4 border-[#2D5016]">
                 <CardHeader>
                   <CardTitle className="text-sm md:text-lg text-[#2D5016]">
-                    <IndianRupee className="inline mr-2" size={18} />
                     Loan Summary
                   </CardTitle>
                 </CardHeader>
