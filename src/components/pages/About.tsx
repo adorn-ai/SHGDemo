@@ -5,6 +5,8 @@ import { Target, Heart, Eye, Award, ArrowRight } from 'lucide-react';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { Link } from 'react-router';
 
+
+
 export function About() {
   const leaders = [
     {
@@ -88,7 +90,7 @@ export function About() {
             </div>
             <div>
               <ImageWithFallback
-                src={photoOne}
+                src="https://images.unsplash.com/photo-1601071733462-d0bbb6ee7a02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrZW55YW4lMjB2aWxsYWdlJTIwY29tbXVuaXR5JTIwZ2F0aGVyaW5nfGVufDF8fHx8MTc3MDE4OTQwMHww&ixlib=rb-4.1.0&q=80&w=1080"
                 alt="Community gathering"
                 className="rounded-lg shadow-xl w-full h-96 object-cover"
               />
