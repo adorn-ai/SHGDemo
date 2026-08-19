@@ -1,0 +1,156 @@
+{
+  "organization": {
+    "name": "St Gabriel Catholic Church Self Help Group",
+    "location": "Thome, Nairobi, Kenya",
+    "affiliation": "Caritas Nairobi - Queen of Apostles Parish, Ruaraka Zone",
+    "established": "18th December 2011",
+    "registered": "21st February 2013 with Caritas",
+    "vision": "A leading Christian based financial service provider committed to empowerment of its members.",
+    "mission": "To empower members by instilling a saving culture, provision of credit and investment opportunities through prudent mobilization and utilization of resources."
+  },
+  "faqs": [
+    {
+      "question": "What is St Gabriel Catholic Church SHG?",
+      "answer": "St Gabriel Catholic Church Self Help Group (SHG), Thome is the socio-economic arm of St. Gabriel Catholic Church, an outstation of Queen of Apostles Parish within Ruaraka Zone of CARITAS Nairobi. The SHG was established on 18th December 2011 and registered with Caritas on 21st February 2013."
+    },
+    {
+      "question": "What time is the St Gabriel Catholic Church SHG office open?",
+      "answer": "We are open for enquiries from Monday to Friday, 8:00 AM to 5:00 PM and the 4th Sunday of every month. We are closed on weekends and public holidays. You can also reach us via our phone number, 0718892506 during working hours, or you can chat with me and I'll answer you at any time"
+    },
+    {
+      "question": "Who can become a member?",
+      "answer": "Membership is open to persons who are 18 years and above, provided that person is of acceptable social and moral standards."
+    },
+    {
+      "question": "What documents do I need to register as a member?",
+      "answer": "You'll need: 1) A copy of your National ID or Passport, 2) A copy of your KRA PIN certificate, 3) A copy of your next of kin's National ID or Passport, 4) A passport-size photograph. You'll also nominate one or more beneficiaries and provide their details, plus your next of kin's contact information. You can apply online through our Register menu or download the membership form to fill by hand and drop off at our office."
+    },
+    {
+      "question": "How much does membership cost?",
+      "answer": "A new member will be required to pay Ksh. 1,000 and maintain a minimum share monthly contribution of Ksh. 600."
+    },
+    {
+      "question": "Is there a limit to how much I can save?",
+      "answer": "No Member is allowed to contribute savings amounting to more than 15% of the total members' savings."
+    },
+    {
+      "question": "Can I transfer my savings to another member?",
+      "answer": "Yes, a member can transfer part or all their savings to another member in same or different self-help group. You'll need to apply for transfer using the prescribed savings transfer form."
+    },
+    {
+      "question": "How do I withdraw from the group?",
+      "answer": "A member may withdraw from the group by giving written notice of not less than 60 (sixty) days."
+    },
+    {
+      "question": "Who receives my savings and benefits if something happens to me?",
+      "answer": "When you register, you nominate one or more beneficiaries and specify what percentage of any lump-sum benefit each should receive (adding up to 100%). For beneficiaries who aren't your immediate next of kin, you'll be asked to attach a supporting document such as a marriage certificate, affidavit, or birth certificate. This nomination is considered by the Self-Help Group but is not binding on it, and can be updated at any time by submitting a new nomination, which replaces the previous one."
+    },
+    {
+      "question": "Can I open an account for my child?",
+      "answer": "Yes, a parent or guardian who is already a member can open a Minor Savings Account on behalf of a child. It is purely a savings account, earns dividends, and reverts to the minor at 18 years of age after consultation with the guardian. It cannot be used to take out a loan directly, but it may be used to guarantee a guardian's loan for the minor's school fees or hospital bills only. The account has no voting rights and is exempted from all charges."
+    },
+    {
+      "question": "What documents do I need to open a Minor Savings Account?",
+      "answer": "You'll need: 1) A copy of the National ID/Passport of the guardian and of the next of kin, 2) A copy of the minor's Birth Certificate, Notification of Birth, or Baptism Card, 3) A passport-size photograph of both the minor and the guardian. The guardian and a witness will also need to sign the application. You can apply online through our Register menu or download the form to fill by hand."
+    },
+    {
+      "question": "Can a registered group or organization join as a member?",
+      "answer": "Yes, this is called Corporate Membership - for registered groups, church bodies, or organizations applying to join as a single corporate entity. You'll need: 1) A list of all group members, 2) Copies of National ID/Passport for all signatories, 3) Passport-size photographs of all signatories, 4) A copy of your Registration Certificate where applicable, 5) A copy of your group's By-laws or Constitution. The group must designate at least a Chairperson, Secretary, and Treasurer as signatories - church-affiliated groups must also include the Parish Priest as a mandatory signatory plus two others. At least two signatories must sign off on each transaction. You can apply online through our Register menu or download the corporate membership form."
+    },
+    {
+      "question": "What are the loan eligibility requirements?",
+      "answer": "Applicants must: 1) Be honest and trustworthy and demonstrate ability to pay the loan, 2) Have saved for 6 consecutive months prior to applying, 3) Apply for a maximum of 3 times their shares, 4) Not save more than 1/3 of their share capital to acquire a loan. A dormant member (four consecutive months without a savings contribution) cannot be considered for any loan."
+    },
+    {
+      "question": "What do I need to apply for a loan?",
+      "answer": "You'll need your membership number, National ID/Passport, and at least one guarantor. The amount you and your guarantor(s) jointly guarantee must cover at least the full loan amount, and your own savings must cover at least a third of that guarantorship. A witness must also sign your application. Loans of Ksh 1,000,000 or above require a current 6-month bank statement and additional approval from the coordinating office. You can apply online through our Apply for Loan page (you'll need to be a verified active member first) or download the loan application form."
+    },
+    {
+      "question": "What is the interest rate on loans?",
+      "answer": "Interest on the loan is 1% per month on a reducing balance."
+    },
+    {
+      "question": "What types of loans are available?",
+      "answer": "Six types: 1) Development loans (max 60 months), 2) Business Loan (max 60 months), 3) Emergency Loan (max Ksh 100,000, 12 months), 4) Education Loan (24 months for post-secondary, 12 months for primary/secondary), 5) Agribusiness loan (max 24 months), 6) Church loan (for Catholic Churches only through Parish Pastoral Council)."
+    },
+    {
+      "question": "Tell me about Development loans",
+      "answer": "All-purpose loan granted to all members individually or to corporate to finance development projects. The loan must be fully guaranteed and has a maximum repayment period of 60 months."
+    },
+    {
+      "question": "What is a Business Loan?",
+      "answer": "For purpose of financing trading activities of individuals and corporates. It can only be advanced to an ongoing business. This loan must be fully guaranteed and has a maximum repayment period of 60 months."
+    },
+    {
+      "question": "What is an Emergency Loan?",
+      "answer": "For unforeseen circumstances e.g. sickness, natural disasters or accidents. This loan is taken at a maximum of Ksh 100,000, must be fully guaranteed and repaid within a period of 12 months. Corporate members are not eligible for this product."
+    },
+    {
+      "question": "How does the Education Loan work?",
+      "answer": "It caters for school fees only and is disbursed after a valid school fees structure has been presented. The loan is disbursed via cheque to the institution directly and is limited to school fees only. It is repaid within a maximum period of 24 months for post-secondary education and 12 months for secondary and primary institutions. Must be fully guaranteed. Corporate members are not eligible."
+    },
+    {
+      "question": "What is an Agribusiness loan?",
+      "answer": "For agricultural purposes aimed at promoting agriculture for food security, improved livelihoods and economic growth. The repayment period shall be limited to a maximum of 24 months."
+    },
+    {
+      "question": "What is a Church loan?",
+      "answer": "Granted to Catholic Churches only through the Parish Pastoral Council. The loan shall be fully guaranteed and repaid as per the loan repayment schedule. Where the signatories of the church group changes, the terms of the loan will not be affected and the responsibility shall be transferred to the new Church council."
+    },
+    {
+      "question": "Who needs to guarantee my loan and how much?",
+      "answer": "You need at least one guarantor, and can add up to five. Together, the amount guaranteed by you (self-guaranteed, from your own savings) and your guarantor(s) must be equal to or greater than the amount you're applying for. Your own savings must cover at least a third of the total guarantorship. Each guarantor must be a member in good standing and will need to provide their membership number, National ID, phone number, and self-help group name, and sign the application - guarantors accept joint and several liability for repayment if you default."
+    },
+    {
+      "question": "Can I refinance my loan?",
+      "answer": "Yes, but you must have: 1) Repaid 70% of the existing loan, 2) Repaid according to the loan agreement, 3) Present detailed documents of an ongoing project/business and budget to justify refinancing. After refinancing, loan security will be paid on the gross amount of the new loan. The loan will have to be guaranteed afresh. Refinancing will be done only once at any given time."
+    },
+    {
+      "question": "How can I lose my membership privileges?",
+      "answer": "Members shall lose privileges on the following grounds: i) Becoming dormant (four consecutive months of non-contribution in savings) - dormant accounts shall not earn dividends, ii) Member withdrawing shares either voluntarily or through loan offsets, iii) One is incapacitated, gross misconduct and bankruptcy, iv) One defaults on a loan."
+    },
+    {
+      "question": "How do I make payments?",
+      "answer": "Two ways: 1) MPESA PAYBILL NUMBER — 4080309, ACCOUNT NAME: MEMBER NAME AND MEMBER NUMBER, or 2) Bank transfer to CARITAS MICROFINANCE BANK, ACCOUNT NO: 1002025000040"
+    },
+    {
+      "question": "What is the group's financial standing?",
+      "answer": "As at 31st July 2023, the share capital stands at Kshs. 46 Million with average savings being Kshs.157,981. The group has invested Kshs. 30.3 million with Arch Dioceses of Nairobi in treasury bills and purchased shares for Kshs 2 million with CARITAS Microfinance Bank."
+    },
+    {
+      "question": "What is the group's motto?",
+      "answer": "Save Regularly. Borrow Wisely. Repay regularly."
+    },
+    {
+      "question": "How do I register - online or by paper form?",
+      "answer": "Both options are available for Adult Membership, Minor Savings Accounts, and Corporate Membership. Use the Register menu on our website to either fill the form online and submit it instantly, or download a printable copy to fill by hand and drop off at our office."
+    },
+    {
+      "question": "How do I contact St Gabriel Catholic Church SHG?",
+      "answer": "P.O. BOX 741- 00618 NAIROBI, Tel: 0718892506, Email: scgabrielshg@gmail.com or shg@thomecaritasnairobi.org"
+    },
+    {
+      "question": "What is your vision?",
+      "answer": "A leading Christian based financial service provider committed to empowerment of its members."
+    },
+    {
+      "question": "What is your mission?",
+      "answer": "To empower members by instilling a saving culture, provision of credit and investment opportunities through prudent mobilization and utilization of resources."
+    },
+    {
+      "question": "How successful is the SHG?",
+      "answer": "The SHG has seen tremendous growth since its establishment in 2011. The SHG has adopted the pay-bill platform of receiving members' contributions and at least 95% of the members have embraced the new payment system which has resulted in increase in share contributions by members."
+    }
+  ],
+  "contact_info": {
+    "po_box": "P.O. BOX 741- 00618 NAIROBI",
+    "phone": "+254 715 590 028",
+    "email": ["shg@thomecaritasnairobi.org"],
+    "mpesa_paybill": "4080309",
+    "bank_account": "1002025000040",
+    "bank_name": "CARITAS MICROFINANCE BANK",
+    "registration_link": "/register",
+    "loan_application_link": "/apply-loan",
+    "about_link": "/about"
+  }
+}
