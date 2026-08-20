@@ -13,6 +13,7 @@ import path from 'path';
 import { handleChatRequest } from './api/_lib/chatHandler.js';
 import { handleContactRequest } from './api/_lib/contactHandler.js';
 import { sendRegistrationNotification } from './api/_lib/notifyHandler.js';
+import { sendLoanApplicationNotification } from './api/_lib/loanNotifyHandler.js';
 
 // Dev-only middleware that calls the SAME handleChatRequest() used by
 // api/chat.js in production, so the chatbot works under plain `npm run dev`
@@ -164,13 +165,69 @@ function notifyRegistrationDevProxy(env: Record<string, string>): Plugin {
   };
 }
 
+// Dev-only middleware mirroring api/notify-loan-application.js, same reasoning as the proxies above.
+function notifyLoanDevProxy(env: Record<string, string>): Plugin {
+  return {
+    name: 'notify-loan-dev-proxy',
+    apply: 'serve',
+    configureServer(server) {
+      server.middlewares.use('/api/notify-loan-application', async (req, res) => {
+        if (req.method !== 'POST') {
+          res.statusCode = 405;
+          res.end(JSON.stringify({ error: 'Method not allowed' }));
+          return;
+        }
+
+        let body = '';
+        req.on('data', (chunk) => {
+          body += chunk;
+        });
+
+        req.on('end', async () => {
+          try {
+            const parsedBody = JSON.parse(body || '{}');
+
+            const gmailUser = env.GMAIL_USER;
+            const gmailAppPassword = env.GMAIL_APP_PASSWORD;
+            if (!gmailUser || !gmailAppPassword) {
+              console.error(
+                '[notify-loan-dev-proxy] GMAIL_USER or GMAIL_APP_PASSWORD is not set. Add both to .env.local, no VITE_ prefix, then restart `npm run dev`.'
+              );
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: 'Notification service is not configured' }));
+              return;
+            }
+
+            const result = await sendLoanApplicationNotification(parsedBody, { gmailUser, gmailAppPassword });
+
+            res.setHeader('Content-Type', 'application/json');
+            res.statusCode = 200;
+            res.end(JSON.stringify(result));
+          } catch (error: any) {
+            console.error('[notify-loan-dev-proxy] error:', error);
+            res.statusCode = error?.status || 500;
+            res.end(JSON.stringify({ error: error?.message || 'Failed to send notification' }));
+          }
+        });
+      });
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => {
   // Loads .env / .env.local without the VITE_ prefix restriction, for server-only use
   // inside this config file. This value never reaches client-side code.
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    plugins: [react(), tailwindcss(), mistralChatDevProxy(env), contactDevProxy(env), notifyRegistrationDevProxy(env)],
+    plugins: [
+      react(),
+      tailwindcss(),
+      mistralChatDevProxy(env),
+      contactDevProxy(env),
+      notifyRegistrationDevProxy(env),
+      notifyLoanDevProxy(env),
+    ],
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       alias: {

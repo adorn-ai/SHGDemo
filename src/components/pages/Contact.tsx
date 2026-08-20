@@ -81,7 +81,6 @@ export function Contact() {
     return (
       <div className="min-h-screen bg-[#FAF9F5] font-sans flex items-center justify-center py-24 px-4">
         <div className="max-w-md text-center">
-          <p className="text-base tracking-[0.2em] uppercase text-[#237A17] mb-4">Message Sent</p>
           <h1 className="text-3xl md:text-4xl mb-4 text-[#16210E] font-bold uppercase">Thank you for reaching out</h1>
           <p className="text-gray-600 mb-8">
             We've received your message and will get back to you as soon as possible, usually within one
@@ -106,7 +105,6 @@ export function Contact() {
     <div className="min-h-screen bg-[#FAF9F5] font-sans py-16 md:py-24">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
-          <p className="text-base tracking-[0.2em] uppercase text-[#237A17] mb-3">Get In Touch</p>
           <h1 className="text-3xl md:text-4xl lg:text-5xl mb-2 text-[#16210E] font-bold uppercase">Contact Us</h1>
           <p className="text-gray-600 max-w-xl mx-auto">
             Have a question about membership, savings, or loans? Send us a message and our team will respond

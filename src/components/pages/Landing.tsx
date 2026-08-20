@@ -13,6 +13,7 @@ import { useEffect, useRef, useState, Fragment, type ReactNode } from 'react';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import shgLogo from '../../assets/shg-logo.png';
 import caritasLogo from '../../assets/caritas-logo.png';
+import whyJoinUsPhoto from '../../assets/why-join-us.jpg';
 import faqData from '../../faq.json';
 
 const HEADLINE_WORDS = ['Empowering', 'Communities', 'Through', 'Financial', 'Unity'];
@@ -255,8 +256,11 @@ export function Landing() {
         }
       `}</style>
 
-      {/* Hero - intentionally left on the original dark green + gold palette */}
-      <section className="relative bg-[#2D5016] text-white py-24 md:py-36 overflow-hidden">
+      {/* Hero - intentionally left on the original dark green + gold palette.
+          Top padding trimmed (was py-24/36 symmetric) now that the eyebrow
+          label above the headline is gone sitewide - brings the headline up
+          into that space while keeping the original bottom spacing. */}
+      <section className="relative bg-[#2D5016] text-white pt-14 md:pt-20 pb-24 md:pb-36 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <ImageWithFallback
             src="https://images.unsplash.com/photo-1536539754812-56b166f0e89b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrZW55YSUyMGxhbmRzY2FwZSUyMHNhdmFubmFoJTIwYmFja2dyb3VuZHxlbnwxfHx8fDE3NzAxODk0MDB8MA&ixlib=rb-4.1.0&q=80&w=1080"
@@ -300,7 +304,6 @@ export function Landing() {
       <section className="py-20 md:py-28 bg-[#FAF9F5]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
-            <p className="text-base lg:text-lg tracking-[0.2em] uppercase text-[#237A17] mb-4">Who We Are</p>
             <h2 className="text-3xl md:text-4xl mb-14 text-[#16210E] max-w-lg font-semibold uppercase">
               Our Mission, Vision & Values
             </h2>
@@ -361,7 +364,6 @@ export function Landing() {
       <section className="py-20 md:py-28 bg-[#FAF9F5]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
-            <p className="text-base lg:text-lg tracking-[0.2em] uppercase text-[#237A17] mb-4 text-center">Join Us In 5 Steps</p>
             <h2 className="text-3xl md:text-4xl mb-16 text-[#16210E] text-center font-semibold uppercase">How It Works</h2>
           </Reveal>
 
@@ -404,21 +406,30 @@ export function Landing() {
         </div>
       </section>
 
-      {/* Why Join Us (formerly Member Benefits) */}
-      <section className="py-20 md:py-28 bg-[#F3F0E8] border-t border-gray-100">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Why Join Us (formerly Member Benefits) - photo as full section background,
+          same overlay treatment as the page heroes, with the accordion sitting on
+          top in a translucent dark panel for legibility over the image. */}
+      <section className="relative py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <ImageWithFallback
+            src={whyJoinUsPhoto}
+            alt="St Gabriel Catholic Church SHG members"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-[#16210E]/80" />
+        </div>
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
-            <p className="text-base lg:text-lg tracking-[0.2em] uppercase text-[#237A17] mb-4 text-center">Why Join Us</p>
-            <h2 className="text-3xl md:text-4xl mb-12 text-[#16210E] text-center font-semibold uppercase">Everything you get as a member</h2>
+            <h2 className="text-3xl md:text-4xl mb-12 text-[#FAF9F5] text-center font-semibold uppercase">Why Join Us</h2>
           </Reveal>
           <Reveal delayMs={150}>
             <Accordion type="single" collapsible className="w-full">
               {benefits.map((benefit, index) => (
-                <AccordionItem key={index} value={`item-${index}`} className="border-[#6B9E4D]">
-                  <AccordionTrigger className="text-lg lg:text-xl text-[#16210E] hover:text-[#237A17] font-bold">
+                <AccordionItem key={index} value={`item-${index}`} className="border-[#8FBF6B]/40">
+                  <AccordionTrigger className="text-lg lg:text-xl text-[#FAF9F5] hover:text-[#8FBF6B] font-bold">
                     {benefit.title}
                   </AccordionTrigger>
-                  <AccordionContent className="text-gray-700 text-base lg:text-lg">
+                  <AccordionContent className="text-gray-200 text-base lg:text-lg">
                     {benefit.content}
                   </AccordionContent>
                 </AccordionItem>
@@ -432,7 +443,6 @@ export function Landing() {
       <section className="py-20 md:py-28 bg-[#FAF9F5]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
-            <p className="text-base lg:text-lg tracking-[0.2em] uppercase text-[#237A17] mb-4 text-center">Real Stories</p>
             <h2 className="text-3xl md:text-4xl mb-14 text-[#16210E] text-center font-semibold uppercase">What Our Members Say</h2>
           </Reveal>
 
@@ -462,7 +472,7 @@ export function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-3 gap-10 mb-10">
             <div>
-              <img src={shgLogo} alt="St Gabriel Catholic Church SHG" className="h-48 w-auto object-contain mb-4" />
+              <img src={shgLogo} alt="St Gabriel Catholic Church SHG" className="h-32 w-auto object-contain mb-4" />
               <h3 className="text-xl mb-4 font-bold">St Gabriel Catholic Church SHG</h3>
               <p className="text-gray-300 leading-relaxed text-base">
                 Empowering communities through financial inclusion and collective growth since 2011.

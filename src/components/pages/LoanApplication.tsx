@@ -6,8 +6,8 @@ import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Checkbox } from '../ui/checkbox';
 import { toast } from 'sonner@2.0.3';
-import { getMemberByNationalId, saveLoan } from '../../lib/store';
-import { AlertCircle, CheckCircle, Users, Download, Plus, Trash2 } from 'lucide-react';
+import { verifyMemberByNationalId, submitLoanApplication } from '../../lib/registrationApi';
+import { AlertCircle, CheckCircle, Users, Download, Plus, Trash2, Loader2 } from 'lucide-react';
 
 const LOAN_PRODUCTS = ['Development Loan', 'Business Loan', 'AgriBusiness Loan', 'Education Loan', 'Emergency Loan', 'Church Loan'];
 
@@ -15,6 +15,7 @@ interface Guarantor {
   membershipNo: string;
   name: string;
   phone: string;
+  email: string;
   idNumber: string;
   groupName: string;
   amountOffered: string;
@@ -26,6 +27,7 @@ const EMPTY_GUARANTOR: Guarantor = {
   membershipNo: '',
   name: '',
   phone: '',
+  email: '',
   idNumber: '',
   groupName: '',
   amountOffered: '',
@@ -118,22 +120,34 @@ export function LoanApplication() {
   const [guarantors, setGuarantors] = useState<Guarantor[]>([{ ...EMPTY_GUARANTOR }, { ...EMPTY_GUARANTOR }]);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const verifyMember = () => {
-    const member = getMemberByNationalId(nationalIdInput);
-    if (member && member.status === 'active') {
-      setMemberData(member);
-      setFormData({
-        ...formData,
-        fullName: `${member.firstName} ${member.lastName}`,
-        nationalId: nationalIdInput,
-        phoneNumber: member.phone,
-        emailAddress: member.email,
-      });
-      setStep(2);
-      toast.success('Member verified successfully!');
-    } else {
-      toast.error('Invalid National ID or member not active. Please register first.');
+  const verifyMember = async () => {
+    setIsVerifying(true);
+    try {
+      const member = await verifyMemberByNationalId(nationalIdInput);
+      if (member) {
+        setMemberData(member);
+        // The verification lookup deliberately returns only {member_number,
+        // name} - not phone/email - to keep member records private rather
+        // than exposing them through a public-facing lookup. The applicant
+        // re-enters their own contact details in Step 2.
+        setFormData({
+          ...formData,
+          fullName: member.name,
+          nationalId: nationalIdInput,
+        });
+        setStep(2);
+        toast.success('Member verified successfully!');
+      } else {
+        toast.error("We couldn't find a member with that National ID. If you're a new applicant, please register first.");
+      }
+    } catch (error) {
+      console.error('Member verification error:', error);
+      toast.error(error instanceof Error ? error.message : 'Verification failed. Please try again.');
+    } finally {
+      setIsVerifying(false);
     }
   };
 
@@ -201,6 +215,7 @@ export function LoanApplication() {
         if (!hasAny) return;
         if (!g.name.trim()) newErrors[`guarantor-${index}-name`] = 'Required';
         if (!g.phone.match(/^(07|01)[0-9]{8}$/)) newErrors[`guarantor-${index}-phone`] = 'Valid phone required';
+        if (!g.email.trim().match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) newErrors[`guarantor-${index}-email`] = 'Valid email required';
         if (!g.idNumber.match(/^[0-9]{7,8}$/)) newErrors[`guarantor-${index}-idNumber`] = 'Valid ID required';
         if (!g.amountOffered || Number(g.amountOffered) <= 0) newErrors[`guarantor-${index}-amountOffered`] = 'Required';
         if (!g.signatureName.trim()) newErrors[`guarantor-${index}-signatureName`] = 'Signature required';
@@ -227,7 +242,7 @@ export function LoanApplication() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validate()) {
@@ -236,57 +251,26 @@ export function LoanApplication() {
       return;
     }
 
-    const loan = {
-      id: `loan-${Date.now()}`,
-      loanId: `LN${new Date().getFullYear()}${String(Date.now()).slice(-6)}`,
-      memberId: memberData.memberId,
-      memberName: formData.fullName,
-      loanProducts,
-      amount: Number(formData.amountRequested),
-      amountInWords: formData.amountInWords,
-      purpose: [formData.loanPurpose1, formData.loanPurpose2, formData.loanPurpose3].filter(Boolean).join('; '),
-      term: Number(formData.repayableMonths),
-      interestRate: 12,
-      monthlyEmi: Math.round(Number(formData.amountRequested) / Number(formData.repayableMonths)),
-      applicationDate: new Date().toISOString().split('T')[0],
-      status: 'treasurer_review' as const,
-      treasurerStatus: 'pending' as const,
-      income: {
-        description1: formData.incomeDescription1,
-        amount1: Number(formData.incomeAmount1) || 0,
-        description2: formData.incomeDescription2,
-        amount2: Number(formData.incomeAmount2) || 0,
-        description3: formData.incomeDescription3,
-        amount3: Number(formData.incomeAmount3) || 0,
-      },
-      otherDebts: [
-        { description: formData.otherDebt1, amount: Number(formData.otherDebtAmount1) || 0 },
-        { description: formData.otherDebt2, amount: Number(formData.otherDebtAmount2) || 0 },
-      ],
-      selfGuaranteedAmount: Number(formData.selfGuaranteedAmount) || 0,
-      selfGuaranteedAmountWords: formData.selfGuaranteedAmountWords,
-      totalGuarantorAmountWords: formData.totalGuarantorAmountWords,
-      guarantors,
-      applicantSignatureName: formData.applicantSignatureName,
-      witness: {
-        name: formData.witnessName,
-        memberNo: formData.witnessMemberNo,
-        phone: formData.witnessPhone,
-        relationship: formData.witnessRelationship,
-        signatureName: formData.witnessSignatureName,
-      },
-      signedDate: new Date().toISOString().split('T')[0],
-      guarantorName: guarantors[0]?.name || '',
-      guarantorPhone: guarantors[0]?.phone || '',
-      comments: [],
-    };
+    setIsSubmitting(true);
+    try {
+      await submitLoanApplication({
+        memberId: memberData.member_number,
+        formData,
+        loanProducts,
+        guarantors,
+      });
 
-    saveLoan(loan);
-    toast.success('Loan application submitted successfully!');
+      toast.success('Loan application submitted successfully! You and your guarantors will receive a confirmation email.');
 
-    setTimeout(() => {
-      navigate('/');
-    }, 2000);
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+    } catch (error) {
+      console.error('Error submitting loan application:', error);
+      toast.error(error instanceof Error ? error.message : 'Error submitting your application. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (step === 1) {
@@ -335,9 +319,15 @@ export function LoanApplication() {
               <Button
                 onClick={verifyMember}
                 className="w-full bg-[#16210E] hover:bg-[#237A17] rounded-none"
-                disabled={!nationalIdInput.trim()}
+                disabled={!nationalIdInput.trim() || isVerifying}
               >
-                Verify & Continue
+                {isVerifying ? (
+                  <>
+                    <Loader2 className="mr-2 animate-spin" size={16} /> Verifying...
+                  </>
+                ) : (
+                  'Verify & Continue'
+                )}
               </Button>
             </div>
           </div>
@@ -396,7 +386,7 @@ export function LoanApplication() {
                 </div>
                 <div>
                   <Label>Membership Number (on file)</Label>
-                  <Input value={memberData?.memberId || ''} readOnly className="bg-[#F3F0E8]" />
+                  <Input value={memberData?.member_number || ''} readOnly className="bg-[#F3F0E8]" />
                 </div>
               </div>
 
@@ -845,7 +835,7 @@ export function LoanApplication() {
                         />
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       <div>
                         <Label>ID No</Label>
                         <Input
@@ -853,6 +843,16 @@ export function LoanApplication() {
                           onChange={(e) => handleGuarantorChange(index, 'idNumber', e.target.value)}
                           placeholder="12345678"
                           className={errors[`guarantor-${index}-idNumber`] ? 'border-red-500' : ''}
+                        />
+                      </div>
+                      <div>
+                        <Label>Email Address</Label>
+                        <Input
+                          type="email"
+                          value={guarantor.email}
+                          onChange={(e) => handleGuarantorChange(index, 'email', e.target.value)}
+                          placeholder="guarantor@example.com"
+                          className={errors[`guarantor-${index}-email`] ? 'border-red-500' : ''}
                         />
                       </div>
                       <div>
@@ -1052,8 +1052,14 @@ export function LoanApplication() {
           </div>
 
           <div className="flex justify-center pt-4">
-            <Button type="submit" className="bg-[#16210E] hover:bg-[#237A17] rounded-none w-full sm:w-auto px-10">
-              Submit Loan Application
+            <Button type="submit" disabled={isSubmitting} className="bg-[#16210E] hover:bg-[#237A17] rounded-none w-full sm:w-auto px-10">
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 animate-spin" size={16} /> Submitting...
+                </>
+              ) : (
+                'Submit Loan Application'
+              )}
             </Button>
           </div>
         </form>

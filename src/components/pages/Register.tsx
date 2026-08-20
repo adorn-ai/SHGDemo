@@ -141,7 +141,6 @@ export function Register() {
       <section className="py-16 md:py-24 border-b border-gray-100">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Reveal>
-            <p className="text-base lg:text-lg tracking-[0.2em] uppercase text-[#237A17] mb-4">Membership</p>
             <h1 className="text-5xl md:text-6xl lg:text-7xl mb-6 text-[#16210E] font-bold uppercase leading-tight">
               Choose How You'd Like to Join
             </h1>

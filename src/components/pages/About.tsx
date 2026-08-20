@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '../ui/dialog';
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '../ui/carousel';
-import { Building2, Church, Landmark } from 'lucide-react';
+import { Building2 } from 'lucide-react';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import faqData from '../../faq.json';
 import shgLogo from '../../assets/shg-logo.png';
 import caritasLogo from '../../assets/caritas-logo.png';
+import aboutHeroPhoto from '../../assets/about-hero.jpg';
 import samuelWainaina from '../../assets/board/samuel_wainaina.jpeg';
 import raphaelKabando from '../../assets/board/raphael_kabando.jpeg';
 import josephineNjau from '../../assets/board/josephine_njau.png';
@@ -175,27 +176,21 @@ export function About() {
       <section className="relative bg-[#16210E] text-[#FAF9F5] py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1640119259111-acc19f7c38f2?auto=format&fit=crop&w=1080&q=80"
-            alt="Kenya community"
+            src={aboutHeroPhoto}
+            alt="St Gabriel Catholic Church SHG members"
             className="w-full h-full object-cover opacity-25"
           />
         </div>
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p
-            className="font-sans text-base tracking-[0.3em] uppercase text-[#B8D4A0] mb-6 opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
-            style={{ animationDelay: '0ms' }}
-          >
-            Thome &middot; Nairobi
-          </p>
           <h1
             className="text-5xl md:text-6xl lg:text-7xl mb-8 leading-tight font-bold uppercase opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
-            style={{ animationDelay: '150ms' }}
+            style={{ animationDelay: '0ms' }}
           >
             About St Gabriel<br className="hidden sm:block" /> Catholic Church SHG
           </h1>
           <div
             className="flex items-center justify-center gap-4 font-sans text-base text-gray-200 opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
-            style={{ animationDelay: '350ms' }}
+            style={{ animationDelay: '200ms' }}
           >
             <span>Est. {faqData.organization.established}</span>
             <span className="w-px h-4 bg-[#FAF9F5]/30" />
@@ -209,7 +204,6 @@ export function About() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
             <Reveal>
-              <p className="font-sans text-base tracking-[0.2em] uppercase text-[#237A17] mb-4">Our Story</p>
               <h2 className="text-3xl md:text-4xl mb-6 text-[#16210E] font-semibold uppercase">29 members. KES 23,100.<br />A shared purpose.</h2>
               <div className="font-sans text-gray-700 space-y-4 leading-relaxed">
                 <p>
@@ -244,9 +238,6 @@ export function About() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-[1fr_auto] gap-10 md:gap-16 items-center">
             <Reveal>
-              <p className="font-sans text-base tracking-[0.2em] uppercase text-[#237A17] mb-4 flex items-center gap-2">
-                <Church size={14} strokeWidth={1.5} /> Our Founding Church
-              </p>
               <h2 className="text-3xl md:text-4xl mb-4 text-[#16210E] font-semibold uppercase">Rooted in St Gabriel Catholic Church</h2>
               <p className="font-sans text-lg text-gray-700 leading-relaxed max-w-xl">
                 The SHG is situated at St. Gabriel Catholic Church grounds along the Northern Bypass, operating
@@ -275,9 +266,6 @@ export function About() {
               <img src={caritasLogo} alt="Caritas Nairobi" className="h-16 sm:h-20 w-auto object-contain" />
             </Reveal>
             <Reveal delayMs={150} className="order-1 md:order-2">
-              <p className="font-sans text-base tracking-[0.2em] uppercase text-[#C41230] mb-4 flex items-center gap-2">
-                <Landmark size={14} strokeWidth={1.5} /> Our Umbrella Organization
-              </p>
               <h2 className="text-3xl md:text-4xl mb-4 text-[#16210E] font-semibold uppercase">Under the Umbrella of Caritas Nairobi</h2>
               <p className="font-sans text-lg text-gray-700 leading-relaxed max-w-xl">
                 Caritas Nairobi, the Aid and Development Department of the Catholic Archdiocese of Nairobi, serves
@@ -307,7 +295,6 @@ export function About() {
       <section className="py-20 md:py-28 bg-[#F3F0E8] border-t border-gray-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal className="mb-12 md:mb-16">
-            <p className="font-sans text-base tracking-[0.2em] uppercase text-[#237A17] mb-4">Our Board</p>
             <h2 className="text-3xl md:text-4xl text-[#16210E] max-w-lg font-semibold uppercase">Management Committee</h2>
           </Reveal>
 

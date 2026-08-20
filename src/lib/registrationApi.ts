@@ -17,6 +17,33 @@ async function notifyAdminOfRegistration(applicantName: string, registrationType
   }
 }
 
+// Same non-blocking pattern, for loan applications: notifies the SHG office,
+// the loanee, and every guarantor with a valid email once the application
+// has already been saved successfully. Carries full loanee + loan details
+// so the admin email gives staff everything needed to review, not just a
+// name and a total.
+async function notifyLoanApplicationSubmitted(payload: {
+  loanee: { name: string; nationalId: string; phone: string; email: string };
+  loan: {
+    products: string[];
+    amountRequested: string | number;
+    amountInWords: string;
+    termMonths: string | number;
+    purpose: string;
+  };
+  guarantors: Array<{ name: string; email: string; amountOffered: string }>;
+}) {
+  try {
+    await fetch('/api/notify-loan-application', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+  } catch (error) {
+    console.error('Failed to send loan application notification emails (application was still saved):', error);
+  }
+}
+
 // =====================================================================
 // Adult Member Registration
 // =====================================================================
@@ -254,6 +281,7 @@ interface Guarantor {
   membershipNo: string;
   name: string;
   phone: string;
+  email: string;
   idNumber: string;
   groupName: string;
   amountOffered: string;
@@ -331,12 +359,31 @@ export async function submitLoanApplication({ memberId, formData, loanProducts, 
     });
 
   if (error) throw new Error(`Loan application failed: ${error.message}`);
+
+  await notifyLoanApplicationSubmitted({
+    loanee: {
+      name: formData.fullName,
+      nationalId: formData.nationalId,
+      phone: formData.phoneNumber,
+      email: formData.emailAddress,
+    },
+    loan: {
+      products: loanProducts,
+      amountRequested: formData.amountRequested,
+      amountInWords: formData.amountInWords,
+      termMonths: formData.repayableMonths,
+      purpose: [formData.loanPurpose1, formData.loanPurpose2, formData.loanPurpose3].filter(Boolean).join('; '),
+    },
+    guarantors: guarantors.map((g) => ({ name: g.name, email: g.email, amountOffered: g.amountOffered })),
+  });
+
   return data;
 }
 
 // =====================================================================
-// Member verification (loan application Step 1) - replaces the old
-// localStorage getMemberByNationalId()
+// Member verification (loan application Step 1) - checks the real
+// `members` table (post-registration roster), not `member_registration`
+// (which only holds pending/newly-submitted applications).
 // =====================================================================
 
 export async function verifyMemberByNationalId(nationalId: string) {
@@ -344,6 +391,8 @@ export async function verifyMemberByNationalId(nationalId: string) {
 
   if (error) throw new Error(`Verification failed: ${error.message}`);
   const match = data?.[0];
-  if (!match || !match.is_verified) return null;
-  return match as { id: string; full_name: string; is_verified: boolean };
+  // No is_verified flag here - presence in the members table IS the proof
+  // of verified membership, so a match at all means "found and verified".
+  if (!match) return null;
+  return match as { member_number: string; name: string };
 }
