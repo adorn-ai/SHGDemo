@@ -294,7 +294,7 @@ export function Landing() {
           into that space while keeping the original bottom spacing. */}
       <section className="relative bg-[#2D5016] text-white pt-14 md:pt-20 pb-24 md:pb-36 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <HeroBackgroundCarousel images={HERO_BG_IMAGES} intervalMs={1500} />
+          <HeroBackgroundCarousel images={HERO_BG_IMAGES} intervalMs={2500} />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
