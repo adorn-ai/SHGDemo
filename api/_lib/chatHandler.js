@@ -15,12 +15,14 @@ import faqData from './faqData.js'; // used ONLY for the two contact-info fallba
 import knowledgeBase from './knowledgeBase.js';
 
 const TOP_K = 4; // how many retrieved chunks to include per question
-const SIMILARITY_THRESHOLD = 0.45; // raised from 0.3 - this corpus is a *church* SHG's documents, so generic churchy
-// vocabulary (St Gabriel, Catholic, Church, Thome) can push an off-topic question's best-matching chunk above a loose
-// threshold even when the chunk has nothing to do with what was asked. 0.45 requires real topical overlap, not just
-// shared proper nouns. Re-tune empirically if genuine SHG questions start getting incorrectly zero-retrieval'd.
-const HARD_GATE_THRESHOLD = 0.5; // if the SINGLE BEST chunk doesn't clear this, skip the LLM call entirely -
-// see the hard gate in handleChatRequest below.
+const SIMILARITY_THRESHOLD = 0.35; // Lowered from 0.45 after production testing showed genuinely on-topic
+// questions (e.g. "what loans are offered and their benefits," near-identical to the long-standing "What
+// types of loans are available?" FAQ entry) scoring below 0.45 and getting incorrectly excluded. 0.45 was an
+// untested guess aimed at keeping churchy-vocabulary false positives out; 0.35 trades a little of that
+// protection back for not rejecting real matches. The clergy/mass-times/parish-leadership category of
+// off-topic question is still handled by the explicit prompt-level decline rule (see buildSystemPrompt),
+// not by this threshold, so lowering it does not reopen that hole.
+const HARD_GATE_THRESHOLD = 0.4; // Lowered from 0.5 for the same reason - see above.
 const MAX_MESSAGE_LENGTH = 2000; // characters - a very long single message is a cost/abuse vector the 40-message cap alone doesn't catch
 const FETCH_TIMEOUT_MS = 15000; // Mistral API calls get a hard timeout so a hung network connection can't hold a serverless invocation open indefinitely
 
@@ -249,7 +251,20 @@ export async function handleChatRequest(messages, apiKey, clientId) {
   // possible reply, guaranteed at the code level rather than requested at
   // the prompt level.
   const bestScore = retrievedChunks.length > 0 ? retrievedChunks[0].score : 0;
-  if (bestScore < HARD_GATE_THRESHOLD) {
+  const gated = bestScore < HARD_GATE_THRESHOLD;
+
+  // Diagnostic log for every request - visible in Vercel's runtime logs (not
+  // the "External APIs" summary panel, the actual Logs/Runtime Logs tab).
+  // This is what to check when a question seems wrongly answered OR wrongly
+  // declined: it shows exactly what score the retriever gave it, so
+  // threshold tuning going forward is based on real numbers instead of
+  // another guess like the 0.45/0.5 -> 0.35/0.4 change that prompted adding
+  // this log in the first place.
+  console.log(
+    `[chat] q="${lastUserMessage?.content?.slice(0, 80) || ''}" bestScore=${bestScore.toFixed(3)} chunksAboveInclusionThreshold=${retrievedChunks.length} gated=${gated}`
+  );
+
+  if (gated) {
     return {
       reply: `I don't have that information available right now. For questions about St Gabriel Catholic Church SHG, please contact the office at ${faqData.contact_info.phone} or ${faqData.contact_info.email[0]}.`,
     };

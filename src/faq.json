@@ -22,6 +22,14 @@
       "answer": "Membership is open to persons who are 18 years and above, provided that person is of acceptable social and moral standards."
     },
     {
+      "question": "What kind of accounts or memberships can I open at St Gabriel Catholic Church SHG?",
+      "answer": "We offer three types: Adult Membership, for individuals 18 years and above, giving full access to savings, dividends, voting rights, and all six loan products; a Minor Savings Account, a savings-only account a parent or guardian who is already a member can open on behalf of a child, which earns dividends but has no voting rights or direct loan access; and Corporate Membership, for registered groups, church bodies, or organizations joining as a single corporate entity with shared savings and lending. Each type has its own application requirements, and you can apply for any of them online through our Register menu or by downloading the relevant form."
+    },
+    {
+      "question": "What are the benefits of being a member (Adult Membership)?",
+      "answer": "Adult Membership gives you: 1) A share of the group's distributable surplus (dividends) on your savings each year, 2) Eligibility for a loan after 6 consecutive months of membership, for up to 3 times your share contributions, 3) The right to vote at meetings and to guarantee loans for fellow members, 4) Benevolent Fund cover - KES 50,000 paid to your family if you pass away, once you've contributed for at least 6 months. It's a way to build savings discipline while having access to affordable credit whenever you need it."
+    },
+    {
       "question": "What documents do I need to register as a member?",
       "answer": "You'll need: 1) A copy of your National ID or Passport, 2) A copy of your KRA PIN certificate, 3) A copy of your next of kin's National ID or Passport, 4) A passport-size photograph. You'll also nominate one or more beneficiaries and provide their details, plus your next of kin's contact information. You can apply online through our Register menu or download the membership form to fill by hand and drop off at our office."
     },
@@ -74,6 +82,10 @@
       "answer": "Six types: 1) Development loans (max 60 months), 2) Business Loan (max 60 months), 3) Emergency Loan (max Ksh 100,000, 12 months), 4) Education Loan (24 months for post-secondary, 12 months for primary/secondary), 5) Agribusiness loan (max 24 months), 6) Church loan (for Catholic Churches only through Parish Pastoral Council)."
     },
     {
+      "question": "What are the benefits of taking a loan from the SHG rather than a bank?",
+      "answer": "SHG loans are priced and run for members' benefit rather than for profit: 1) A flat 1% per month interest rate on a reducing balance, generally lower than typical bank or shark lending rates, 2) No collateral beyond guarantors from fellow members - no title deeds or logbooks required, 3) Six different loan products (Development, Business, Emergency, Education, Agribusiness, Church) tailored to different needs rather than one generic product, 4) A simple, fast application process handled by people who know you, 5) Because the SHG is member-owned, the interest paid on loans ultimately comes back to members as dividends rather than going to outside shareholders."
+    },
+    {
       "question": "Tell me about Development loans",
       "answer": "All-purpose loan granted to all members individually or to corporate to finance development projects. The loan must be fully guaranteed and has a maximum repayment period of 60 months."
     },
@@ -115,7 +127,7 @@
     },
     {
       "question": "What is the group's financial standing?",
-      "answer": "As at 31st July 2023, the share capital stands at Kshs. 46 Million with average savings being Kshs.157,981. The group has invested Kshs. 30.3 million with Arch Dioceses of Nairobi in treasury bills and purchased shares for Kshs 2 million with CARITAS Microfinance Bank."
+      "answer": "As at 31st December 2025, the share capital stands at approximately KES 87.2 million, with total loans issued in 2025 of about KES 19.4 million and 376 active members. The group has invested funds with Arch Dioceses of Nairobi in treasury bills and holds funds with CARITAS Microfinance Bank."
     },
     {
       "question": "What is the group's motto?",
@@ -145,7 +157,9 @@
   "contact_info": {
     "po_box": "P.O. BOX 741- 00618 NAIROBI",
     "phone": "+254 715 590 028",
-    "email": ["shg@thomecaritasnairobi.org"],
+    "email": [
+      "shg@thomecaritasnairobi.org"
+    ],
     "mpesa_paybill": "4080309",
     "bank_account": "1002025000040",
     "bank_name": "CARITAS MICROFINANCE BANK",
