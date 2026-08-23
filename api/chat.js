@@ -1,6 +1,17 @@
 // Vercel serverless function. Place this file at /api/chat.js in your project root
 // (a sibling of /src, NOT inside it). Vercel auto-deploys anything in /api as an
 // endpoint, so this becomes reachable at POST /api/chat — no extra config needed.
+//
+// This must stay a thin wrapper around handleChatRequest() from ./_lib/chatHandler.js -
+// that's the one place the RAG logic (embedding the question, retrieving relevant
+// chunks from knowledgeBase.js, the strict system prompt, the hard relevance gate,
+// rate limiting) lives. vite.config.mts's dev proxy calls the exact same function, so
+// this file and local `npm run dev` are guaranteed to behave identically. Do NOT
+// re-implement any Mistral API calls directly in this file - that's what caused
+// production to silently diverge from dev before (a bare, promptless call to
+// mistral-tiny-latest with no retrieval, no system prompt, and no guardrails at all).
+
+import { handleChatRequest } from './_lib/chatHandler.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -27,39 +38,17 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Chat service is not configured' });
   }
 
+  // Identify the caller for chatHandler's rate limiting. Vercel sits behind a
+  // proxy, so the real client IP is in x-forwarded-for, not req.socket.
+  const clientId =
+    (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || 'unknown';
+
   try {
-    const mistralResponse = await fetch('https://api.mistral.ai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: 'mistral-tiny-latest',
-        messages,
-        temperature: 0.3,
-        max_tokens: 500,
-      }),
-    });
-
-    if (!mistralResponse.ok) {
-      const errorText = await mistralResponse.text();
-      console.error('Mistral API error:', mistralResponse.status, errorText);
-      return res.status(502).json({ error: 'Chat service is temporarily unavailable' });
-    }
-
-    const data = await mistralResponse.json();
-    const reply = data.choices?.[0]?.message?.content;
-
-    if (!reply) {
-      return res.status(502).json({ error: 'Chat service returned an unexpected response' });
-    }
-
-    // Only forward what the frontend actually needs - never pass through Mistral's
-    // full raw response, which could leak details you don't want exposed.
+    const { reply } = await handleChatRequest(messages, apiKey, clientId);
     return res.status(200).json({ reply });
   } catch (error) {
     console.error('Chat proxy error:', error);
-    return res.status(500).json({ error: 'Failed to reach chat service' });
+    const status = error?.status || 500;
+    return res.status(status).json({ error: error?.message || 'Failed to reach chat service' });
   }
 }

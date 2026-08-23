@@ -270,7 +270,7 @@ export function Chatbot() {
                 {isLoading ? <Loader2 className="animate-spin" size={18} /> : <Send size={18} />}
               </Button>
             </div>
-            <p className="text-base text-gray-500 mt-2 text-center">Powered by Mistral AI</p>
+            <p className="text-base text-gray-500 mt-2 text-center">With love from the St Gabriel Catholic Church SHG</p>
           </div>
         </div>
       )}
