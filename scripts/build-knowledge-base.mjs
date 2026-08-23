@@ -51,8 +51,18 @@ const CHUNK_SIZE = 1200; // characters per chunk - roughly 250-300 tokens
 const CHUNK_OVERLAP = 150; // characters of overlap so context isn't cut mid-thought
 const EMBED_BATCH_SIZE = 20; // chunks per embeddings API call
 
+// PDF cover pages / title text set with wide kerning often extract as
+// single letters separated by spaces ("S E L F H E L P G R O U P"). Left
+// alone, this produces a chunk that's mostly noise and embeds unpredictably
+// - it can end up scoring surprisingly high against unrelated questions
+// just because it's short and generic-sounding. Collapse runs of 3+
+// single-letter "words" back into real words before chunking.
+function collapseLetterSpacing(text) {
+  return text.replace(/(?:\b[A-Za-z]\b[ \t]){2,}\b[A-Za-z]\b/g, (match) => match.replace(/\s+/g, ''));
+}
+
 function chunkText(text, source) {
-  const cleaned = text.replace(/\s+/g, ' ').trim();
+  const cleaned = collapseLetterSpacing(text).replace(/\s+/g, ' ').trim();
   const chunks = [];
   let start = 0;
   while (start < cleaned.length) {

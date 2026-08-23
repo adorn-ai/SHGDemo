@@ -99,7 +99,7 @@ export function Navbar() {
               </Link>
 
               <Link to="/apply-loan">
-                <Button className="bg-[#16210E] hover:bg-[#237A17] rounded-none font-bold uppercase tracking-wide">
+                <Button className="bg-[#B00117] hover:bg-[#8C0112] rounded-none font-bold uppercase tracking-wide">
                   Apply for Loan
                 </Button>
               </Link>
@@ -190,7 +190,7 @@ export function Navbar() {
 
               <Link
                 to="/apply-loan"
-                className="block mt-2 px-3 py-2 bg-[#16210E] text-[#FAF9F5] text-center font-bold uppercase tracking-wide"
+                className="block mt-2 px-3 py-2 bg-[#B00117] text-[#FAF9F5] text-center font-bold uppercase tracking-wide"
                 onClick={() => setIsOpen(false)}
               >
                 Apply for Loan

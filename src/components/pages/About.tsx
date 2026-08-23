@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '../ui/dialog';
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '../ui/carousel';
-import { Building2 } from 'lucide-react';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import faqData from '../../faq.json';
 import shgLogo from '../../assets/shg-logo.png';
 import caritasLogo from '../../assets/caritas-logo.png';
-import aboutHeroPhoto from '../../assets/about-hero.jpg';
+import aboutHeroPhoto from '../../assets/group-photo.jpg';
+import ourStoryPhoto from '../../assets/about-hero.jpg';
+import churchPhoto from '../../assets/church-building.jpg';
 import samuelWainaina from '../../assets/board/samuel_wainaina.jpeg';
 import raphaelKabando from '../../assets/board/raphael_kabando.jpeg';
 import josephineNjau from '../../assets/board/josephine_njau.png';
@@ -111,7 +112,7 @@ function LeaderProfile({ leader, onSelect }: { leader: Leader; onSelect: (leader
       <button type="button" onClick={() => onSelect(leader)} className="text-left cursor-pointer">
         <h3 className="text-xl text-[#16210E] leading-snug font-bold uppercase">{leader.name}</h3>
       </button>
-      <p className="font-sans text-base tracking-[0.1em] uppercase text-[#237A17] mt-1 mb-2 leading-relaxed">{leader.role}</p>
+      <p className="font-sans text-base tracking-[0.05em] text-[#237A17] mt-1 mb-2 leading-relaxed">{leader.role}</p>
       <button
         type="button"
         onClick={() => onSelect(leader)}
@@ -137,7 +138,7 @@ function LeaderModal({ leader, onClose }: { leader: Leader | null; onClose: () =
             </div>
             <div className="p-6">
               <h3 className="text-2xl text-[#16210E] font-bold uppercase mb-1">{leader.name}</h3>
-              <p className="text-base tracking-[0.1em] uppercase text-[#237A17] mb-4">{leader.role}</p>
+              <p className="text-base tracking-[0.05em] text-[#237A17] mb-4">{leader.role}</p>
               <p className="text-base text-gray-600 leading-relaxed">
                 {leader.bio || 'A dedicated member of the Management Committee serving St Gabriel Catholic Church SHG.'}
               </p>
@@ -146,17 +147,6 @@ function LeaderModal({ leader, onClose }: { leader: Leader | null; onClose: () =
         )}
       </DialogContent>
     </Dialog>
-  );
-}
-
-/* Placeholder for a logo not yet supplied - swap the contents of this div for a real
-   <img src={...} alt="..." className="h-16 sm:h-20 w-auto object-contain" /> once available. */
-function LogoPlaceholder({ label }: { label: string }) {
-  return (
-    <div className="h-16 sm:h-20 aspect-square flex flex-col items-center justify-center gap-1 border border-gray-300 bg-[#F3F0E8] text-gray-400 px-3">
-      <Building2 size={20} strokeWidth={1.5} />
-      <span className="font-sans text-[9px] tracking-wide uppercase text-center leading-tight">{label}</span>
-    </div>
   );
 }
 
@@ -224,9 +214,9 @@ export function About() {
             </Reveal>
             <Reveal delayMs={150} className="aspect-[4/3] overflow-hidden">
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1601071733462-d0bbb6ee7a02?auto=format&fit=crop&w=1080&q=80"
-                alt="Community gathering"
-                className="w-full h-full object-cover"
+                src={ourStoryPhoto}
+                alt="SHG leaders outside St Gabriel Catholic Church"
+                className="w-full h-full object-cover object-[center_60%]"
               />
             </Reveal>
           </div>
@@ -250,7 +240,11 @@ export function About() {
             <Reveal delayMs={150} className="flex items-center gap-4 justify-start md:justify-end">
               <img src={shgLogo} alt="St Gabriel Catholic Church SHG" className="h-16 sm:h-20 w-auto object-contain" />
               <span className="text-2xl text-gray-300 font-light">&times;</span>
-              <LogoPlaceholder label="St Gabriel Catholic Church" />
+              <img
+                src={churchPhoto}
+                alt="St Gabriel Catholic Church"
+                className="h-16 sm:h-20 aspect-square object-cover object-[center_25%] border border-gray-200"
+              />
             </Reveal>
           </div>
         </div>
@@ -281,7 +275,7 @@ export function About() {
       </section>
 
       {/* Signature moment: the motto */}
-      <section className="bg-[#16210E] py-20 md:py-28">
+      <section className="bg-[#B00117] py-20 md:py-28">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Reveal>
             <p className="italic text-3xl md:text-5xl text-[#FAF9F5] leading-tight">

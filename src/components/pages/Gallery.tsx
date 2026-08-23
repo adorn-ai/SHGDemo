@@ -3,12 +3,6 @@ import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { X, ChevronLeft, ChevronRight, ArrowLeft, Images } from 'lucide-react';
 import { Button } from '../ui/button';
 
-// Import local images so Vite bundles them correctly (works on Vercel)
-import photoOne from '../../assets/photoone.jpg';
-import photoTwo from '../../assets/phototwo.jpg';
-import photoThree from '../../assets/photothree.jpg';
-import photoFour from '../../assets/photofour.jpg';
-
 // AGM 2025 photo set (14 photos). Filenames match the download bundle
 // provided - drop these straight into src/assets/ as agm2025-01.jpg ... agm2025-14.jpg.
 import agm25_01 from '../../assets/agm2025-01.jpg';
@@ -86,20 +80,20 @@ const ALBUMS: Album[] = [
     title: 'AGM 2025',
     description: 'Highlights from our Annual General Meeting',
     photos: [
-      { src: agm25_01, title: 'Committee Addresses the Floor', description: 'Mr Joseph Ruhiu addresses the SHG members' },
+      { src: agm25_01, title: 'Committee Addresses the Floor', description: 'A committee member speaks to attendees during the proceedings.' },
       { src: agm25_02, title: 'Members in Attendance', description: 'SHG members gathered for the Annual General Meeting.' },
       { src: agm25_03, title: 'Question and Answer Session', description: 'The committee responds to questions from the floor.' },
       { src: agm25_04, title: 'Addressing the Assembly', description: 'A committee member speaks from the podium as the panel looks on.' },
       { src: agm25_05, title: 'Committee Panel', description: 'Committee members seated at the head table during discussions.' },
       { src: agm25_06, title: 'Members Following the Proceedings', description: 'Attendees listening in as the meeting continues.' },
-      { src: agm25_07, title: 'Token of Appreciation', description: 'Mr Joseph Ruhiu presents Mrs. Lucy Kibera with a token of appreciation.' },
+      { src: agm25_07, title: 'Token of Appreciation', description: 'A member is presented with a token of appreciation.' },
       { src: agm25_08, title: 'Token of Appreciation', description: 'A member receives a gift from the committee.' },
       { src: agm25_09, title: 'Token of Appreciation', description: 'A member is presented with an umbrella as a token of appreciation.' },
       { src: agm25_10, title: 'Token of Appreciation', description: 'A member receives a gift bag from the committee.' },
-      { src: agm25_11, title: 'Token of Appreciation', description: 'Faith Esaabu is presented with a gift during the meeting.' },
+      { src: agm25_11, title: 'Token of Appreciation', description: 'A member is presented with a gift during the meeting.' },
       { src: agm25_12, title: 'Token of Appreciation', description: 'A member receives a gift bag from the committee.' },
       { src: agm25_13, title: 'Token of Appreciation', description: 'A member is presented with a gift during the meeting.' },
-      { src: agm25_14, title: 'Token of Appreciation', description: 'A committee member presents an umbrella to Mr Kibera' },
+      { src: agm25_14, title: 'Token of Appreciation', description: 'A committee member presents an umbrella to a longtime member.' },
     ],
   },
   {
@@ -108,9 +102,9 @@ const ALBUMS: Album[] = [
     description: 'Outgoing and incoming committee members mark the handover',
     photos: [
       { src: handover01, title: 'Committee Group Photo', description: 'Committee members gather outside the church following the handover.' },
-      { src: handover02, title: 'Handover of Documents', description: 'Mr Samuel Wainaina receives handover documents from the outgoing chair Mr Joseph Ruhiu' },
-      { src: handover03, title: 'Reviewing the Handover', description: 'Mrs. Josephine Njau receives handover documents' },
-      { src: handover04, title: 'Handover of Records', description: 'Elizabeth Thiaka recieves handover documents from Mr Samuel Wainaina' },
+      { src: handover02, title: 'Handover of Documents', description: 'An outgoing and incoming committee member exchange handover documents.' },
+      { src: handover03, title: 'Reviewing the Handover', description: 'Committee members go through handover documentation together.' },
+      { src: handover04, title: 'Handover of Records', description: 'A committee member hands over records as part of the transition.' },
     ],
   },
   {
@@ -129,10 +123,10 @@ const ALBUMS: Album[] = [
     title: 'Feb 2026 Breakfast Forum',
     description: 'Members gather for a morning discussion forum',
     photos: [
-      { src: breakfast01, title: 'Forum Discussion', description: 'Mr Samuel Wainaina addresses members gathered under the tent for the breakfast forum.' },
-      { src: breakfast02, title: 'Forum Discussion', description: 'Members listen as the discussion continues in the old church' },
+      { src: breakfast01, title: 'Forum Discussion', description: 'A facilitator addresses members gathered under the tent for the breakfast forum.' },
+      { src: breakfast02, title: 'Forum Discussion', description: 'Members listen as the discussion continues under the tent.' },
       { src: breakfast03, title: 'Forum Discussion', description: 'A facilitator speaks to members seated around the table.' },
-      { src: breakfast04, title: 'Members in Attendance', description: 'Members gathered in the old church for the breakfast forum.' },
+      { src: breakfast04, title: 'Members in Attendance', description: 'Members gathered under the tent for the breakfast forum.' },
     ],
   },
   {
@@ -140,13 +134,13 @@ const ALBUMS: Album[] = [
     title: 'AGM 2026',
     description: "Our 15th anniversary Annual General Meeting",
     photos: [
-      { src: agm26_01, title: 'Members Gathered', description: 'SHG members gathered for the Annual General Meeting.' },
-      { src: agm26_02, title: 'Token of Appreciation', description: 'Mr Suleman Chege is presented with a token of appreciation by Mr Kibera' },
-      { src: agm26_03, title: 'Token of Appreciation', description: 'Mrs Naomi Mungai receives a gift bag from the committee.' },
-      { src: agm26_04, title: 'Token of Appreciation', description: 'A member is presented with a gift during the meeting by Mr Graham Waliaula' },
-      { src: agm26_05, title: 'Unveiling the Strategic Plan', description: 'Leaders unveil the Strategic Plan 2026-2030.' },
-      { src: agm26_06, title: 'Strategic Plan 2026-2030 Unveiled', description: 'Management Committee members as the Strategic Plan 2026-2030 is unveiled.' },
       { src: agm26_07, title: 'Strategic Plan 2026-2030', description: 'A close-up of the newly unveiled Strategic Plan 2026-2030.' },
+      { src: agm26_05, title: 'Unveiling the Strategic Plan', description: 'Leaders unveil the Strategic Plan 2026-2030.' },
+      { src: agm26_02, title: 'Token of Appreciation', description: 'A member is presented with a token of appreciation.' },
+      { src: agm26_03, title: 'Token of Appreciation', description: 'A member receives a gift bag from the committee.' },
+      { src: agm26_04, title: 'Token of Appreciation', description: 'A member is presented with a gift during the meeting.' },
+      { src: agm26_01, title: 'Members Gathered', description: 'SHG members gathered for the Annual General Meeting.' },
+      { src: agm26_06, title: 'Strategic Plan 2026-2030 Unveiled', description: 'Members applaud as the Strategic Plan 2026-2030 is unveiled.' },
       { src: agm26_08, title: 'Cutting the Anniversary Cake', description: 'Leaders cut the cake marking 15 years of the SHG.' },
       { src: agm26_09, title: 'Celebrating 15 Years', description: 'Members share a slice of cake to mark 15 years of growing together.' },
       { src: agm26_10, title: 'Celebrating 15 Years', description: 'Members share a slice of cake to mark 15 years of growing together.' },
@@ -161,45 +155,6 @@ const ALBUMS: Album[] = [
       { src: under40_01, title: 'Group Photo', description: 'Participants gather for a group photo at the Under 40 Training.' },
       { src: under40_02, title: 'Group Photo', description: 'Another moment from the group photo at the training.' },
       { src: under40_03, title: 'Training Session', description: 'Participants attend a session during the training.' },
-    ],
-  },
-  {
-    id: 'community-youth',
-    title: 'Community & Youth Activities',
-    description: 'Gatherings, games, and fellowship',
-    photos: [
-      {
-        src: photoOne,
-        title: 'Community Gathering',
-        description: 'Youth SHG Members receiving an award',
-      },
-      {
-        src: photoTwo,
-        title: 'Outdoor Activities',
-        description: 'Youth SHG members participating in deanery games',
-      },
-      {
-        src: photoThree,
-        title: 'Prayer',
-        description: 'Members embarking in a word of prayer',
-      },
-      {
-        src: photoFour,
-        title: 'Team Building',
-        description: 'SHG members in a team building activity',
-      },
-    ],
-  },
-  {
-    id: 'partnerships',
-    title: 'Partnerships',
-    description: 'Agreements with local businesses',
-    photos: [
-      {
-        src: 'https://images.unsplash.com/photo-1745847768380-2caeadbb3b71?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoYW5kc2hha2UlMjBidXNpbmVzcyUyMGFncmVlbWVudHxlbnwxfHx8fDE3NzAxMzQzODl8MA&ixlib=rb-4.1.0&q=80&w=1080',
-        title: 'Partnership Agreements',
-        description: 'Signing MoUs with local businesses',
-      },
     ],
   },
 ];

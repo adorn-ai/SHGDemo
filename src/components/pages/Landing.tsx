@@ -14,7 +14,39 @@ import { ImageWithFallback } from '../figma/ImageWithFallback';
 import shgLogo from '../../assets/shg-logo.png';
 import caritasLogo from '../../assets/caritas-logo.png';
 import whyJoinUsPhoto from '../../assets/why-join-us.jpg';
+import heroCarouselPhoto1 from '../../assets/group-photo.jpg';
+import heroCarouselPhoto2 from '../../assets/church-building.jpg';
 import faqData from '../../faq.json';
+
+const HERO_BG_IMAGES = [heroCarouselPhoto1, heroCarouselPhoto2];
+
+// Full-bleed background carousel for the hero - crossfades between images on
+// a timer, no arrows/dots/manual controls, just ambient auto-rotation.
+function HeroBackgroundCarousel({ images, intervalMs = 1500 }: { images: string[]; intervalMs?: number }) {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % images.length);
+    }, intervalMs);
+    return () => clearInterval(timer);
+  }, [images.length, intervalMs]);
+
+  return (
+    <>
+      {images.map((src, i) => (
+        <ImageWithFallback
+          key={src}
+          src={src}
+          alt="St Gabriel Catholic Church SHG"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
+            i === index ? 'opacity-30' : 'opacity-0'
+          }`}
+        />
+      ))}
+    </>
+  );
+}
 
 const HEADLINE_WORDS = ['Empowering', 'Communities', 'Through', 'Financial', 'Unity'];
 
@@ -262,11 +294,7 @@ export function Landing() {
           into that space while keeping the original bottom spacing. */}
       <section className="relative bg-[#2D5016] text-white pt-14 md:pt-20 pb-24 md:pb-36 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <ImageWithFallback
-            src="https://images.unsplash.com/photo-1536539754812-56b166f0e89b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrZW55YSUyMGxhbmRzY2FwZSUyMHNhdmFubmFoJTIwYmFja2dyb3VuZHxlbnwxfHx8fDE3NzAxODk0MDB8MA&ixlib=rb-4.1.0&q=80&w=1080"
-            alt="Kenya landscape"
-            className="w-full h-full object-cover opacity-30"
-          />
+          <HeroBackgroundCarousel images={HERO_BG_IMAGES} intervalMs={1500} />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -309,24 +337,24 @@ export function Landing() {
             </h2>
           </Reveal>
 
-          <div className="grid md:grid-cols-2 gap-10 mb-16">
-            <Reveal className="border-t-2 border-[#16210E] pt-6">
-              <Eye className="text-[#237A17] mb-3" size={28} strokeWidth={1.5} />
-              <h3 className="text-xl mb-2 text-[#16210E] font-semibold">Our Vision</h3>
-              <p className="text-base lg:text-lg text-gray-600 leading-relaxed">{faqData.organization.vision}</p>
+          <div className="grid md:grid-cols-2 gap-8 mb-16">
+            <Reveal className="bg-white border-t-4 border-[#16210E] shadow-sm p-8 md:p-10">
+              <Eye className="text-[#237A17] mb-4" size={36} strokeWidth={1.5} />
+              <h3 className="text-2xl mb-3 text-[#16210E] font-semibold">Our Vision</h3>
+              <p className="text-lg lg:text-xl text-gray-600 leading-relaxed">{faqData.organization.vision}</p>
             </Reveal>
-            <Reveal delayMs={150} className="border-t-2 border-[#16210E] pt-6">
-              <Icon iconNode={targetArrow} className="text-[#237A17] mb-3" size={28} strokeWidth={1.5} />
-              <h3 className="text-xl mb-2 text-[#16210E] font-semibold">Our Mission</h3>
-              <p className="text-base lg:text-lg text-gray-600 leading-relaxed">{faqData.organization.mission}</p>
+            <Reveal delayMs={150} className="bg-white border-t-4 border-[#16210E] shadow-sm p-8 md:p-10">
+              <Icon iconNode={targetArrow} className="text-[#237A17] mb-4" size={36} strokeWidth={1.5} />
+              <h3 className="text-2xl mb-3 text-[#16210E] font-semibold">Our Mission</h3>
+              <p className="text-lg lg:text-xl text-gray-600 leading-relaxed">{faqData.organization.mission}</p>
             </Reveal>
           </div>
 
           <Reveal className="pt-10 border-t border-gray-200">
             <h3 className="text-xl lg:text-2xl mb-8 text-[#16210E] font-bold uppercase">Our Values</h3>
-            <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
               {VALUES.map((value, index) => (
-                <Reveal key={value.title} delayMs={index * 60}>
+                <Reveal key={value.title} delayMs={index * 60} className="bg-white shadow-sm p-6 h-full">
                   <value.icon className="text-[#237A17] mb-2" size={30} strokeWidth={1.5} />
                   <p className="text-[#16210E] mb-1 font-bold text-lg">{value.title}</p>
                   <p className="text-gray-600 text-base lg:text-lg leading-relaxed">{value.desc}</p>
@@ -416,20 +444,20 @@ export function Landing() {
             alt="St Gabriel Catholic Church SHG members"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-[#16210E]/80" />
+          <div className="absolute inset-0 bg-[#16210E]/88" />
         </div>
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
-            <h2 className="text-3xl md:text-4xl mb-12 text-[#FAF9F5] text-center font-semibold uppercase">Why Join Us</h2>
+            <h2 className="text-4xl md:text-5xl mb-12 text-[#FAF9F5] text-center font-semibold uppercase">Why Join Us</h2>
           </Reveal>
           <Reveal delayMs={150}>
             <Accordion type="single" collapsible className="w-full">
               {benefits.map((benefit, index) => (
                 <AccordionItem key={index} value={`item-${index}`} className="border-[#8FBF6B]/40">
-                  <AccordionTrigger className="text-lg lg:text-xl text-[#FAF9F5] hover:text-[#8FBF6B] font-bold">
+                  <AccordionTrigger className="text-xl lg:text-2xl text-[#FAF9F5] hover:text-[#8FBF6B] font-bold">
                     {benefit.title}
                   </AccordionTrigger>
-                  <AccordionContent className="text-gray-200 text-base lg:text-lg">
+                  <AccordionContent className="text-gray-100 text-lg lg:text-xl">
                     {benefit.content}
                   </AccordionContent>
                 </AccordionItem>

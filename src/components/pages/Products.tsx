@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import { Button } from '../ui/button';
-import { Wallet, Building2, HandCoins, AlertTriangle, GraduationCap, Sprout, Church, ArrowRight } from 'lucide-react';
+import { Building2, HandCoins, AlertTriangle, GraduationCap, Sprout, Church, ArrowRight, UserPlus, Baby, CheckCircle2 } from 'lucide-react';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import productsHeroPhoto from '../../assets/products-hero.jpg';
 
@@ -43,7 +43,57 @@ const LOAN_PRODUCTS = [
   },
 ];
 
-// Table data - built from the same product facts already used in the cards
+// Membership account types - benefits sourced from Register.tsx / the
+// updated By-laws, restated here so this page also covers what each type of
+// account actually gets you, not just the loan products.
+interface AccountType {
+  icon: typeof UserPlus;
+  eyebrow: string;
+  title: string;
+  description: string;
+  benefits: string[];
+}
+
+const ACCOUNT_TYPES: AccountType[] = [
+  {
+    icon: UserPlus,
+    eyebrow: 'For individuals 18+',
+    title: 'Adult Membership',
+    description: 'Full membership with savings, voting rights, and access to every loan product we offer.',
+    benefits: [
+      'Entitled to distributable surplus (dividends) on your share contributions',
+      'Eligible for a loan after 6 months of membership, up to 3 times your share contributions',
+      'Vote and guarantee loans for fellow members while your account stays active',
+      'Benevolent Fund support: KES 50,000 paid to your family if you pass away, after 6 months of contributions',
+    ],
+  },
+  {
+    icon: Baby,
+    eyebrow: 'Opened by a parent or guardian',
+    title: 'Minor Savings Account',
+    description: "A savings-only account opened on a child's behalf, operated by a member parent or guardian.",
+    benefits: [
+      'Pure savings account with a minimum monthly contribution of KES 300',
+      'Entitled to distributable surplus (dividends), the same as adult accounts',
+      "Can be used to guarantee a guardian's loan for the minor's school fees or hospital bills only",
+      'The parent or guardian serves as next of kin for this account',
+    ],
+  },
+  {
+    icon: Building2,
+    eyebrow: 'For groups & organizations',
+    title: 'Corporate Membership',
+    description: 'Register a registered group, church body, or organization as a single corporate member.',
+    benefits: [
+      'Group savings and lending under one account',
+      'Access to Development, Business & Church loans',
+      'At least two signatories required per transaction',
+      'Church-affiliated groups include the Parish Priest as signatory',
+    ],
+  },
+];
+
+
 // above (each of which is grounded in the Strategic Plan / By-laws per the
 // project handover notes), just restructured into comparable rows/columns.
 interface ProductRow {
@@ -142,28 +192,42 @@ export function Products() {
         </div>
       </section>
 
-      {/* Member Savings */}
+      {/* Membership Accounts - what each account type actually gets you */}
       <section className="py-16 md:py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className={CARD_CLASSES}>
-            <div className="flex items-start gap-4">
-              <Wallet className="text-[#237A17] shrink-0 mt-1" size={32} strokeWidth={1.5} />
-              <div>
-                <p className="text-base tracking-[0.15em] uppercase text-[#237A17] mb-1">Savings</p>
-                <h2 className="text-2xl mb-3 text-[#16210E] font-semibold uppercase">Member Savings</h2>
-                <p className="text-gray-600 leading-relaxed mb-4">
-                  Regular share contributions that grow the group's capital and earn dividends. New members pay a
-                  one-time registration fee of KES 1,000 and maintain a minimum monthly contribution of KES 600.
-                  To keep the group's capital fairly distributed, no single member may hold more than 15% of
-                  total members' savings.
-                </p>
-                <Link to="/register">
-                  <Button variant="outline" className="border-[#16210E] text-[#16210E] rounded-none">
-                    Become a Member
-                  </Button>
-                </Link>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl md:text-4xl mb-3 text-[#16210E] font-semibold uppercase max-w-lg">
+            Three ways to save with us.
+          </h2>
+          <p className="text-gray-600 mb-12 max-w-2xl">
+            Every membership type builds savings and earns dividends - pick the one that fits you, your child, or
+            your organization.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {ACCOUNT_TYPES.map((account) => (
+              <div key={account.title} className={`${CARD_CLASSES} flex flex-col h-full`}>
+                <account.icon className="text-[#237A17] mb-3" size={32} strokeWidth={1.5} />
+                <p className="text-base tracking-[0.15em] uppercase text-[#237A17] mb-1">{account.eyebrow}</p>
+                <h3 className="text-xl mb-2 text-[#16210E] font-bold">{account.title}</h3>
+                <p className="text-gray-600 leading-relaxed mb-4">{account.description}</p>
+                <ul className="space-y-2.5 mb-2 flex-1">
+                  {account.benefits.map((benefit) => (
+                    <li key={benefit} className="flex items-start gap-2.5">
+                      <CheckCircle2 className="text-[#237A17] shrink-0 mt-0.5" size={16} strokeWidth={1.5} />
+                      <span className="text-sm text-gray-700 leading-relaxed">{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link to="/register">
+              <Button size="lg" className="bg-[#16210E] hover:bg-[#237A17] rounded-none">
+                Become a Member <ArrowRight className="ml-2" size={18} />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -208,14 +272,22 @@ export function Products() {
           {/* Desktop/tablet: full table, horizontally scrollable if the viewport is
               narrower than the content (e.g. small tablets in portrait). */}
           <div className="hidden md:block overflow-x-auto border border-gray-200">
-            <table className="w-full min-w-[900px] border-collapse text-left">
+            <table className="w-full min-w-[900px] border-collapse text-left table-fixed">
+              <colgroup>
+                <col className="w-[13%]" />
+                <col className="w-[20%]" />
+                <col className="w-[9%]" />
+                <col className="w-[14%]" />
+                <col className="w-[12%]" />
+                <col className="w-[32%]" />
+              </colgroup>
               <thead>
-                <tr className="bg-[#16210E] text-[#FAF9F5]">
-                  <th className="p-4 text-sm tracking-[0.1em] uppercase font-semibold whitespace-nowrap">Product</th>
-                  <th className="p-4 text-sm tracking-[0.1em] uppercase font-semibold whitespace-nowrap">Eligibility</th>
-                  <th className="p-4 text-sm tracking-[0.1em] uppercase font-semibold whitespace-nowrap">Max Term</th>
-                  <th className="p-4 text-sm tracking-[0.1em] uppercase font-semibold whitespace-nowrap">Interest Rate</th>
-                  <th className="p-4 text-sm tracking-[0.1em] uppercase font-semibold whitespace-nowrap">Guarantor</th>
+                <tr className="bg-[#B00117] text-[#FAF9F5]">
+                  <th className="p-4 text-sm tracking-[0.1em] uppercase font-semibold">Product</th>
+                  <th className="p-4 text-sm tracking-[0.1em] uppercase font-semibold">Eligibility</th>
+                  <th className="p-4 text-sm tracking-[0.1em] uppercase font-semibold">Max Term</th>
+                  <th className="p-4 text-sm tracking-[0.1em] uppercase font-semibold">Interest Rate</th>
+                  <th className="p-4 text-sm tracking-[0.1em] uppercase font-semibold">Guarantor</th>
                   <th className="p-4 text-sm tracking-[0.1em] uppercase font-semibold">Purpose</th>
                 </tr>
               </thead>
@@ -225,12 +297,12 @@ export function Products() {
                     key={row.product}
                     className={`border-t border-gray-200 align-top ${index % 2 === 1 ? 'bg-[#F3F0E8]/50' : 'bg-white'}`}
                   >
-                    <td className="p-4 font-bold text-[#16210E] whitespace-nowrap">{row.product}</td>
+                    <td className="p-4 font-bold text-[#16210E]">{row.product}</td>
                     <td className="p-4 text-gray-700">{row.eligibility}</td>
-                    <td className="p-4 text-gray-700 whitespace-nowrap">{row.maxTerm}</td>
-                    <td className="p-4 text-gray-700 whitespace-nowrap">{row.interestRate}</td>
-                    <td className="p-4 text-gray-700 whitespace-nowrap">{row.guarantorRequired}</td>
-                    <td className="p-4 text-gray-600 leading-relaxed min-w-[260px]">{row.purpose}</td>
+                    <td className="p-4 text-gray-700">{row.maxTerm}</td>
+                    <td className="p-4 text-gray-700">{row.interestRate}</td>
+                    <td className="p-4 text-gray-700">{row.guarantorRequired}</td>
+                    <td className="p-4 text-gray-600 leading-relaxed">{row.purpose}</td>
                   </tr>
                 ))}
               </tbody>

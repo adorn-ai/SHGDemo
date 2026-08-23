@@ -2,6 +2,8 @@ import { useRef, useEffect, useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import { Button } from '../ui/button';
 import { UserPlus, Baby, Building2, CheckCircle2, FileEdit, Download } from 'lucide-react';
+import { ImageWithFallback } from '../figma/ImageWithFallback';
+import registerHeroPhoto from '../../assets/church-building.jpg';
 
 // Scroll-triggered fade/slide-in wrapper, matching the entrance treatment used
 // site-wide (Landing, About) so this page feels like part of the same product.
@@ -98,34 +100,34 @@ const ACCOUNT_TYPES: AccountType[] = [
 function AccountCard({ account, delayMs }: { account: AccountType; delayMs: number }) {
   return (
     <Reveal delayMs={delayMs} className="flex flex-col h-full">
-      <div className="flex flex-col h-full border-t-2 border-[#16210E] pt-6">
-        <div className="w-14 h-14 rounded-full bg-[#16210E] flex items-center justify-center mb-5">
-          <account.icon className="text-[#FAF9F5]" size={26} strokeWidth={1.5} />
+      <div className="flex flex-col h-full border-t-2 border-[#16210E] pt-8 px-1">
+        <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-[#16210E] flex items-center justify-center mb-6">
+          <account.icon className="text-[#FAF9F5]" size={32} strokeWidth={1.5} />
         </div>
 
-        <p className="text-base tracking-[0.15em] uppercase text-[#237A17] mb-2">{account.eyebrow}</p>
-        <h3 className="text-2xl mb-3 text-[#16210E] font-bold">{account.title}</h3>
-        <p className="text-base lg:text-lg text-gray-600 leading-relaxed mb-6">{account.description}</p>
+        <p className="text-base lg:text-lg tracking-[0.15em] uppercase text-[#237A17] mb-2">{account.eyebrow}</p>
+        <h3 className="text-2xl lg:text-3xl mb-4 text-[#16210E] font-bold">{account.title}</h3>
+        <p className="text-lg lg:text-xl text-gray-600 leading-relaxed mb-8">{account.description}</p>
 
-        <ul className="space-y-3 mb-8 flex-1">
+        <ul className="space-y-4 mb-10 flex-1">
           {account.benefits.map((benefit) => (
-            <li key={benefit} className="flex items-start gap-2.5">
-              <CheckCircle2 className="text-[#237A17] shrink-0 mt-0.5" size={18} strokeWidth={1.5} />
-              <span className="text-base text-gray-700 leading-relaxed">{benefit}</span>
+            <li key={benefit} className="flex items-start gap-3">
+              <CheckCircle2 className="text-[#237A17] shrink-0 mt-0.5" size={22} strokeWidth={1.5} />
+              <span className="text-base lg:text-lg text-gray-700 leading-relaxed">{benefit}</span>
             </li>
           ))}
         </ul>
 
         <div className="flex flex-col gap-3 mt-auto">
           <Link to={account.applyHref}>
-            <Button className="w-full bg-[#16210E] hover:bg-[#237A17] rounded-none">
-              <FileEdit className="mr-2" size={16} />
+            <Button size="lg" className="w-full bg-[#16210E] hover:bg-[#237A17] rounded-none text-base lg:text-lg py-6">
+              <FileEdit className="mr-2" size={18} />
               Apply Online
             </Button>
           </Link>
           <a href={account.downloadHref} download={account.downloadName}>
-            <Button variant="outline" className="w-full border-[#16210E] text-[#16210E] rounded-none">
-              <Download className="mr-2" size={16} />
+            <Button size="lg" variant="outline" className="w-full border-[#16210E] text-[#16210E] rounded-none text-base lg:text-lg py-6">
+              <Download className="mr-2" size={18} />
               Download Form
             </Button>
           </a>
@@ -138,13 +140,21 @@ function AccountCard({ account, delayMs }: { account: AccountType; delayMs: numb
 export function Register() {
   return (
     <div className="min-h-screen bg-[#FAF9F5] font-sans">
-      <section className="py-16 md:py-24 border-b border-gray-100">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* Hero - background photo with dark overlay, matching About/Products */}
+      <section className="relative bg-[#16210E] text-[#FAF9F5] py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <ImageWithFallback
+            src={registerHeroPhoto}
+            alt="St Gabriel Catholic Church"
+            className="w-full h-full object-cover object-[center_30%] opacity-25"
+          />
+        </div>
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Reveal>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl mb-6 text-[#16210E] font-bold uppercase leading-tight">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl mb-6 font-bold uppercase leading-tight">
               Choose How You'd Like to Join
             </h1>
-            <p className="text-gray-600 text-base lg:text-lg max-w-2xl mx-auto">
+            <p className="text-gray-200 text-base lg:text-lg max-w-2xl mx-auto">
               St Gabriel Catholic Church SHG offers three types of membership. Pick the one that fits you, apply
               online in minutes, or download the form to fill by hand.
             </p>
@@ -152,9 +162,12 @@ export function Register() {
         </div>
       </section>
 
+      {/* Larger, more generous card layout on big screens: wider max-width
+          container, bigger gaps, and a cap so cards don't stretch absurdly
+          wide on ultrawide monitors while still using the freed-up space. */}
       <section className="py-16 md:py-24">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-10 lg:gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-3 gap-10 lg:gap-14 xl:gap-16">
             {ACCOUNT_TYPES.map((account, index) => (
               <AccountCard key={account.title} account={account} delayMs={index * 120} />
             ))}
