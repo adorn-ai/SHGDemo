@@ -8,7 +8,7 @@ import caritasLogo from '../../assets/caritas-logo.png';
 import aboutHeroPhoto from '../../assets/group-photo.jpg';
 import ourStoryPhoto from '../../assets/about-hero.jpg';
 import churchPhoto from '../../assets/church-building.jpg';
-import samuelWainaina from '../../assets/board/samuel_wainaina.jpeg';
+import samuelWainaina from '../../assets/board/samuel_wainaina.jpg';
 import raphaelKabando from '../../assets/board/raphael_kabando.jpeg';
 import josephineNjau from '../../assets/board/josephine_njau.png';
 import elizabethThiaka from '../../assets/board/elizabeth_thiaka.jpeg';
@@ -28,6 +28,7 @@ const LEADERS: Leader[] = [
     name: 'Samuel Wainaina',
     role: 'Chairman, Management Committee',
     image: samuelWainaina,
+    bio: 'Executive Financial Advisor with over two decades of experience guiding individuals, families, and businesses through cash flow management, strategic saving, investment planning, and wealth preservation. As Chairman, he provides strategic leadership and financial oversight, championing a culture of consistent saving, responsible borrowing, and timely repayment - keeping the Group a trusted vehicle for members\u2019 collective economic empowerment.',
   },
   {
     name: 'Raphael Kabando',
@@ -50,6 +51,7 @@ const LEADERS: Leader[] = [
     name: 'Suleman Chege',
     role: 'Secretary, Capacity Building and Development Committee',
     image: sulemanChege,
+    bio: 'A retired Senior District Commissioner with a distinguished career in national administration, including oversight of national elections and parliamentary affairs. Holds a BA from the University of Nairobi and a Master\u2019s in Public Administration from Liverpool University, with further training from the Washington International Institute and Lok Sabha, India\u2019s Parliament. Currently involved in hospitality, works of mercy, and Catholic men\u2019s association leadership.',
   },
   {
     name: 'Naomi Mungai',
@@ -60,6 +62,7 @@ const LEADERS: Leader[] = [
     name: 'Mary Njoroge',
     role: 'Secretary, Finance and Budget Committee',
     image: maryNjoroge,
+    bio: 'A seasoned professional and accomplished businesswoman with over 30 years of experience as an Executive Secretary in the oil industry. Today, she channels that experience and entrepreneurial spirit into her own ventures, with a primary focus on farming and real estate, driven by a passion for sustainable growth and lasting value.',
   },
 ];
 
@@ -105,9 +108,13 @@ function LeaderProfile({ leader, onSelect }: { leader: Leader; onSelect: (leader
       <button
         type="button"
         onClick={() => onSelect(leader)}
-        className="aspect-square w-full overflow-hidden mb-4 cursor-pointer"
+        className="aspect-[4/5] w-full overflow-hidden mb-4 cursor-pointer bg-[#F3F0E8]"
       >
-        <ImageWithFallback src={leader.image} alt={leader.name} className="w-full h-full object-cover" />
+        <ImageWithFallback
+          src={leader.image}
+          alt={leader.name}
+          className="w-full h-full object-cover object-top"
+        />
       </button>
       <button type="button" onClick={() => onSelect(leader)} className="text-left cursor-pointer">
         <h3 className="text-xl text-[#16210E] leading-snug font-bold uppercase">{leader.name}</h3>
@@ -129,21 +136,32 @@ function LeaderProfile({ leader, onSelect }: { leader: Leader; onSelect: (leader
 function LeaderModal({ leader, onClose }: { leader: Leader | null; onClose: () => void }) {
   return (
     <Dialog open={leader !== null} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md rounded-none font-sans p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-md rounded-none font-sans p-0 max-h-[85vh] overflow-hidden">
         {leader && (
-          <>
+          // Everything lives inside ONE wrapper div, deliberately - DialogContent's
+          // own default classes (likely a CSS grid, per the shadcn/radix template)
+          // place direct children into the same implicit cell rather than stacking
+          // them, which is what caused the image and text to render on top of each
+          // other. Making this a single child sidesteps that entirely: whatever
+          // display type the parent uses, a lone child just gets sized to fill the
+          // available box, and layout inside this div is fully self-determined.
+          <div className="flex flex-col max-h-[85vh] overflow-hidden">
             <DialogTitle className="sr-only">{leader.name}</DialogTitle>
-            <div className="aspect-square w-full overflow-hidden">
-              <ImageWithFallback src={leader.image} alt={leader.name} className="w-full h-full object-cover" />
+            <div className="h-72 sm:h-80 w-full overflow-hidden bg-[#F3F0E8] shrink-0">
+              <ImageWithFallback
+                src={leader.image}
+                alt={leader.name}
+                className="w-full h-full object-contain"
+              />
             </div>
-            <div className="p-6">
+            <div className="p-6 overflow-y-auto">
               <h3 className="text-2xl text-[#16210E] font-bold uppercase mb-1">{leader.name}</h3>
               <p className="text-base tracking-[0.05em] text-[#237A17] mb-4">{leader.role}</p>
               <p className="text-base text-gray-600 leading-relaxed">
                 {leader.bio || 'A dedicated member of the Management Committee serving St Gabriel Catholic Church SHG.'}
               </p>
             </div>
-          </>
+          </div>
         )}
       </DialogContent>
     </Dialog>

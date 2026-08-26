@@ -216,19 +216,19 @@ export function Landing() {
 
   const testimonials = [
     {
-      name: 'Grace Wanjiru',
-      text: 'St Gabriel Catholic Church SHG helped me start my small business. The loan process was smooth and the support from the community has been incredible.',
-      role: 'Small Business Owner',
+      name: 'Hellena Wambui Kanyeki',
+      text: 'St Gabriel Catholic Church SHG helped me in taking small loans to solve emergencies and also advance my rental business',
+      role: 'Business Woman',
     },
     {
-      name: 'Joseph Kimani',
-      text: 'Being part of this SHG has not only helped me financially but also gave me a sense of belonging to a supportive community.',
-      role: 'Active Member',
+      name: 'Michelle Muthoni',
+      text: 'Being part of this SHG has not only helped me be more financially aware in terms of saving, but gives me a sense of belonging as a young member',
+      role: 'Active Youth Member',
     },
     {
-      name: 'Mary Akinyi',
-      text: 'The financial literacy programs and regular savings have transformed how I manage my family finances.',
-      role: 'Member since 2020',
+      name: 'Dennis Jackson',
+      text: 'Since I joined the St Gabriel Catholic Church SHG, I have felt a sense of belonging among the youth, encouraging me to save consistently',
+      role: 'Active Youth Member',
     },
     {
       name: 'Samuel Kariuki',
