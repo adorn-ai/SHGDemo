@@ -216,19 +216,19 @@ export function Landing() {
 
   const testimonials = [
     {
-      name: 'Hellena Wambui Kanyeki',
-      text: 'St Gabriel Catholic Church SHG helped me in taking small loans to solve emergencies and also advance my rental business',
-      role: 'Business Woman',
+      name: 'Grace Wanjiru',
+      text: 'St Gabriel Catholic Church SHG helped me start my small business. The loan process was smooth and the support from the community has been incredible.',
+      role: 'Small Business Owner',
     },
     {
-      name: 'Michelle Muthoni',
-      text: 'Being part of this SHG has not only helped me be more financially aware in terms of saving, but gives me a sense of belonging as a young member',
-      role: 'Active Youth Member',
+      name: 'Joseph Kimani',
+      text: 'Being part of this SHG has not only helped me financially but also gave me a sense of belonging to a supportive community.',
+      role: 'Active Member',
     },
     {
-      name: 'Dennis Jackson',
-      text: 'Since I joined the St Gabriel Catholic Church SHG, I have felt a sense of belonging among the youth, encouraging me to save consistently',
-      role: 'Active Youth Member',
+      name: 'Mary Akinyi',
+      text: 'The financial literacy programs and regular savings have transformed how I manage my family finances.',
+      role: 'Member since 2020',
     },
     {
       name: 'Samuel Kariuki',
@@ -294,7 +294,7 @@ export function Landing() {
           into that space while keeping the original bottom spacing. */}
       <section className="relative bg-[#2D5016] text-white pt-14 md:pt-20 pb-24 md:pb-36 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <HeroBackgroundCarousel images={HERO_BG_IMAGES} intervalMs={2500} />
+          <HeroBackgroundCarousel images={HERO_BG_IMAGES} intervalMs={1500} />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -329,8 +329,8 @@ export function Landing() {
       </section>
 
       {/* Mission, Vision & Values */}
-      <section className="py-20 md:py-28 bg-[#FAF9F5]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 md:py-28 xl:py-32 bg-[#FAF9F5]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="text-3xl md:text-4xl mb-14 text-[#16210E] max-w-lg font-semibold uppercase">
               Our Mission, Vision & Values
@@ -338,12 +338,12 @@ export function Landing() {
           </Reveal>
 
           <div className="grid md:grid-cols-2 gap-8 mb-16">
-            <Reveal className="bg-white border-t-4 border-[#16210E] shadow-sm p-8 md:p-10">
+            <Reveal className="rounded-lg border-2 border-[#C41230]/30 hover:border-[#C41230] bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-8 md:p-10">
               <Eye className="text-[#237A17] mb-4" size={36} strokeWidth={1.5} />
               <h3 className="text-2xl mb-3 text-[#16210E] font-semibold">Our Vision</h3>
               <p className="text-lg lg:text-xl text-gray-600 leading-relaxed">{faqData.organization.vision}</p>
             </Reveal>
-            <Reveal delayMs={150} className="bg-white border-t-4 border-[#16210E] shadow-sm p-8 md:p-10">
+            <Reveal delayMs={150} className="rounded-lg border-2 border-[#C41230]/30 hover:border-[#C41230] bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-8 md:p-10">
               <Icon iconNode={targetArrow} className="text-[#237A17] mb-4" size={36} strokeWidth={1.5} />
               <h3 className="text-2xl mb-3 text-[#16210E] font-semibold">Our Mission</h3>
               <p className="text-lg lg:text-xl text-gray-600 leading-relaxed">{faqData.organization.mission}</p>
@@ -354,7 +354,11 @@ export function Landing() {
             <h3 className="text-xl lg:text-2xl mb-8 text-[#16210E] font-bold uppercase">Our Values</h3>
             <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
               {VALUES.map((value, index) => (
-                <Reveal key={value.title} delayMs={index * 60} className="bg-white shadow-sm p-6 h-full">
+                <Reveal
+                  key={value.title}
+                  delayMs={index * 60}
+                  className="rounded-lg border-2 border-[#C41230]/30 hover:border-[#C41230] bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-6 h-full"
+                >
                   <value.icon className="text-[#237A17] mb-2" size={30} strokeWidth={1.5} />
                   <p className="text-[#16210E] mb-1 font-bold text-lg">{value.title}</p>
                   <p className="text-gray-600 text-base lg:text-lg leading-relaxed">{value.desc}</p>

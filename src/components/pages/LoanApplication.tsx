@@ -275,17 +275,17 @@ export function LoanApplication() {
 
   if (step === 1) {
     return (
-      <div className="min-h-screen bg-[#FAF9F5] font-sans py-16 md:py-24">
-        <div className="max-w-md lg:max-w-lg mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <p className="text-base lg:text-lg tracking-[0.2em] uppercase text-[#237A17] mb-3">Caritas Nairobi</p>
-            <h1 className="text-3xl md:text-4xl mb-2 text-[#16210E]">Loan Application</h1>
-            <p className="text-gray-600">St Gabriel Catholic Church SHG</p>
+      <div className="min-h-screen bg-[#FAF9F5] font-sans pt-8 pb-16 md:pt-12 md:pb-24 flex items-center">
+        <div className="max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl 2xl:max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="text-center mb-10 lg:mb-14">
+            <p className="text-base lg:text-lg xl:text-xl tracking-[0.2em] uppercase text-[#237A17] mb-3">Caritas Nairobi</p>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl mb-2 text-[#16210E]">Loan Application</h1>
+            <p className="text-gray-600 lg:text-lg xl:text-xl">St Gabriel Catholic Church SHG</p>
             <div className="mt-4">
               <a
                 href="/LOAN_APPLICATION_FORM_.pdf"
                 download="Loan-Application-Form.pdf"
-                className="inline-flex items-center gap-1.5 text-base lg:text-lg text-[#16210E] hover:text-[#237A17] underline underline-offset-4"
+                className="inline-flex items-center gap-1.5 text-base lg:text-lg xl:text-xl text-[#16210E] hover:text-[#237A17] underline underline-offset-4"
               >
                 <Download size={13} />
                 Download Form (Fill Manually)
@@ -293,42 +293,44 @@ export function LoanApplication() {
             </div>
           </div>
 
-          <div className="border-t-2 border-[#16210E] pt-8">
-            <h2 className="text-xl text-[#16210E] mb-6">Member Verification</h2>
-            <div className="space-y-5">
-              <div>
-                <Label htmlFor="nationalId">National ID Number</Label>
-                <Input
-                  id="nationalId"
-                  value={nationalIdInput}
-                  onChange={(e) => setNationalIdInput(e.target.value)}
-                  placeholder="Enter your National ID number"
-                  className="text-lg md:text-lg"
-                />
-                <p className="text-base lg:text-lg text-gray-500 mt-2">
-                  Use the same National ID number you registered with as a member
-                </p>
+          <div className="bg-white border border-gray-200 shadow-sm p-6 sm:p-8 lg:p-12 xl:p-16">
+            <div className="border-t-2 border-[#16210E] pt-8">
+              <h2 className="text-xl lg:text-2xl xl:text-3xl text-[#16210E] mb-6">Member Verification</h2>
+              <div className="space-y-5 lg:space-y-6">
+                <div>
+                  <Label htmlFor="nationalId" className="lg:text-lg xl:text-xl">National ID Number</Label>
+                  <Input
+                    id="nationalId"
+                    value={nationalIdInput}
+                    onChange={(e) => setNationalIdInput(e.target.value)}
+                    placeholder="Enter your National ID number"
+                    className="text-lg md:text-lg lg:h-12 lg:text-xl xl:h-14 xl:text-2xl"
+                  />
+                  <p className="text-base lg:text-lg xl:text-xl text-gray-500 mt-2">
+                    Use the same National ID number you registered with as a member
+                  </p>
+                </div>
+
+                <Notice>
+                  <AlertCircle className="inline mr-2 -mt-0.5" size={14} />
+                  Only active members can apply for loans. If you're not registered yet, please{' '}
+                  <a href="/register" className="underline font-semibold">register here</a>.
+                </Notice>
+
+                <Button
+                  onClick={verifyMember}
+                  className="w-full bg-[#16210E] hover:bg-[#237A17] rounded-none lg:h-12 lg:text-lg xl:h-14 xl:text-xl"
+                  disabled={!nationalIdInput.trim() || isVerifying}
+                >
+                  {isVerifying ? (
+                    <>
+                      <Loader2 className="mr-2 animate-spin" size={16} /> Verifying...
+                    </>
+                  ) : (
+                    'Verify & Continue'
+                  )}
+                </Button>
               </div>
-
-              <Notice>
-                <AlertCircle className="inline mr-2 -mt-0.5" size={14} />
-                Only active members can apply for loans. If you're not registered yet, please{' '}
-                <a href="/register" className="underline font-semibold">register here</a>.
-              </Notice>
-
-              <Button
-                onClick={verifyMember}
-                className="w-full bg-[#16210E] hover:bg-[#237A17] rounded-none"
-                disabled={!nationalIdInput.trim() || isVerifying}
-              >
-                {isVerifying ? (
-                  <>
-                    <Loader2 className="mr-2 animate-spin" size={16} /> Verifying...
-                  </>
-                ) : (
-                  'Verify & Continue'
-                )}
-              </Button>
             </div>
           </div>
         </div>
@@ -341,7 +343,7 @@ export function LoanApplication() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F5] font-sans py-12 md:py-20">
-      <div className="max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <p className="text-base lg:text-lg tracking-[0.2em] uppercase text-[#237A17] mb-3">Caritas Nairobi &middot; Caritas Registered Trustees</p>
           <h1 className="text-3xl md:text-4xl mb-2 text-[#16210E]">Loan Application and Agreement Form</h1>
@@ -519,6 +521,7 @@ export function LoanApplication() {
             </div>
           </div>
 
+          <div className="xl:grid xl:grid-cols-2 xl:gap-x-12 xl:items-start">
           <div className="border-t-2 border-[#6B9E4D] pt-8">
             <SectionHeading eyebrow="Step 2" title="Sources of Income" />
             <div className="space-y-5">
@@ -632,7 +635,9 @@ export function LoanApplication() {
               {errors.incomeAmount1 && <p className="text-base lg:text-lg text-red-500">{errors.incomeAmount1}</p>}
             </div>
           </div>
+          </div>
 
+          <div className="xl:grid xl:grid-cols-2 xl:gap-x-12 xl:items-start">
           <div className="border-t-2 border-[#6B9E4D] pt-8">
             <SectionHeading eyebrow="Step 4" title="Loan Application" />
             <div className="space-y-5">
@@ -757,6 +762,7 @@ export function LoanApplication() {
                 )}
               </div>
             </div>
+          </div>
           </div>
 
           <div className="border-t-2 border-[#16210E] pt-8">
@@ -958,6 +964,7 @@ export function LoanApplication() {
             </div>
           </div>
 
+          <div className="xl:grid xl:grid-cols-2 xl:gap-x-12 xl:items-start">
           <div className="border-t-2 border-[#6B9E4D] pt-8">
             <SectionHeading eyebrow="Step 7" title="Witnessed By" />
             <div className="space-y-4">
@@ -1049,6 +1056,7 @@ export function LoanApplication() {
               </div>
               {errors.terms && <p className="text-base lg:text-lg text-red-500">{errors.terms}</p>}
             </div>
+          </div>
           </div>
 
           <div className="flex justify-center pt-4">

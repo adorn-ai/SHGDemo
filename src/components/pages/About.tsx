@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogTitle } from '../ui/dialog';
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '../ui/carousel';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import faqData from '../../faq.json';
-import shgLogo from '../../assets/shg-logo.png';
 import caritasLogo from '../../assets/caritas-logo.png';
 import aboutHeroPhoto from '../../assets/group-photo.jpg';
 import ourStoryPhoto from '../../assets/about-hero.jpg';
@@ -244,7 +243,7 @@ export function About() {
       {/* Correlation 1: St Gabriel Catholic Church */}
       <section className="py-16 md:py-20 border-t border-gray-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-[1fr_auto] gap-10 md:gap-16 items-center">
+          <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
             <Reveal>
               <h2 className="text-3xl md:text-4xl mb-4 text-[#16210E] font-semibold uppercase">Rooted in St Gabriel Catholic Church</h2>
               <p className="font-sans text-lg text-gray-700 leading-relaxed max-w-xl">
@@ -255,13 +254,11 @@ export function About() {
                 lives of the faithful we serve.
               </p>
             </Reveal>
-            <Reveal delayMs={150} className="flex items-center gap-4 justify-start md:justify-end">
-              <img src={shgLogo} alt="St Gabriel Catholic Church SHG" className="h-16 sm:h-20 w-auto object-contain" />
-              <span className="text-2xl text-gray-300 font-light">&times;</span>
+            <Reveal delayMs={150} className="aspect-[4/3] overflow-hidden">
               <img
                 src={churchPhoto}
                 alt="St Gabriel Catholic Church"
-                className="h-16 sm:h-20 aspect-square object-cover object-[center_25%] border border-gray-200"
+                className="w-full h-full object-cover object-[center_30%]"
               />
             </Reveal>
           </div>
@@ -272,10 +269,8 @@ export function About() {
       <section className="py-16 md:py-20 border-t border-gray-100 bg-[#F3F0E8]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-[auto_1fr] gap-10 md:gap-16 items-center">
-            <Reveal className="flex items-center gap-4 justify-start order-2 md:order-1">
-              <img src={shgLogo} alt="St Gabriel Catholic Church SHG" className="h-16 sm:h-20 w-auto object-contain" />
-              <span className="text-2xl text-gray-300 font-light">&times;</span>
-              <img src={caritasLogo} alt="Caritas Nairobi" className="h-16 sm:h-20 w-auto object-contain" />
+            <Reveal className="flex items-center justify-start order-2 md:order-1">
+              <img src={caritasLogo} alt="Caritas Nairobi" className="h-24 sm:h-28 w-auto object-contain" />
             </Reveal>
             <Reveal delayMs={150} className="order-1 md:order-2">
               <h2 className="text-3xl md:text-4xl mb-4 text-[#16210E] font-semibold uppercase">Under the Umbrella of Caritas Nairobi</h2>

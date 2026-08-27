@@ -183,9 +183,9 @@ export function Products() {
             className="w-full h-full object-cover opacity-25"
           />
         </div>
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl mb-4 font-bold uppercase">Savings & Credit Products</h1>
-          <p className="text-gray-200 max-w-2xl mx-auto">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl mb-5 font-bold uppercase">Savings & Credit Products</h1>
+          <p className="text-gray-200 text-lg max-w-2xl mx-auto">
             Everything St Gabriel Catholic Church SHG offers members, from regular savings to affordable credit
             for life's needs. Interest on all loans is 1% per month on a reducing balance.
           </p>
@@ -193,28 +193,28 @@ export function Products() {
       </section>
 
       {/* Membership Accounts - what each account type actually gets you */}
-      <section className="py-16 md:py-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl mb-3 text-[#16210E] font-semibold uppercase max-w-lg">
+      <section className="py-16 md:py-20 xl:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl md:text-4xl xl:text-5xl mb-3 text-[#16210E] font-semibold uppercase max-w-2xl">
             Three ways to save with us.
           </h2>
-          <p className="text-gray-600 mb-12 max-w-2xl">
+          <p className="text-gray-600 text-lg mb-12 xl:mb-16 max-w-2xl">
             Every membership type builds savings and earns dividends - pick the one that fits you, your child, or
             your organization.
           </p>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 lg:gap-10 xl:gap-12">
             {ACCOUNT_TYPES.map((account) => (
-              <div key={account.title} className={`${CARD_CLASSES} flex flex-col h-full`}>
-                <account.icon className="text-[#237A17] mb-3" size={32} strokeWidth={1.5} />
+              <div key={account.title} className={`${CARD_CLASSES} p-6 lg:p-8 flex flex-col h-full`}>
+                <account.icon className="text-[#237A17] mb-3" size={36} strokeWidth={1.5} />
                 <p className="text-base tracking-[0.15em] uppercase text-[#237A17] mb-1">{account.eyebrow}</p>
-                <h3 className="text-xl mb-2 text-[#16210E] font-bold">{account.title}</h3>
-                <p className="text-gray-600 leading-relaxed mb-4">{account.description}</p>
-                <ul className="space-y-2.5 mb-2 flex-1">
+                <h3 className="text-xl lg:text-2xl mb-2 text-[#16210E] font-bold">{account.title}</h3>
+                <p className="text-gray-600 text-base lg:text-lg leading-relaxed mb-4">{account.description}</p>
+                <ul className="space-y-2.5 lg:space-y-3 mb-2 flex-1">
                   {account.benefits.map((benefit) => (
                     <li key={benefit} className="flex items-start gap-2.5">
                       <CheckCircle2 className="text-[#237A17] shrink-0 mt-0.5" size={16} strokeWidth={1.5} />
-                      <span className="text-sm text-gray-700 leading-relaxed">{benefit}</span>
+                      <span className="text-sm lg:text-base text-gray-700 leading-relaxed">{benefit}</span>
                     </li>
                   ))}
                 </ul>
@@ -222,7 +222,7 @@ export function Products() {
             ))}
           </div>
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-12 xl:mt-16">
             <Link to="/register">
               <Button size="lg" className="bg-[#16210E] hover:bg-[#237A17] rounded-none">
                 Become a Member <ArrowRight className="ml-2" size={18} />
@@ -233,19 +233,19 @@ export function Products() {
       </section>
 
       {/* Loan Products */}
-      <section className="py-16 md:py-20 bg-[#F3F0E8] border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl mb-12 text-[#16210E] font-semibold uppercase max-w-lg">
+      <section className="py-16 md:py-20 xl:py-24 bg-[#F3F0E8] border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl md:text-4xl xl:text-5xl mb-12 xl:mb-16 text-[#16210E] font-semibold uppercase max-w-2xl">
             Six loan products designed for different needs.
           </h2>
 
-          <div className="grid md:grid-cols-2 gap-x-8 gap-y-8">
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-8 lg:gap-10">
             {LOAN_PRODUCTS.map((product) => (
-              <div key={product.title} className={CARD_CLASSES}>
-                <product.icon className="text-[#237A17] mb-3" size={28} strokeWidth={1.5} />
-                <h3 className="text-xl mb-1 text-[#16210E] font-bold">{product.title}</h3>
-                <p className="text-base text-[#237A17] mb-3">{product.terms}</p>
-                <p className="text-gray-600 leading-relaxed">{product.desc}</p>
+              <div key={product.title} className={`${CARD_CLASSES} p-6 lg:p-8`}>
+                <product.icon className="text-[#237A17] mb-3" size={32} strokeWidth={1.5} />
+                <h3 className="text-xl lg:text-2xl mb-1 text-[#16210E] font-bold">{product.title}</h3>
+                <p className="text-base lg:text-lg text-[#237A17] mb-3">{product.terms}</p>
+                <p className="text-gray-600 text-base lg:text-lg leading-relaxed">{product.desc}</p>
               </div>
             ))}
           </div>
@@ -261,10 +261,10 @@ export function Products() {
       </section>
 
       {/* Product Comparison Table */}
-      <section className="py-16 md:py-20 border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl mb-3 text-[#16210E] font-semibold uppercase">Product Details at a Glance</h2>
-          <p className="text-gray-600 mb-10 max-w-2xl">
+      <section className="py-16 md:py-20 xl:py-24 border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl md:text-4xl xl:text-5xl mb-3 text-[#16210E] font-semibold uppercase">Product Details at a Glance</h2>
+          <p className="text-gray-600 text-lg mb-10 xl:mb-14 max-w-2xl">
             A side-by-side comparison of eligibility, repayment terms, and guarantor requirements across every
             product.
           </p>

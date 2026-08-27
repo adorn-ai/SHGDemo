@@ -15,12 +15,12 @@ const RECIPIENT_EMAIL = 'shg@thomecaritasnairobi.org';
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
- * @param {{ name: string; email: string; phone?: string; subject: string; message: string }} body
+ * @param {{ name: string; email: string; phone?: string; subject: string; message: string; requestCallback?: boolean }} body
  * @param {{ gmailUser: string; gmailAppPassword: string }} credentials
  * @returns {Promise<{ ok: true }>}
  */
 export async function handleContactRequest(body, { gmailUser, gmailAppPassword }) {
-  const { name, email, phone, subject, message } = body || {};
+  const { name, email, phone, subject, message, requestCallback } = body || {};
 
   if (!name || !String(name).trim()) {
     const err = new Error('Name is required');
@@ -47,6 +47,11 @@ export async function handleContactRequest(body, { gmailUser, gmailAppPassword }
     err.status = 400;
     throw err;
   }
+  if (requestCallback && (!phone || !String(phone).trim())) {
+    const err = new Error('A phone number is required to request a call back');
+    err.status = 400;
+    throw err;
+  }
 
   const escapeHtml = (str) =>
     String(str)
@@ -57,6 +62,10 @@ export async function handleContactRequest(body, { gmailUser, gmailAppPassword }
 
   const htmlBody = `
     <h2>New message from the SHG website contact form</h2>
+    ${requestCallback ? `
+    <p style="background:#FEF2F2; border-left:4px solid #B00117; padding:10px 14px; margin:0 0 16px; font-weight:bold; color:#B00117;">
+      &#128222; This person has asked to be called back${phone ? ` at ${escapeHtml(phone)}` : ''}.
+    </p>` : ''}
     <p><strong>Name:</strong> ${escapeHtml(name)}</p>
     <p><strong>Email:</strong> ${escapeHtml(email)}</p>
     ${phone ? `<p><strong>Phone:</strong> ${escapeHtml(phone)}</p>` : ''}
@@ -82,7 +91,7 @@ export async function handleContactRequest(body, { gmailUser, gmailAppPassword }
       from: `St Gabriel Catholic Church SHG Website <${gmailUser}>`,
       to: RECIPIENT_EMAIL,
       replyTo: String(email),
-      subject: `[Website Contact] ${subject}`,
+      subject: `${requestCallback ? '[CALL BACK REQUESTED] ' : ''}[Website Contact] ${subject}`,
       html: htmlBody,
     });
   } catch (error) {

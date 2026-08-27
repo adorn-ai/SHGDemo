@@ -3,6 +3,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
+import { Checkbox } from '../ui/checkbox';
 import { toast } from 'sonner@2.0.3';
 import { Phone, Mail, MapPin, Clock, Send, Loader2 } from 'lucide-react';
 import faqData from '../../faq.json';
@@ -22,6 +23,7 @@ export function Contact() {
     phone: '',
     subject: '',
     message: '',
+    requestCallback: false,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,6 +41,9 @@ export function Contact() {
     if (!formData.subject.trim()) newErrors.subject = 'Subject is required';
     if (!formData.message.trim()) newErrors.message = 'Message is required';
     else if (formData.message.length > 5000) newErrors.message = 'Message is too long (max 5000 characters)';
+    if (formData.requestCallback && !formData.phone.trim()) {
+      newErrors.phone = 'A phone number is required so we can call you back';
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -91,7 +96,7 @@ export function Contact() {
             className="border-[#16210E] text-[#16210E] rounded-none"
             onClick={() => {
               setSubmitted(false);
-              setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+              setFormData({ name: '', email: '', phone: '', subject: '', message: '', requestCallback: false });
             }}
           >
             Send Another Message
@@ -102,9 +107,9 @@ export function Contact() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] font-sans py-16 md:py-24">
+    <div className="min-h-screen bg-[#FAF9F5] font-sans pt-8 pb-16 md:pt-14 md:pb-24">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-14">
+        <div className="text-center mb-10">
           <h1 className="text-3xl md:text-4xl lg:text-5xl mb-2 text-[#16210E] font-bold uppercase">Contact Us</h1>
           <p className="text-gray-600 max-w-xl mx-auto">
             Have a question about membership, savings, or loans? Send us a message and our team will respond
@@ -185,15 +190,30 @@ export function Contact() {
                   {errors.name && <p className="text-base text-red-500 mt-1">{errors.name}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="phone">Phone (optional)</Label>
+                  <Label htmlFor="phone">Phone {formData.requestCallback ? '*' : '(optional)'}</Label>
                   <Input
                     id="phone"
                     value={formData.phone}
                     onChange={(e) => handleChange('phone', e.target.value)}
                     placeholder="0712345678"
-                    className="bg-[#FAF9F5]"
+                    className={`bg-[#FAF9F5] ${errors.phone ? 'border-red-500' : ''}`}
                   />
+                  {errors.phone && <p className="text-base text-red-500 mt-1">{errors.phone}</p>}
                 </div>
+              </div>
+
+              <div className="flex items-start space-x-2">
+                <Checkbox
+                  id="requestCallback"
+                  checked={formData.requestCallback}
+                  onCheckedChange={(checked) => {
+                    setFormData({ ...formData, requestCallback: checked === true });
+                    if (errors.phone) setErrors({ ...errors, phone: '' });
+                  }}
+                />
+                <Label htmlFor="requestCallback" className="text-base text-gray-700 cursor-pointer font-normal">
+                  Please call me back instead of / in addition to replying by email
+                </Label>
               </div>
 
               <div>
