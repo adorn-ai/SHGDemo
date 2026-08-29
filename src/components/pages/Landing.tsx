@@ -352,12 +352,12 @@ export function Landing() {
 
           <Reveal className="pt-10 border-t border-gray-200">
             <h3 className="text-xl lg:text-2xl mb-8 text-[#16210E] font-bold uppercase">Our Values</h3>
-            <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="flex flex-wrap justify-center gap-6">
               {VALUES.map((value, index) => (
                 <Reveal
                   key={value.title}
                   delayMs={index * 60}
-                  className="rounded-lg border-2 border-[#C41230]/30 hover:border-[#C41230] bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-6 h-full"
+                  className="rounded-lg border-2 border-[#C41230]/30 hover:border-[#C41230] bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-6 w-full sm:w-[calc(50%-0.75rem)] md:w-[calc(25%-1.125rem)]"
                 >
                   <value.icon className="text-[#237A17] mb-2" size={30} strokeWidth={1.5} />
                   <p className="text-[#16210E] mb-1 font-bold text-lg">{value.title}</p>

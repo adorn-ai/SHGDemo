@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import { Button } from '../ui/button';
-import { Building2, HandCoins, AlertTriangle, GraduationCap, Sprout, Church, ArrowRight, UserPlus, Baby, CheckCircle2 } from 'lucide-react';
+import { Building2, HandCoins, AlertTriangle, GraduationCap, Sprout, Church, ArrowRight, UserPlus, Baby, CheckCircle2, Rocket, HeartHandshake, Accessibility } from 'lucide-react';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import productsHeroPhoto from '../../assets/products-hero.jpg';
 
@@ -40,6 +40,35 @@ const LOAN_PRODUCTS = [
     title: 'Church Loan',
     terms: 'Repaid per agreed schedule',
     desc: 'Available to Catholic Churches only, through the Parish Pastoral Council. Must be fully guaranteed.',
+  },
+];
+
+// Special Loan Products - a separate category under the Self-Help Programme
+// aimed at vulnerable/strategic demographics (youth, elderly, PLWD), each
+// carrying a subsidized 0.8%/month rate versus the standard 1%/month, plus
+// a mandatory Caritas Nairobi approval step. Source: Special Loan Products
+// manual, section 5.7. Note: the manual states eligibility and the
+// preferential rate for these three, but does NOT state a maximum
+// repayment term the way it does for the six products above - so none is
+// shown here rather than inventing one.
+const SPECIAL_LOAN_PRODUCTS = [
+  {
+    icon: Rocket,
+    title: 'Youth Loan Product',
+    terms: 'Ages 18\u201335 \u00b7 0.8% per month (preferential rate)',
+    desc: 'Supports young entrepreneurs and innovators with capital to start or expand small ventures and achieve self-reliance. Must be fully guaranteed; approval requires formal sign-off from Caritas Nairobi.',
+  },
+  {
+    icon: HeartHandshake,
+    title: 'Senior Citizens Loan Product',
+    terms: 'Ages 65+ \u00b7 0.8% per month (preferential rate)',
+    desc: 'Provides financial dignity and security to elderly members - managing financial needs, supporting family, and maintaining small-scale livelihood activities in retirement. Requires Caritas Nairobi approval.',
+  },
+  {
+    icon: Accessibility,
+    title: 'People Living with Disabilities (PLWD) Loan',
+    terms: 'Verified PLWD members \u00b7 0.8% per month (preferential rate)',
+    desc: 'Provides equitable access to finance for members with disabilities, enabling them to acquire assistive technologies or invest in income-generating activities. Eligibility verified by medical or government documentation; requires Caritas Nairobi approval.',
   },
 ];
 
@@ -162,6 +191,30 @@ const PRODUCT_TABLE: ProductRow[] = [
     purpose: 'Financing for parish-level projects and needs.',
     guarantorRequired: 'Yes \u2013 fully guaranteed',
   },
+  {
+    product: 'Youth Loan Product',
+    eligibility: 'Members aged 18\u201335',
+    maxTerm: 'Not specified in the product manual',
+    interestRate: '0.8% per month, reducing balance (preferential rate)',
+    purpose: 'Capital for young entrepreneurs and innovators to start or expand small ventures. Requires Caritas Nairobi approval.',
+    guarantorRequired: 'Yes \u2013 fully guaranteed',
+  },
+  {
+    product: 'Senior Citizens Loan Product',
+    eligibility: 'Members aged 65+',
+    maxTerm: 'Not specified in the product manual',
+    interestRate: '0.8% per month, reducing balance (preferential rate)',
+    purpose: 'Financial dignity and security for elderly members - managing needs and small-scale livelihood activities in retirement. Requires Caritas Nairobi approval.',
+    guarantorRequired: 'Yes \u2013 by savings or qualified guarantors',
+  },
+  {
+    product: 'PLWD Loan Product',
+    eligibility: 'Verified persons living with disabilities',
+    maxTerm: 'Not specified in the product manual',
+    interestRate: '0.8% per month, reducing balance (preferential rate)',
+    purpose: 'Access to finance for assistive technologies or income-generating activities. Requires Caritas Nairobi approval.',
+    guarantorRequired: 'Yes \u2013 by savings or qualified guarantors',
+  },
 ];
 
 // Stylish card treatment: full Caritas-red border (subtle at rest, fully
@@ -260,6 +313,31 @@ export function Products() {
         </div>
       </section>
 
+      {/* Special Loan Products - subsidized-rate products for youth, elderly, and PLWD members */}
+      <section className="py-16 md:py-20 xl:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl md:text-4xl xl:text-5xl mb-3 text-[#16210E] font-semibold uppercase max-w-2xl">
+            Special Loan Products
+          </h2>
+          <p className="text-gray-600 text-lg mb-12 xl:mb-16 max-w-2xl">
+            In line with Caritas Nairobi's socio-economic empowerment mission, these products offer a subsidized
+            0.8% per month rate to remove barriers to credit for youth, elderly, and PLWD members. Each requires
+            formal approval from Caritas Nairobi.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-8 lg:gap-10">
+            {SPECIAL_LOAN_PRODUCTS.map((product) => (
+              <div key={product.title} className={`${CARD_CLASSES} p-6 lg:p-8`}>
+                <product.icon className="text-[#237A17] mb-3" size={32} strokeWidth={1.5} />
+                <h3 className="text-xl lg:text-2xl mb-1 text-[#16210E] font-bold">{product.title}</h3>
+                <p className="text-base lg:text-lg text-[#237A17] mb-3">{product.terms}</p>
+                <p className="text-gray-600 text-base lg:text-lg leading-relaxed">{product.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Product Comparison Table */}
       <section className="py-16 md:py-20 xl:py-24 border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -272,14 +350,14 @@ export function Products() {
           {/* Desktop/tablet: full table, horizontally scrollable if the viewport is
               narrower than the content (e.g. small tablets in portrait). */}
           <div className="hidden md:block overflow-x-auto border border-gray-200">
-            <table className="w-full min-w-[900px] border-collapse text-left table-fixed">
+            <table className="w-full min-w-[1000px] border-collapse text-left table-fixed">
               <colgroup>
-                <col className="w-[13%]" />
-                <col className="w-[20%]" />
-                <col className="w-[9%]" />
+                <col className="w-[15%]" />
+                <col className="w-[17%]" />
+                <col className="w-[15%]" />
                 <col className="w-[14%]" />
-                <col className="w-[12%]" />
-                <col className="w-[32%]" />
+                <col className="w-[13%]" />
+                <col className="w-[26%]" />
               </colgroup>
               <thead>
                 <tr className="bg-[#B00117] text-[#FAF9F5]">
@@ -297,12 +375,12 @@ export function Products() {
                     key={row.product}
                     className={`border-t border-gray-200 align-top ${index % 2 === 1 ? 'bg-[#F3F0E8]/50' : 'bg-white'}`}
                   >
-                    <td className="p-4 font-bold text-[#16210E]">{row.product}</td>
-                    <td className="p-4 text-gray-700">{row.eligibility}</td>
-                    <td className="p-4 text-gray-700">{row.maxTerm}</td>
-                    <td className="p-4 text-gray-700">{row.interestRate}</td>
-                    <td className="p-4 text-gray-700">{row.guarantorRequired}</td>
-                    <td className="p-4 text-gray-600 leading-relaxed">{row.purpose}</td>
+                    <td className="p-4 font-bold text-[#16210E] break-words">{row.product}</td>
+                    <td className="p-4 text-gray-700 break-words">{row.eligibility}</td>
+                    <td className="p-4 text-gray-700 break-words">{row.maxTerm}</td>
+                    <td className="p-4 text-gray-700 break-words">{row.interestRate}</td>
+                    <td className="p-4 text-gray-700 break-words">{row.guarantorRequired}</td>
+                    <td className="p-4 text-gray-600 leading-relaxed break-words">{row.purpose}</td>
                   </tr>
                 ))}
               </tbody>

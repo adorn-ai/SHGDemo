@@ -322,10 +322,11 @@ export function About() {
             </Carousel>
           </div>
 
-          {/* Desktop: plain grid, same click behavior as mobile */}
-          <div className="hidden md:grid md:grid-cols-4 gap-x-8 gap-y-12">
+          {/* Desktop: flex-wrap so an incomplete last row (7 leaders in 4 columns) centers
+              itself instead of sticking to the left edge - same fix as the Values grid. */}
+          <div className="hidden md:flex md:flex-wrap md:justify-center gap-x-8 gap-y-12">
             {LEADERS.map((leader, index) => (
-              <Reveal key={index} delayMs={index * 80}>
+              <Reveal key={index} delayMs={index * 80} className="md:w-[calc(25%-1.5rem)]">
                 <LeaderProfile leader={leader} onSelect={setSelectedLeader} />
               </Reveal>
             ))}

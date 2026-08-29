@@ -107,9 +107,9 @@ export function Contact() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] font-sans pt-8 pb-16 md:pt-14 md:pb-24">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
+    <div className="min-h-screen bg-[#FAF9F5] font-sans pt-6 pb-12 md:pt-10 md:pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl lg:text-5xl mb-2 text-[#16210E] font-bold uppercase">Contact Us</h1>
           <p className="text-gray-600 max-w-xl mx-auto">
             Have a question about membership, savings, or loans? Send us a message and our team will respond
@@ -117,11 +117,11 @@ export function Contact() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-5 gap-12 md:gap-16">
+        <div className="grid md:grid-cols-5 gap-8 md:gap-10">
           {/* Contact info + map - left on desktop, SECOND on mobile (form comes first) */}
-          <div className="md:col-span-2 space-y-8 order-2 md:order-1">
-            <div className="border-t-2 border-[#16210E] pt-6">
-              <div className="flex items-start gap-3 mb-6">
+          <div className="md:col-span-2 space-y-5 order-2 md:order-1 lg:-mt-2">
+            <div className="border-t-2 border-[#16210E] pt-6 lg:border-2 lg:bg-white lg:shadow-sm lg:p-6">
+              <div className="flex items-start gap-3 mb-5">
                 <MapPin className="text-[#237A17] shrink-0 mt-0.5" size={18} strokeWidth={1.5} />
                 <div>
                   <p className="text-[#16210E]">Address</p>
@@ -129,14 +129,14 @@ export function Contact() {
                   <p className="text-base text-gray-600">1st Floor, above PMC Chapel</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 mb-6">
+              <div className="flex items-start gap-3 mb-5">
                 <Phone className="text-[#237A17] shrink-0 mt-0.5" size={18} strokeWidth={1.5} />
                 <div>
                   <p className="text-[#16210E]">Phone</p>
                   <p className="text-base text-gray-600">{faqData.contact_info.phone}</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 mb-6">
+              <div className="flex items-start gap-3 mb-5">
                 <Mail className="text-[#237A17] shrink-0 mt-0.5" size={18} strokeWidth={1.5} />
                 <div>
                   <p className="text-[#16210E]">Email</p>
@@ -156,11 +156,11 @@ export function Contact() {
             </div>
 
             {/* Map - moved here from the About page */}
-            <div className="overflow-hidden border border-gray-200">
+            <div className="overflow-hidden border-2 border-gray-200">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.818!2d36.8716!3d-1.2341!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f16d7b2c3b4a1%3A0x0!2sSt+Gabriel+Catholic+Church%2C+Thome%2C+Nairobi!5e0!3m2!1sen!2ske!4v1700000000000!5m2!1sen!2ske"
                 width="100%"
-                height="300"
+                height="220"
                 style={{ border: 0 }}
                 allowFullScreen
                 loading="lazy"
@@ -176,7 +176,7 @@ export function Contact() {
           </div>
 
           {/* Form - FIRST on mobile, right column on desktop */}
-          <div className="md:col-span-3 order-1 md:order-2">
+          <div className="md:col-span-3 order-1 md:order-2 lg:border-2 lg:border-gray-200 lg:bg-white lg:shadow-sm lg:p-8">
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>

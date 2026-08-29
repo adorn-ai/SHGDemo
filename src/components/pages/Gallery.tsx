@@ -134,13 +134,13 @@ const ALBUMS: Album[] = [
     title: 'AGM 2026',
     description: "Our 15th anniversary Annual General Meeting",
     photos: [
-      { src: agm26_07, title: 'Strategic Plan 2026-2030', description: 'A close-up of the newly unveiled Strategic Plan 2026-2030.' },
-      { src: agm26_05, title: 'Unveiling the Strategic Plan', description: 'Leaders unveil the Strategic Plan 2026-2030.' },
+      { src: agm26_01, title: 'Members Gathered', description: 'SHG members gathered for the Annual General Meeting.' },
       { src: agm26_02, title: 'Token of Appreciation', description: 'A member is presented with a token of appreciation.' },
       { src: agm26_03, title: 'Token of Appreciation', description: 'A member receives a gift bag from the committee.' },
       { src: agm26_04, title: 'Token of Appreciation', description: 'A member is presented with a gift during the meeting.' },
-      { src: agm26_01, title: 'Members Gathered', description: 'SHG members gathered for the Annual General Meeting.' },
+      { src: agm26_05, title: 'Unveiling the Strategic Plan', description: 'Leaders unveil the Strategic Plan 2026-2030.' },
       { src: agm26_06, title: 'Strategic Plan 2026-2030 Unveiled', description: 'Members applaud as the Strategic Plan 2026-2030 is unveiled.' },
+      { src: agm26_07, title: 'Strategic Plan 2026-2030', description: 'A close-up of the newly unveiled Strategic Plan 2026-2030.' },
       { src: agm26_08, title: 'Cutting the Anniversary Cake', description: 'Leaders cut the cake marking 15 years of the SHG.' },
       { src: agm26_09, title: 'Celebrating 15 Years', description: 'Members share a slice of cake to mark 15 years of growing together.' },
       { src: agm26_10, title: 'Celebrating 15 Years', description: 'Members share a slice of cake to mark 15 years of growing together.' },
@@ -186,7 +186,7 @@ export function Gallery() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] font-sans py-16 md:py-24">
+    <div className="min-h-screen bg-[#FAF9F5] font-sans pt-8 pb-16 md:pt-12 md:pb-24">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {!selectedAlbum ? (
           <>

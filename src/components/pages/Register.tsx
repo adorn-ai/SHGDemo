@@ -100,7 +100,7 @@ const ACCOUNT_TYPES: AccountType[] = [
 function AccountCard({ account, delayMs }: { account: AccountType; delayMs: number }) {
   return (
     <Reveal delayMs={delayMs} className="flex flex-col h-full">
-      <div className="flex flex-col h-full border-t-2 border-[#16210E] pt-8 px-1">
+      <div className="flex flex-col h-full rounded-lg border-2 border-[#C41230]/30 hover:border-[#C41230] bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-8">
         <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-[#16210E] flex items-center justify-center mb-6">
           <account.icon className="text-[#FAF9F5]" size={32} strokeWidth={1.5} />
         </div>
@@ -132,6 +132,7 @@ function AccountCard({ account, delayMs }: { account: AccountType; delayMs: numb
             </Button>
           </a>
         </div>
+
       </div>
     </Reveal>
   );
