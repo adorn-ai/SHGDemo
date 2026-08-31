@@ -210,12 +210,29 @@ export function LoanApplication() {
     if (validGuarantors.length === 0) {
       newErrors.guarantors = 'At least one guarantor is required';
     } else {
+      // Counts how many guarantors share each email address, so the loop
+      // below can flag every entry involved in a duplicate - not just the
+      // second one typed, which would otherwise leave the first, equally
+      // ambiguous entry unmarked.
+      const guarantorEmailCounts: Record<string, number> = {};
+      guarantors.forEach((g) => {
+        const email = g.email.trim().toLowerCase();
+        if (email) guarantorEmailCounts[email] = (guarantorEmailCounts[email] || 0) + 1;
+      });
+
       guarantors.forEach((g, index) => {
         const hasAny = g.name.trim() || g.phone.trim() || g.idNumber.trim();
         if (!hasAny) return;
         if (!g.name.trim()) newErrors[`guarantor-${index}-name`] = 'Required';
         if (!g.phone.match(/^(07|01)[0-9]{8}$/)) newErrors[`guarantor-${index}-phone`] = 'Valid phone required';
-        if (!g.email.trim().match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) newErrors[`guarantor-${index}-email`] = 'Valid email required';
+        const guarantorEmail = g.email.trim().toLowerCase();
+        if (!g.email.trim().match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+          newErrors[`guarantor-${index}-email`] = 'Valid email required';
+        } else if (guarantorEmail === formData.emailAddress.trim().toLowerCase()) {
+          newErrors[`guarantor-${index}-email`] = 'Guarantor email cannot be the same as your own email address';
+        } else if (guarantorEmailCounts[guarantorEmail] > 1) {
+          newErrors[`guarantor-${index}-email`] = 'Each guarantor must have a different email address';
+        }
         if (!g.idNumber.match(/^[0-9]{7,8}$/)) newErrors[`guarantor-${index}-idNumber`] = 'Valid ID required';
         if (!g.amountOffered || Number(g.amountOffered) <= 0) newErrors[`guarantor-${index}-amountOffered`] = 'Required';
         if (!g.signatureName.trim()) newErrors[`guarantor-${index}-signatureName`] = 'Signature required';
@@ -964,7 +981,6 @@ export function LoanApplication() {
             </div>
           </div>
 
-          <div className="xl:grid xl:grid-cols-2 xl:gap-x-12 xl:items-start">
           <div className="border-t-2 border-[#6B9E4D] pt-8">
             <SectionHeading eyebrow="Step 7" title="Witnessed By" />
             <div className="space-y-4">
@@ -1056,7 +1072,6 @@ export function LoanApplication() {
               </div>
               {errors.terms && <p className="text-base lg:text-lg text-red-500">{errors.terms}</p>}
             </div>
-          </div>
           </div>
 
           <div className="flex justify-center pt-4">

@@ -23,6 +23,7 @@ async function notifyAdminOfRegistration(applicantName: string, registrationType
 // so the admin email gives staff everything needed to review, not just a
 // name and a total.
 async function notifyLoanApplicationSubmitted(payload: {
+  loanRegistrationId: string | number;
   loanee: { name: string; nationalId: string; phone: string; email: string };
   loan: {
     products: string[];
@@ -31,7 +32,7 @@ async function notifyLoanApplicationSubmitted(payload: {
     termMonths: string | number;
     purpose: string;
   };
-  guarantors: Array<{ name: string; email: string; amountOffered: string }>;
+  guarantors: Array<{ name: string; email: string; idNumber: string; amountOffered: string }>;
 }) {
   try {
     await fetch('/api/notify-loan-application', {
@@ -48,18 +49,28 @@ async function notifyLoanApplicationSubmitted(payload: {
 // Adult Member Registration
 // =====================================================================
 
+interface Beneficiary {
+  fullName: string;
+  relationship: string;
+  dateOfBirth: string;
+  gender: string;
+  percentage: number;
+}
+
 interface MemberRegistrationInput {
   formData: Record<string, string>;
+  beneficiaries: Beneficiary[];
   files: {
     passportPhoto?: File;
     nationalIdCopy?: File;
     kraCertificate?: File;
+    nextOfKinIdCopy?: File;
   };
 }
 
-export async function submitMemberRegistration({ formData, files }: MemberRegistrationInput) {
+export async function submitMemberRegistration({ formData, beneficiaries, files }: MemberRegistrationInput) {
   // Upload in a fixed, predictable order so doc_1/doc_2/... always mean the same thing.
-  const orderedFiles = [files.passportPhoto, files.nationalIdCopy, files.kraCertificate].filter(
+  const orderedFiles = [files.passportPhoto, files.nationalIdCopy, files.kraCertificate, files.nextOfKinIdCopy].filter(
     (f): f is File => Boolean(f)
   );
 
@@ -70,6 +81,7 @@ export async function submitMemberRegistration({ formData, files }: MemberRegist
   const passportPhotoPath = files.passportPhoto ? paths[i++] : null;
   const nationalIdCopyPath = files.nationalIdCopy ? paths[i++] : null;
   const kraCertificatePath = files.kraCertificate ? paths[i++] : null;
+  const nextOfKinIdCopyPath = files.nextOfKinIdCopy ? paths[i++] : null;
 
   const { data, error } = await supabase
     .from('member_registration')
@@ -100,6 +112,22 @@ export async function submitMemberRegistration({ formData, files }: MemberRegist
 
       group_name: formData.groupName,
 
+      // Next of kin - required document on the paper form (Appendix II, item 3)
+      // and its own dedicated section, but previously had no home in this table
+      // or the web form at all.
+      next_of_kin_name: formData.nextOfKinName,
+      next_of_kin_relationship: formData.nextOfKinRelationship,
+      next_of_kin_phone: formData.nextOfKinPhone,
+      next_of_kin_id_no: formData.nextOfKinIdNo,
+      next_of_kin_id_copy_path: nextOfKinIdCopyPath,
+
+      // Beneficiary nomination table from the paper form - stored as JSONB,
+      // same pattern as `signatories` below in corporate registration and
+      // `guarantors`/`witness` in loan_registration. Percentages are the
+      // applicant's responsibility to sum to 100 (validated client-side);
+      // not enforced at the DB level here.
+      beneficiaries,
+
       applicant_signature_name: formData.applicantSignatureName,
       witness_name: formData.witnessName,
       witness_membership_no: formData.witnessMembershipNo,
@@ -115,7 +143,7 @@ export async function submitMemberRegistration({ formData, files }: MemberRegist
   if (error) {
     // Registration failed after files were already uploaded - clean up
     // rather than leaving them orphaned, so a corrected retry starts fresh.
-    await deleteDocuments([passportPhotoPath, nationalIdCopyPath, kraCertificatePath]);
+    await deleteDocuments([passportPhotoPath, nationalIdCopyPath, kraCertificatePath, nextOfKinIdCopyPath]);
     throw new Error(`Registration failed: ${error.message}`);
   }
 
@@ -209,6 +237,7 @@ interface CorporateRegistrationInput {
     signatoryPhotos: File[];
     registrationCertificate?: File;
     byLaws?: File;
+    patronEndorsement?: File;
   };
 }
 
@@ -217,13 +246,16 @@ export async function submitCorporateRegistration({ formData, isChurchGroup, sig
   const uniqueId = Date.now().toString();
   const displayName = formData.registeredGroupName;
 
-  const singleFiles = [files.memberList, files.registrationCertificate, files.byLaws].filter((f): f is File => Boolean(f));
+  const singleFiles = [files.memberList, files.registrationCertificate, files.byLaws, files.patronEndorsement].filter(
+    (f): f is File => Boolean(f)
+  );
   const singlePaths = await uploadDocuments('Registration', displayName, uniqueId, singleFiles);
 
   let i = 0;
   const memberListPath = files.memberList ? singlePaths[i++] : null;
   const registrationCertificatePath = files.registrationCertificate ? singlePaths[i++] : null;
   const byLawsPath = files.byLaws ? singlePaths[i++] : null;
+  const patronEndorsementPath = files.patronEndorsement ? singlePaths[i++] : null;
 
   // Signatory ID copies and photos are uploaded in their own sub-batches so
   // their doc_N numbering doesn't collide with the single files above.
@@ -253,6 +285,7 @@ export async function submitCorporateRegistration({ formData, isChurchGroup, sig
       signatory_photos: signatoryPhotos,
       registration_certificate_path: registrationCertificatePath,
       by_laws_path: byLawsPath,
+      patron_endorsement_path: patronEndorsementPath,
 
       is_kyc_submitted: true,
     });
@@ -262,6 +295,7 @@ export async function submitCorporateRegistration({ formData, isChurchGroup, sig
       memberListPath,
       registrationCertificatePath,
       byLawsPath,
+      patronEndorsementPath,
       ...signatoryIdPaths,
       ...signatoryPhotoPaths,
     ]);
@@ -356,11 +390,14 @@ export async function submitLoanApplication({ memberId, formData, loanProducts, 
         relationship: formData.witnessRelationship,
         signatureName: formData.witnessSignatureName,
       },
-    });
+    })
+    .select('id')
+    .single();
 
   if (error) throw new Error(`Loan application failed: ${error.message}`);
 
   await notifyLoanApplicationSubmitted({
+    loanRegistrationId: data.id,
     loanee: {
       name: formData.fullName,
       nationalId: formData.nationalId,
@@ -374,7 +411,10 @@ export async function submitLoanApplication({ memberId, formData, loanProducts, 
       termMonths: formData.repayableMonths,
       purpose: [formData.loanPurpose1, formData.loanPurpose2, formData.loanPurpose3].filter(Boolean).join('; '),
     },
-    guarantors: guarantors.map((g) => ({ name: g.name, email: g.email, amountOffered: g.amountOffered })),
+    // idNumber is required here (not just name/email/amountOffered as
+    // before) - the guarantor response flow uses it as the second
+    // verification factor when someone opens their emailed link.
+    guarantors: guarantors.map((g) => ({ name: g.name, email: g.email, idNumber: g.idNumber, amountOffered: g.amountOffered })),
   });
 
   return data;

@@ -14,6 +14,7 @@ import { handleChatRequest } from './api/_lib/chatHandler.js';
 import { handleContactRequest } from './api/_lib/contactHandler.js';
 import { sendRegistrationNotification } from './api/_lib/notifyHandler.js';
 import { sendLoanApplicationNotification } from './api/_lib/loanNotifyHandler.js';
+import { getGuarantorResponseDetails, submitGuarantorResponse } from './api/_lib/guarantorResponseHandler.js';
 
 // Dev-only middleware that calls the SAME handleChatRequest() used by
 // api/chat.js in production, so the chatbot works under plain `npm run dev`
@@ -214,10 +215,117 @@ function notifyLoanDevProxy(env: Record<string, string>): Plugin {
   };
 }
 
+// Dev-only middleware mirroring api/guarantor-response-details.js. Read-only
+// (fetches the snapshot a guarantor sees before deciding), so unlike the
+// other proxies it needs no Gmail credentials - only Supabase, via
+// getSupabaseAdmin() reading process.env directly (see the
+// Object.assign(process.env, env) call below defineConfig - that's what
+// makes SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY reachable here at all).
+function guarantorResponseDetailsDevProxy(): Plugin {
+  return {
+    name: 'guarantor-response-details-dev-proxy',
+    apply: 'serve',
+    configureServer(server) {
+      server.middlewares.use('/api/guarantor-response-details', async (req, res) => {
+        if (req.method !== 'POST') {
+          res.statusCode = 405;
+          res.end(JSON.stringify({ error: 'Method not allowed' }));
+          return;
+        }
+
+        let body = '';
+        req.on('data', (chunk) => {
+          body += chunk;
+        });
+
+        req.on('end', async () => {
+          try {
+            const { token } = JSON.parse(body || '{}');
+            const details = await getGuarantorResponseDetails(token);
+
+            res.setHeader('Content-Type', 'application/json');
+            res.statusCode = 200;
+            res.end(JSON.stringify(details));
+          } catch (error: any) {
+            console.error('[guarantor-response-details-dev-proxy] error:', error);
+            res.statusCode = error?.status || 500;
+            res.end(JSON.stringify({ error: error?.message || 'Failed to load this request' }));
+          }
+        });
+      });
+    },
+  };
+}
+
+// Dev-only middleware mirroring api/guarantor-response-submit.js, same
+// reasoning as the proxies above. Needs Gmail credentials too, since a
+// successful submission emails the loanee and SHG office.
+function guarantorResponseSubmitDevProxy(env: Record<string, string>): Plugin {
+  return {
+    name: 'guarantor-response-submit-dev-proxy',
+    apply: 'serve',
+    configureServer(server) {
+      server.middlewares.use('/api/guarantor-response-submit', async (req, res) => {
+        if (req.method !== 'POST') {
+          res.statusCode = 405;
+          res.end(JSON.stringify({ error: 'Method not allowed' }));
+          return;
+        }
+
+        let body = '';
+        req.on('data', (chunk) => {
+          body += chunk;
+        });
+
+        req.on('end', async () => {
+          try {
+            const parsedBody = JSON.parse(body || '{}');
+
+            const gmailUser = env.GMAIL_USER;
+            const gmailAppPassword = env.GMAIL_APP_PASSWORD;
+            if (!gmailUser || !gmailAppPassword) {
+              console.error(
+                '[guarantor-response-submit-dev-proxy] GMAIL_USER or GMAIL_APP_PASSWORD is not set. Add both to .env.local, no VITE_ prefix, then restart `npm run dev`.'
+              );
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: 'Notification service is not configured' }));
+              return;
+            }
+
+            const result = await submitGuarantorResponse(parsedBody, { gmailUser, gmailAppPassword });
+
+            res.setHeader('Content-Type', 'application/json');
+            res.statusCode = 200;
+            res.end(JSON.stringify(result));
+          } catch (error: any) {
+            console.error('[guarantor-response-submit-dev-proxy] error:', error);
+            res.statusCode = error?.status || 500;
+            res.end(JSON.stringify({ error: error?.message || 'Failed to submit your response' }));
+          }
+        });
+      });
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => {
   // Loads .env / .env.local without the VITE_ prefix restriction, for server-only use
   // inside this config file. This value never reaches client-side code.
   const env = loadEnv(mode, process.cwd(), '');
+
+  // Everything above reads its credentials by explicitly destructuring them
+  // off `env` and passing them as function arguments (env.GMAIL_USER, etc.) -
+  // that pattern works fine for those handlers. But supabaseAdmin.js and
+  // guarantorTokens.js read process.env.SUPABASE_URL / .SUPABASE_SERVICE_ROLE_KEY
+  // / .GUARANTOR_TOKEN_SECRET directly, the same way they do in real Vercel
+  // production (where env vars are injected into process.env ambiently).
+  // Without this line, `env` stays a local variable that those two files can
+  // never see, no matter what's correctly sitting in .env.local - which is
+  // exactly what caused "SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is not
+  // set on the server" even with a correct .env.local. This line makes local
+  // dev match production's ambient process.env behavior instead of adding
+  // yet another explicit-parameter path for just these three vars.
+  Object.assign(process.env, env);
 
   return {
     plugins: [
@@ -227,6 +335,8 @@ export default defineConfig(({ mode }) => {
       contactDevProxy(env),
       notifyRegistrationDevProxy(env),
       notifyLoanDevProxy(env),
+      guarantorResponseDetailsDevProxy(),
+      guarantorResponseSubmitDevProxy(env),
     ],
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
