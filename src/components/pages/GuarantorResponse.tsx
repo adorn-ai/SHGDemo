@@ -5,6 +5,7 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { CheckCircle2, XCircle, AlertCircle, Loader2, ShieldCheck } from 'lucide-react';
+import shgLogo from '../../assets/shg-logo.png';
 
 interface LoanSummary {
   loaneeName: string;
@@ -22,10 +23,33 @@ interface ResponseDetails {
   expiresAt: string;
 }
 
+// This page lives outside the normal site layout (no navbar/footer - see
+// Routes.tsx), since guarantors arrive here cold from an email link
+// rather than by browsing the site. Without that layout's usual
+// branding, a bare page asking someone to accept a financial obligation
+// can look uncomfortably close to a phishing page, especially to a
+// less tech-familiar guarantor. This small header is the one piece of
+// visual anchoring to the real organization that carries across every
+// state below (loading, error, the form, and success).
+function PageHeader() {
+  return (
+    <div className="flex items-center justify-center gap-3 mb-8">
+      <img src={shgLogo} alt="St Gabriel Catholic Church SHG" className="h-12 w-auto object-contain" />
+      <div className="text-left">
+        <p className="text-[#16210E] font-bold leading-tight">St Gabriel Catholic Church SHG</p>
+        <p className="text-sm text-gray-500 leading-tight">Save &middot; Borrow &middot; Grow</p>
+      </div>
+    </div>
+  );
+}
+
 function Centered({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[#FAF9F5] font-sans flex items-center justify-center px-4 py-16">
-      <div className="max-w-lg w-full">{children}</div>
+      <div className="max-w-lg w-full">
+        <PageHeader />
+        {children}
+      </div>
     </div>
   );
 }
@@ -158,6 +182,7 @@ export function GuarantorResponse() {
   return (
     <div className="min-h-screen bg-[#FAF9F5] font-sans py-12 md:py-20">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <PageHeader />
         <div className="text-center mb-8">
           <p className="text-base tracking-[0.2em] uppercase text-[#237A17] mb-2">Guarantorship Request</p>
           <h1 className="text-3xl md:text-4xl text-[#16210E] font-bold uppercase">Review & Respond</h1>

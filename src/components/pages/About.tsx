@@ -33,6 +33,7 @@ const LEADERS: Leader[] = [
     name: 'Raphael Kabando',
     role: 'Vice-Chairman \u00b7 Chairman, Capacity Building, Strategy and Development Committee',
     image: raphaelKabando,
+    bio: 'A socio-economist specialising in economic planning; institutional development; project planning, M&E; governance; among others.',
   },
   {
     name: 'Josephine Njau',

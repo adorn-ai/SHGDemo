@@ -171,7 +171,7 @@ export function Landing() {
 
     // Figures from the Strategic Plan 2026-2030 (FY2025 baseline):
     // 376 active members, KES 87,228,750 share capital, KES 19,381,000 loans issued in 2025
-    const targets = { members: 376, savings: 87228750, loans: 19381000 };
+    const targets = { members: 400, savings: 96076467, loans: 19381000 };
     const duration = 2000;
     const steps = 60;
     const increment = {

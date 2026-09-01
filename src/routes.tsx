@@ -10,6 +10,7 @@ import { MemberRegistration } from './components/pages/MemberRegistration';
 import { MinorRegistration } from './components/pages/MinorRegistration';
 import { Register } from './components/pages/Register';
 import { LoanApplication } from './components/pages/LoanApplication';
+import { GuarantorResponse } from './components/pages/GuarantorResponse';
 import { AdminLogin } from './components/admin/AdminLogin';
 import { AdminLayout } from './components/admin/AdminLayout';
 import { Dashboard } from './components/admin/Dashboard';
@@ -47,6 +48,18 @@ export const router = createBrowserRouter([
       { path: 'register-corporate', Component: CorporateRegistration },
       { path: 'apply-loan', Component: LoanApplication },
     ],
+  },
+
+  // Guarantor Response (standalone, no navbar/footer) - reached via the
+  // accept/reject button in a guarantor's notification email (see
+  // loanNotifyHandler.js). Deliberately outside the Root layout: this is
+  // a single-purpose action page for someone arriving cold from an email
+  // link, often not otherwise browsing the site, so it isn't wrapped in
+  // site navigation the way ordinary pages are - same reasoning as
+  // AdminLogin below being standalone.
+  {
+    path: '/guarantor-response',
+    Component: GuarantorResponse,
   },
 
   // Admin Login (standalone, no layout)

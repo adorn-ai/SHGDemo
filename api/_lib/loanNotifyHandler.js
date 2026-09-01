@@ -241,10 +241,26 @@ export async function sendLoanApplicationNotification(body, { gmailUser, gmailAp
             day: 'numeric',
           });
           responseLinkHtml = `
-            <p style="background:#F3F0E8; border-left:4px solid #16210E; padding:14px 18px; margin:20px 0;">
-              <strong>Please respond to this request:</strong><br>
-              <a href="${link}" style="color:#16210E; font-weight:bold;">Accept or Reject This Guarantorship</a><br>
+            <p style="margin: 20px 0 12px;"><strong>Please respond to this request:</strong></p>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 16px;">
+              <tr>
+                <td align="center" bgcolor="#B00117" style="border-radius: 6px;">
+                  <a href="${link}"
+                     target="_blank"
+                     style="display: inline-block; padding: 18px 36px; font-size: 20px; font-weight: bold;
+                            color: #FFFFFF; background-color: #B00117; border-radius: 6px; text-decoration: none;
+                            font-family: Arial, sans-serif;">
+                    ACCEPT OR REJECT THIS LOAN GUARANTEE
+                  </a>
+                </td>
+              </tr>
+            </table>
+            <p style="background:#F3F0E8; border-left:4px solid #16210E; padding:14px 18px; margin:0 0 20px; font-size: 15px;">
               You'll be asked to confirm your National ID on that page. This link expires on <strong>${expiryDate}</strong>.
+            </p>
+            <p style="font-size: 13px; color: #666666; margin: 0 0 20px;">
+              If the button above doesn't work, copy and paste this link into your browser:<br>
+              <a href="${link}" style="color:#16210E; word-break: break-all;">${link}</a>
             </p>
           `;
         }
