@@ -2,8 +2,6 @@ import { useRef, useEffect, useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import { Button } from '../ui/button';
 import { UserPlus, Baby, Building2, CheckCircle2, FileEdit, Download } from 'lucide-react';
-import { ImageWithFallback } from '../figma/ImageWithFallback';
-import registerHeroPhoto from '../../assets/church-building.jpg';
 
 // Scroll-triggered fade/slide-in wrapper, matching the entrance treatment used
 // site-wide (Landing, About) so this page feels like part of the same product.
@@ -141,21 +139,15 @@ function AccountCard({ account, delayMs }: { account: AccountType; delayMs: numb
 export function Register() {
   return (
     <div className="min-h-screen bg-[#FAF9F5] font-sans">
-      {/* Hero - background photo with dark overlay, matching About/Products */}
-      <section className="relative bg-[#16210E] text-[#FAF9F5] py-20 md:py-28 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <ImageWithFallback
-            src={registerHeroPhoto}
-            alt="St Gabriel Catholic Church"
-            className="w-full h-full object-cover object-[center_30%] opacity-25"
-          />
-        </div>
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* Header */}
+      <section className="pt-10 pb-8 md:pt-12 md:pb-10">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Reveal>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl mb-6 font-bold uppercase leading-tight">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl mb-5 font-bold uppercase leading-tight text-[#16210E]">
               Choose How You'd Like to Join
             </h1>
-            <p className="text-gray-200 text-base lg:text-lg max-w-2xl mx-auto">
+            <div className="w-14 h-1 bg-[#237A17] mx-auto mb-5" />
+            <p className="text-gray-600 text-base lg:text-lg">
               St Gabriel Catholic Church SHG offers three types of membership. Pick the one that fits you, apply
               online in minutes, or download the form to fill by hand.
             </p>
@@ -166,7 +158,7 @@ export function Register() {
       {/* Larger, more generous card layout on big screens: wider max-width
           container, bigger gaps, and a cap so cards don't stretch absurdly
           wide on ultrawide monitors while still using the freed-up space. */}
-      <section className="py-16 md:py-24">
+      <section className="py-10 md:py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-3 gap-10 lg:gap-14 xl:gap-16">
             {ACCOUNT_TYPES.map((account, index) => (

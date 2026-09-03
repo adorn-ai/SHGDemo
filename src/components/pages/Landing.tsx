@@ -11,7 +11,6 @@ import {
 import { targetArrow } from '@lucide/lab';
 import { useEffect, useRef, useState, Fragment, type ReactNode } from 'react';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
-import shgLogo from '../../assets/shg-logo.png';
 import caritasLogo from '../../assets/caritas-logo.png';
 import whyJoinUsPhoto from '../../assets/why-join-us.jpg';
 import heroCarouselPhoto1 from '../../assets/group-photo.jpg';
@@ -171,7 +170,7 @@ export function Landing() {
 
     // Figures from the Strategic Plan 2026-2030 (FY2025 baseline):
     // 376 active members, KES 87,228,750 share capital, KES 19,381,000 loans issued in 2025
-    const targets = { members: 400, savings: 96076467, loans: 19381000 };
+    const targets = { members: 376, savings: 87228750, loans: 19381000 };
     const duration = 2000;
     const steps = 60;
     const increment = {
@@ -292,9 +291,9 @@ export function Landing() {
           Top padding trimmed (was py-24/36 symmetric) now that the eyebrow
           label above the headline is gone sitewide - brings the headline up
           into that space while keeping the original bottom spacing. */}
-      <section className="relative bg-[#2D5016] text-white pt-14 md:pt-20 pb-24 md:pb-36 overflow-hidden">
+      <section className="relative bg-[#2D5016] text-white pt-14 md:pt-20 pb-20 md:pb-28 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <HeroBackgroundCarousel images={HERO_BG_IMAGES} intervalMs={1500} />
+          <HeroBackgroundCarousel images={HERO_BG_IMAGES} intervalMs={3000} />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -329,7 +328,7 @@ export function Landing() {
       </section>
 
       {/* Mission, Vision & Values */}
-      <section className="py-20 md:py-28 xl:py-32 bg-[#FAF9F5]">
+      <section className="py-14 md:py-20 xl:py-24 bg-[#FAF9F5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="text-3xl md:text-4xl mb-14 text-[#16210E] max-w-lg font-semibold uppercase">
@@ -337,7 +336,7 @@ export function Landing() {
             </h2>
           </Reveal>
 
-          <div className="grid md:grid-cols-2 gap-8 mb-16">
+          <div className="grid md:grid-cols-2 gap-8 mb-10">
             <Reveal className="rounded-lg border-2 border-[#C41230]/30 hover:border-[#C41230] bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-8 md:p-10">
               <Eye className="text-[#237A17] mb-4" size={36} strokeWidth={1.5} />
               <h3 className="text-2xl mb-3 text-[#16210E] font-semibold">Our Vision</h3>
@@ -350,8 +349,8 @@ export function Landing() {
             </Reveal>
           </div>
 
-          <Reveal className="pt-10 border-t border-gray-200">
-            <h3 className="text-xl lg:text-2xl mb-8 text-[#16210E] font-bold uppercase">Our Values</h3>
+          <Reveal className="pt-6 border-t border-gray-200">
+            <h3 className="text-xl lg:text-2xl mb-6 text-[#16210E] font-bold uppercase">Our Values</h3>
             <div className="flex flex-wrap justify-center gap-6">
               {VALUES.map((value, index) => (
                 <Reveal
@@ -371,7 +370,7 @@ export function Landing() {
       </section>
 
       {/* Stats - kept dark for contrast, but on the new near-black rather than forest green */}
-      <section ref={statsRef} className="py-20 bg-[#16210E] text-[#FAF9F5]">
+      <section ref={statsRef} className="py-14 md:py-16 bg-[#16210E] text-[#FAF9F5]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-3 gap-10 text-center">
             {[
@@ -393,10 +392,10 @@ export function Landing() {
       </section>
 
       {/* How It Works - process-flow journey, 5 steps */}
-      <section className="py-20 md:py-28 bg-[#FAF9F5]">
+      <section className="py-14 md:py-20 bg-[#FAF9F5]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
-            <h2 className="text-3xl md:text-4xl mb-16 text-[#16210E] text-center font-semibold uppercase">How It Works</h2>
+            <h2 className="text-3xl md:text-4xl mb-10 text-[#16210E] text-center font-semibold uppercase">How It Works</h2>
           </Reveal>
 
           {/* Desktop/tablet: circular badges connected by bold arrows - a real journey path, not a static grid */}
@@ -441,7 +440,7 @@ export function Landing() {
       {/* Why Join Us (formerly Member Benefits) - photo as full section background,
           same overlay treatment as the page heroes, with the accordion sitting on
           top in a translucent dark panel for legibility over the image. */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
+      <section className="relative py-14 md:py-20 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <ImageWithFallback
             src={whyJoinUsPhoto}
@@ -472,7 +471,7 @@ export function Landing() {
       </section>
 
       {/* Testimonials - auto-advancing carousel */}
-      <section className="py-20 md:py-28 bg-[#FAF9F5]">
+      <section className="py-14 md:py-20 bg-[#FAF9F5]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="text-3xl md:text-4xl mb-14 text-[#16210E] text-center font-semibold uppercase">What Our Members Say</h2>
@@ -502,9 +501,8 @@ export function Landing() {
       {/* Footer */}
       <footer className="bg-[#16210E] text-[#FAF9F5] py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-10 mb-10">
+          <div className="grid md:grid-cols-3 gap-x-12 gap-y-10 mb-10 items-start">
             <div>
-              <img src={shgLogo} alt="St Gabriel Catholic Church SHG" className="h-32 w-auto object-contain mb-4" />
               <h3 className="text-xl mb-4 font-bold">St Gabriel Catholic Church SHG</h3>
               <p className="text-gray-300 leading-relaxed text-base">
                 Empowering communities through financial inclusion and collective growth since 2011.
@@ -518,7 +516,7 @@ export function Landing() {
             </div>
             <div>
               <p className="text-base tracking-[0.2em] uppercase text-[#8FBF6B] mb-4">Quick Links</p>
-              <div className="space-y-2 font-sans">
+              <div className="space-y-3 font-sans">
                 <Link to="/about" className="block text-gray-300 hover:text-[#FAF9F5]">About Us</Link>
                 <Link to="/products" className="block text-gray-300 hover:text-[#FAF9F5]">Products</Link>
                 <Link to="/register" className="block text-gray-300 hover:text-[#FAF9F5]">Register</Link>
@@ -528,7 +526,7 @@ export function Landing() {
             </div>
             <div>
               <p className="text-base tracking-[0.2em] uppercase text-[#8FBF6B] mb-4">Contact Us</p>
-              <div className="space-y-2 text-gray-300 font-sans">
+              <div className="space-y-3 text-gray-300 font-sans">
                 <p>St. Gabriel Catholic Church, Thome</p>
                 <p>1st Floor, above PMC Chapel</p>
                 <p>shg@thomecaritasnairobi.org</p>

@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Checkbox } from '../ui/checkbox';
 import { toast } from 'sonner@2.0.3';
 import { verifyMemberByNationalId, submitLoanApplication } from '../../lib/registrationApi';
@@ -193,7 +192,13 @@ export function LoanApplication() {
     const amount = Number(formData.amountRequested);
     if (!amount || amount <= 0) newErrors.amountRequested = 'Loan amount is required';
     if (!formData.amountInWords.trim()) newErrors.amountInWords = 'Amount in words is required';
-    if (!formData.repayableMonths) newErrors.repayableMonths = 'Repayment period is required';
+    if (!formData.repayableMonths) {
+      newErrors.repayableMonths = 'Repayment period is required';
+    } else if (!Number.isInteger(Number(formData.repayableMonths)) || Number(formData.repayableMonths) < 1) {
+      newErrors.repayableMonths = 'Enter a whole number of months';
+    } else if (Number(formData.repayableMonths) > 96) {
+      newErrors.repayableMonths = 'Maximum repayment period is 96 months (8 years)';
+    }
     if (!formData.loanPurpose1.trim()) newErrors.loanPurpose1 = 'At least one loan purpose is required';
 
     if (loanProducts.includes('Emergency Loan') && amount > 100000) {
@@ -210,30 +215,44 @@ export function LoanApplication() {
     if (validGuarantors.length === 0) {
       newErrors.guarantors = 'At least one guarantor is required';
     } else {
-      // Counts how many guarantors share each email address, so the loop
-      // below can flag every entry involved in a duplicate - not just the
-      // second one typed, which would otherwise leave the first, equally
-      // ambiguous entry unmarked.
+      // Frequency maps so every entry involved in a duplicate gets
+      // flagged, not just the second one typed - which would otherwise
+      // leave the first, equally ambiguous entry looking valid.
       const guarantorEmailCounts: Record<string, number> = {};
+      const guarantorIdCounts: Record<string, number> = {};
       guarantors.forEach((g) => {
         const email = g.email.trim().toLowerCase();
         if (email) guarantorEmailCounts[email] = (guarantorEmailCounts[email] || 0) + 1;
+        const id = g.idNumber.trim();
+        if (id) guarantorIdCounts[id] = (guarantorIdCounts[id] || 0) + 1;
       });
+      const loaneeEmail = formData.emailAddress.trim().toLowerCase();
+      const loaneeId = formData.nationalId.trim();
 
       guarantors.forEach((g, index) => {
         const hasAny = g.name.trim() || g.phone.trim() || g.idNumber.trim();
         if (!hasAny) return;
         if (!g.name.trim()) newErrors[`guarantor-${index}-name`] = 'Required';
         if (!g.phone.match(/^(07|01)[0-9]{8}$/)) newErrors[`guarantor-${index}-phone`] = 'Valid phone required';
+
         const guarantorEmail = g.email.trim().toLowerCase();
         if (!g.email.trim().match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
           newErrors[`guarantor-${index}-email`] = 'Valid email required';
-        } else if (guarantorEmail === formData.emailAddress.trim().toLowerCase()) {
+        } else if (guarantorEmail === loaneeEmail) {
           newErrors[`guarantor-${index}-email`] = 'Guarantor email cannot be the same as your own email address';
         } else if (guarantorEmailCounts[guarantorEmail] > 1) {
           newErrors[`guarantor-${index}-email`] = 'Each guarantor must have a different email address';
         }
-        if (!g.idNumber.match(/^[0-9]{7,8}$/)) newErrors[`guarantor-${index}-idNumber`] = 'Valid ID required';
+
+        const guarantorId = g.idNumber.trim();
+        if (!g.idNumber.match(/^[0-9]{7,8}$/)) {
+          newErrors[`guarantor-${index}-idNumber`] = 'Valid ID required';
+        } else if (guarantorId === loaneeId) {
+          newErrors[`guarantor-${index}-idNumber`] = 'Guarantor ID cannot be the same as your own ID number';
+        } else if (guarantorIdCounts[guarantorId] > 1) {
+          newErrors[`guarantor-${index}-idNumber`] = 'Each guarantor must have a different ID number';
+        }
+
         if (!g.amountOffered || Number(g.amountOffered) <= 0) newErrors[`guarantor-${index}-amountOffered`] = 'Required';
         if (!g.signatureName.trim()) newErrors[`guarantor-${index}-signatureName`] = 'Signature required';
       });
@@ -355,8 +374,44 @@ export function LoanApplication() {
     );
   }
 
-  const totalFromGuarantors = guarantors.reduce((sum, g) => sum + (Number(g.amountOffered) || 0), 0);
+  // Same "counts as a real guarantor" rule used in validate() (name +
+  // phone + idNumber all filled in) - previously this summary counted
+  // every guarantor's amountOffered unconditionally, so a guarantor
+  // missing just their ID number (a genuinely easy field to skip past)
+  // would still show up in this total, but silently NOT count toward it
+  // in the real validation a moment later. That mismatch - a confident
+  // "KES 1,100,000" on screen next to a rejection saying "Currently: KES
+  // 350,000" - was confusing with no visible explanation, since the two
+  // numbers were computed two different ways.
+  const validGuarantorsForDisplay = guarantors.filter((g) => g.name.trim() && g.phone.trim() && g.idNumber.trim());
+  const totalFromGuarantors = validGuarantorsForDisplay.reduce((sum, g) => sum + (Number(g.amountOffered) || 0), 0);
   const totalGuaranteed = totalFromGuarantors + (Number(formData.selfGuaranteedAmount) || 0);
+
+  // Missing fields and duplicate ID/email are two genuinely different
+  // problems (previously only the first was detected here, so a
+  // duplicate - everything filled in, just not unique - fell through
+  // to a "missing name, phone, or ID number" message that was simply
+  // wrong for that case). Computed the same way validate() does, so the
+  // hint below always matches what submission will actually reject.
+  const hasMissingGuarantorFields = guarantors.length > validGuarantorsForDisplay.length;
+  const guarantorEmailCountsForDisplay: Record<string, number> = {};
+  const guarantorIdCountsForDisplay: Record<string, number> = {};
+  guarantors.forEach((g) => {
+    const email = g.email.trim().toLowerCase();
+    if (email) guarantorEmailCountsForDisplay[email] = (guarantorEmailCountsForDisplay[email] || 0) + 1;
+    const id = g.idNumber.trim();
+    if (id) guarantorIdCountsForDisplay[id] = (guarantorIdCountsForDisplay[id] || 0) + 1;
+  });
+  const loaneeEmailForDisplay = formData.emailAddress.trim().toLowerCase();
+  const loaneeIdForDisplay = formData.nationalId.trim();
+  const hasDuplicateGuarantorField = guarantors.some((g) => {
+    const email = g.email.trim().toLowerCase();
+    const id = g.idNumber.trim();
+    return (
+      (email && (email === loaneeEmailForDisplay || guarantorEmailCountsForDisplay[email] > 1)) ||
+      (id && (id === loaneeIdForDisplay || guarantorIdCountsForDisplay[id] > 1))
+    );
+  });
 
   return (
     <div className="min-h-screen bg-[#FAF9F5] font-sans py-12 md:py-20">
@@ -702,17 +757,21 @@ export function LoanApplication() {
 
               <div>
                 <Label htmlFor="repayableMonths">Repayable in _____ monthly instalments *</Label>
-                <Select value={formData.repayableMonths} onValueChange={(value) => handleChange('repayableMonths', value)}>
-                  <SelectTrigger className={errors.repayableMonths ? 'border-red-500' : ''}>
-                    <SelectValue placeholder="Select repayment period" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="6">6 months</SelectItem>
-                    <SelectItem value="12">12 months</SelectItem>
-                    <SelectItem value="18">18 months</SelectItem>
-                    <SelectItem value="24">24 months</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Input
+                  id="repayableMonths"
+                  type="number"
+                  min={1}
+                  max={96}
+                  step={1}
+                  value={formData.repayableMonths}
+                  onChange={(e) => handleChange('repayableMonths', e.target.value)}
+                  placeholder="e.g., 12"
+                  className={errors.repayableMonths ? 'border-red-500' : ''}
+                />
+                <p className="text-base lg:text-lg text-gray-500 mt-1">
+                  Enter the number of months, up to the maximum allowed for your selected product(s) - see the
+                  Products page for each product's repayment limit.
+                </p>
                 {errors.repayableMonths && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.repayableMonths}</p>}
               </div>
 
@@ -840,7 +899,7 @@ export function LoanApplication() {
                         />
                       </div>
                       <div>
-                        <Label>Name in Full</Label>
+                        <Label>Name in Full *</Label>
                         <Input
                           value={guarantor.name}
                           onChange={(e) => handleGuarantorChange(index, 'name', e.target.value)}
@@ -849,7 +908,7 @@ export function LoanApplication() {
                         />
                       </div>
                       <div>
-                        <Label>Cell Phone No</Label>
+                        <Label>Cell Phone No *</Label>
                         <Input
                           value={guarantor.phone}
                           onChange={(e) => handleGuarantorChange(index, 'phone', e.target.value)}
@@ -860,7 +919,7 @@ export function LoanApplication() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       <div>
-                        <Label>ID No</Label>
+                        <Label>ID No *</Label>
                         <Input
                           value={guarantor.idNumber}
                           onChange={(e) => handleGuarantorChange(index, 'idNumber', e.target.value)}
@@ -869,7 +928,7 @@ export function LoanApplication() {
                         />
                       </div>
                       <div>
-                        <Label>Email Address</Label>
+                        <Label>Email Address *</Label>
                         <Input
                           type="email"
                           value={guarantor.email}
@@ -889,7 +948,7 @@ export function LoanApplication() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
-                        <Label>Amount Offered (KES)</Label>
+                        <Label>Amount Offered (KES) *</Label>
                         <Input
                           type="number"
                           value={guarantor.amountOffered}
@@ -950,6 +1009,20 @@ export function LoanApplication() {
                         (Shortfall: KES {(Number(formData.amountRequested) - totalGuaranteed).toLocaleString()})
                       </span>
                     )}
+                  </p>
+                )}
+                {hasMissingGuarantorFields && (
+                  <p className="text-base lg:text-lg text-amber-600 mt-2 flex items-start gap-1.5">
+                    <AlertCircle className="shrink-0 mt-0.5" size={16} />
+                    One or more guarantors have an amount entered but are missing their name, phone, or ID
+                    number - their amount won't count toward the total until all three are filled in.
+                  </p>
+                )}
+                {hasDuplicateGuarantorField && (
+                  <p className="text-base lg:text-lg text-red-600 mt-2 flex items-start gap-1.5">
+                    <AlertCircle className="shrink-0 mt-0.5" size={16} />
+                    A guarantor's ID number or email matches your own, or another guarantor's - each person
+                    must have a unique ID and email before you can submit.
                   </p>
                 )}
               </div>

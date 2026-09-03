@@ -1,8 +1,6 @@
 import { Link } from 'react-router';
 import { Button } from '../ui/button';
 import { Building2, HandCoins, AlertTriangle, GraduationCap, Sprout, Church, ArrowRight, UserPlus, Baby, CheckCircle2, Rocket, HeartHandshake, Accessibility } from 'lucide-react';
-import { ImageWithFallback } from '../figma/ImageWithFallback';
-import productsHeroPhoto from '../../assets/products-hero.jpg';
 
 const LOAN_PRODUCTS = [
   {
@@ -227,18 +225,12 @@ const CARD_CLASSES =
 export function Products() {
   return (
     <div className="min-h-screen bg-[#FAF9F5] font-sans">
-      {/* Hero */}
-      <section className="relative bg-[#16210E] text-[#FAF9F5] py-20 md:py-28 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <ImageWithFallback
-            src={productsHeroPhoto}
-            alt="St Gabriel Catholic Church SHG members"
-            className="w-full h-full object-cover opacity-25"
-          />
-        </div>
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl mb-5 font-bold uppercase">Savings & Credit Products</h1>
-          <p className="text-gray-200 text-lg max-w-2xl mx-auto">
+      {/* Header */}
+      <section className="pt-10 pb-8 md:pt-12 md:pb-10">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl mb-5 font-bold uppercase text-[#16210E]">Savings & Credit Products</h1>
+          <div className="w-14 h-1 bg-[#237A17] mx-auto mb-5" />
+          <p className="text-gray-600 text-lg">
             Everything St Gabriel Catholic Church SHG offers members, from regular savings to affordable credit
             for life's needs. Interest on all loans is 1% per month on a reducing balance.
           </p>
@@ -246,7 +238,7 @@ export function Products() {
       </section>
 
       {/* Membership Accounts - what each account type actually gets you */}
-      <section className="py-16 md:py-20 xl:py-24">
+      <section className="py-12 md:py-14 xl:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl xl:text-5xl mb-3 text-[#16210E] font-semibold uppercase max-w-2xl">
             Three ways to save with us.
@@ -314,18 +306,18 @@ export function Products() {
       </section>
 
       {/* Special Loan Products - subsidized-rate products for youth, elderly, and PLWD members */}
-      <section className="py-16 md:py-20 xl:py-24">
+      <section className="py-10 md:py-12 xl:py-14 border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl xl:text-5xl mb-3 text-[#16210E] font-semibold uppercase max-w-2xl">
             Special Loan Products
           </h2>
-          <p className="text-gray-600 text-lg mb-12 xl:mb-16 max-w-2xl">
+          <p className="text-gray-600 text-lg mb-6 xl:mb-8 max-w-2xl">
             In line with Caritas Nairobi's socio-economic empowerment mission, these products offer a subsidized
             0.8% per month rate to remove barriers to credit for youth, elderly, and PLWD members. Each requires
             formal approval from Caritas Nairobi.
           </p>
 
-          <div className="grid md:grid-cols-3 gap-8 lg:gap-10">
+          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
             {SPECIAL_LOAN_PRODUCTS.map((product) => (
               <div key={product.title} className={`${CARD_CLASSES} p-6 lg:p-8`}>
                 <product.icon className="text-[#237A17] mb-3" size={32} strokeWidth={1.5} />
@@ -339,7 +331,7 @@ export function Products() {
       </section>
 
       {/* Product Comparison Table */}
-      <section className="py-16 md:py-20 xl:py-24 border-t border-gray-100">
+      <section className="py-14 md:py-16 xl:py-20 border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl xl:text-5xl mb-3 text-[#16210E] font-semibold uppercase">Product Details at a Glance</h2>
           <p className="text-gray-600 text-lg mb-10 xl:mb-14 max-w-2xl">

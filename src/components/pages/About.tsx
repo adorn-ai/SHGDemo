@@ -4,7 +4,6 @@ import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import faqData from '../../faq.json';
 import caritasLogo from '../../assets/caritas-logo.png';
-import aboutHeroPhoto from '../../assets/group-photo.jpg';
 import ourStoryPhoto from '../../assets/about-hero.jpg';
 import churchPhoto from '../../assets/church-building.jpg';
 import samuelWainaina from '../../assets/board/samuel_wainaina.jpg';
@@ -33,7 +32,6 @@ const LEADERS: Leader[] = [
     name: 'Raphael Kabando',
     role: 'Vice-Chairman \u00b7 Chairman, Capacity Building, Strategy and Development Committee',
     image: raphaelKabando,
-    bio: 'A socio-economist specialising in economic planning; institutional development; project planning, M&E; governance; among others.',
   },
   {
     name: 'Josephine Njau',
@@ -180,35 +178,32 @@ export function About() {
         }
       `}</style>
 
-      {/* Hero */}
-      <section className="relative bg-[#16210E] text-[#FAF9F5] py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <ImageWithFallback
-            src={aboutHeroPhoto}
-            alt="St Gabriel Catholic Church SHG members"
-            className="w-full h-full object-cover opacity-25"
-          />
-        </div>
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* Header */}
+      <section className="pt-10 pb-8 md:pt-12 md:pb-10">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1
-            className="text-5xl md:text-6xl lg:text-7xl mb-8 leading-tight font-bold uppercase opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
+            className="text-4xl md:text-5xl lg:text-6xl mb-5 leading-tight font-bold uppercase text-[#16210E] opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
             style={{ animationDelay: '0ms' }}
           >
-            About St Gabriel<br className="hidden sm:block" /> Catholic Church SHG
+            About St Gabriel Catholic Church SHG
           </h1>
           <div
-            className="flex items-center justify-center gap-4 font-sans text-base text-gray-200 opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
+            className="w-14 h-1 bg-[#237A17] mx-auto mb-5 opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
+            style={{ animationDelay: '100ms' }}
+          />
+          <div
+            className="flex items-center justify-center gap-4 font-sans text-base text-gray-500 opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
             style={{ animationDelay: '200ms' }}
           >
             <span>Est. {faqData.organization.established}</span>
-            <span className="w-px h-4 bg-[#FAF9F5]/30" />
+            <span className="w-px h-4 bg-gray-300" />
             <span>Registered {faqData.organization.registered}</span>
           </div>
         </div>
       </section>
 
       {/* Our Story */}
-      <section className="py-20 md:py-28">
+      <section className="py-14 md:py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
             <Reveal>

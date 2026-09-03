@@ -107,11 +107,11 @@ export function Contact() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] font-sans pt-6 pb-12 md:pt-10 md:pb-16">
+    <div className="min-h-screen bg-[#FAF9F5] font-sans pt-6 pb-10 md:pt-8 md:pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
+        <div className="mb-6">
           <h1 className="text-3xl md:text-4xl lg:text-5xl mb-2 text-[#16210E] font-bold uppercase">Contact Us</h1>
-          <p className="text-gray-600 max-w-xl mx-auto">
+          <p className="text-gray-600 max-w-xl">
             Have a question about membership, savings, or loans? Send us a message and our team will respond
             directly.
           </p>
