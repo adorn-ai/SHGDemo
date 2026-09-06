@@ -247,7 +247,7 @@ export function MemberRegistration() {
           <p className="text-base lg:text-lg text-gray-400 mt-1">Complete all fields marked with *</p>
           <div className="mt-4">
             <a
-              href="/Membership_Application_Form.pdf"
+              href="/MEMBERSHIP APPLICATION FORM (2).pdf"
               download="Membership-Application-Form.pdf"
               className="inline-flex items-center gap-1.5 text-base lg:text-lg text-[#16210E] hover:text-[#237A17] underline underline-offset-4"
             >

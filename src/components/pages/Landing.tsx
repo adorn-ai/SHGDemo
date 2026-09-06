@@ -17,11 +17,20 @@ import heroCarouselPhoto1 from '../../assets/group-photo.jpg';
 import heroCarouselPhoto2 from '../../assets/church-building.jpg';
 import faqData from '../../faq.json';
 
-const HERO_BG_IMAGES = [heroCarouselPhoto1, heroCarouselPhoto2];
+const HERO_BG_IMAGES = [
+  { src: heroCarouselPhoto1, position: 'center 20%' }, // group photo - keep faces in frame, they sit in the upper portion
+  { src: heroCarouselPhoto2, position: 'center 35%' }, // church building - keep the facade/entrance in frame
+];
 
 // Full-bleed background carousel for the hero - crossfades between images on
 // a timer, no arrows/dots/manual controls, just ambient auto-rotation.
-function HeroBackgroundCarousel({ images, intervalMs = 1500 }: { images: string[]; intervalMs?: number }) {
+function HeroBackgroundCarousel({
+  images,
+  intervalMs = 1500,
+}: {
+  images: Array<{ src: string; position?: string }>;
+  intervalMs?: number;
+}) {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -33,14 +42,21 @@ function HeroBackgroundCarousel({ images, intervalMs = 1500 }: { images: string[
 
   return (
     <>
-      {images.map((src, i) => (
+      {images.map((image, i) => (
         <ImageWithFallback
-          key={src}
-          src={src}
+          key={image.src}
+          src={image.src}
           alt="St Gabriel Catholic Church SHG"
+          // object-cover + explicit w-full h-full fills the absolutely-positioned
+          // parent completely at any container size (small or large screens)
+          // without ever stretching/distorting the source photo - the browser
+          // crops to fill instead. object-position is set per-image (not one
+          // shared value) since a group photo and a building photo need
+          // different crop bias to keep their actual subject in frame.
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
             i === index ? 'opacity-30' : 'opacity-0'
           }`}
+          style={{ objectPosition: image.position || 'center' }}
         />
       ))}
     </>
@@ -170,7 +186,7 @@ export function Landing() {
 
     // Figures from the Strategic Plan 2026-2030 (FY2025 baseline):
     // 376 active members, KES 87,228,750 share capital, KES 19,381,000 loans issued in 2025
-    const targets = { members: 376, savings: 87228750, loans: 19381000 };
+    const targets = { members: 376, savings: 87228750, loans: 23065000 };
     const duration = 2000;
     const steps = 60;
     const increment = {
@@ -215,24 +231,24 @@ export function Landing() {
 
   const testimonials = [
     {
-      name: 'Grace Wanjiru',
-      text: 'St Gabriel Catholic Church SHG helped me start my small business. The loan process was smooth and the support from the community has been incredible.',
+      name: 'Hellena Wambui',
+      text: 'St Gabriel Catholic Church SHG helped me sort out my emergencies on time like paying school fees.',
       role: 'Small Business Owner',
     },
     {
-      name: 'Joseph Kimani',
-      text: 'Being part of this SHG has not only helped me financially but also gave me a sense of belonging to a supportive community.',
+      name: 'Michelle Muthoni',
+      text: 'Being part of the Self Help Group hs helped me in being financially responsible while increasing the urge to save more to secure a better future',
+      role: 'Active Youth Member',
+    },
+    {
+      name: 'Kambo Mwangi',
+      text: 'The St Gabriel Catholic Church SHG has encouraged me to save more and a seamless process to depositing your savings',
+      role: 'Active Youth Member',
+    },
+    {
+      name: 'Elizabeth Gitau',
+      text: 'The Self Help Group takes in new members well, while operating and serving the community as one family.',
       role: 'Active Member',
-    },
-    {
-      name: 'Mary Akinyi',
-      text: 'The financial literacy programs and regular savings have transformed how I manage my family finances.',
-      role: 'Member since 2020',
-    },
-    {
-      name: 'Samuel Kariuki',
-      text: 'I financed my motorbike through an emergency loan when I needed it most. The guarantors process felt fair and the group trusted me.',
-      role: 'Boda Boda Operator',
     },
     {
       name: 'Esther Wairimu',
@@ -291,7 +307,7 @@ export function Landing() {
           Top padding trimmed (was py-24/36 symmetric) now that the eyebrow
           label above the headline is gone sitewide - brings the headline up
           into that space while keeping the original bottom spacing. */}
-      <section className="relative bg-[#2D5016] text-white pt-14 md:pt-20 pb-20 md:pb-28 overflow-hidden">
+      <section className="relative bg-[#2D5016] text-white pt-14 md:pt-20 pb-20 md:pb-28 overflow-hidden min-h-[480px] sm:min-h-[540px] md:min-h-[600px] lg:min-h-[680px]">
         <div className="absolute inset-0 z-0">
           <HeroBackgroundCarousel images={HERO_BG_IMAGES} intervalMs={3000} />
         </div>
@@ -331,7 +347,7 @@ export function Landing() {
       <section className="py-14 md:py-20 xl:py-24 bg-[#FAF9F5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
-            <h2 className="text-3xl md:text-4xl mb-14 text-[#16210E] max-w-lg font-semibold uppercase">
+            <h2 className="text-3xl md:text-4xl mb-14 text-[#16210E] font-semibold uppercase">
               Our Mission, Vision & Values
             </h2>
           </Reveal>

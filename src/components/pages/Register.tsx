@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import { Button } from '../ui/button';
-import { UserPlus, Baby, Building2, CheckCircle2, FileEdit, Download } from 'lucide-react';
+import { UserPlus, Baby, Building2, CheckCircle2, FileEdit, Download, MousePointerClick, FolderInput, Search, PartyPopper, ArrowRight } from 'lucide-react';
 
 // Scroll-triggered fade/slide-in wrapper, matching the entrance treatment used
 // site-wide (Landing, About) so this page feels like part of the same product.
@@ -41,7 +41,7 @@ interface AccountType {
   title: string;
   eyebrow: string;
   description: string;
-  benefits: string[];
+  requirements: string[];
   applyHref: string;
   downloadHref: string;
   downloadName: string;
@@ -53,11 +53,11 @@ const ACCOUNT_TYPES: AccountType[] = [
     eyebrow: 'For individuals 18+',
     title: 'Adult Membership',
     description: 'Full membership with savings, voting rights, and access to every loan product we offer.',
-    benefits: [
-      'Entitled to distributable surplus (dividends) on your share contributions',
-      'Eligible for a loan after 6 months of membership, up to 3 times your share contributions',
-      'Vote and guarantee loans for fellow members while your account stays active',
-      "Benevolent Fund support: KES 50,000 paid to your family if you pass away, after 6 months of contributions",
+    requirements: [
+      'Copy of your National ID or Passport',
+      'Copy of your KRA PIN certificate',
+      "Copy of your next of kin's National ID or Passport",
+      'One passport-size photograph',
     ],
     applyHref: '/register',
     downloadHref: '/MEMBERSHIP APPLICATION FORM (2).pdf',
@@ -68,14 +68,14 @@ const ACCOUNT_TYPES: AccountType[] = [
     eyebrow: 'Opened by a parent or guardian',
     title: 'Minor Savings Account',
     description: "A savings-only account opened on a child's behalf, operated by a member parent or guardian.",
-    benefits: [
-      'Pure savings account with a minimum monthly contribution of KES 300',
-      'Entitled to distributable surplus (dividends), the same as adult accounts',
-      "Can be used to guarantee a guardian's loan for the minor's school fees or hospital bills only",
-      'The parent or guardian serves as next of kin for this account',
+    requirements: [
+      "Copy of the guardian's National ID or Passport, and of the next of kin's",
+      "Copy of the minor's Birth Certificate, Notification of Birth, or Baptism Card",
+      'Passport-size photograph of both the minor and the guardian',
+      'Signatures from the guardian and a witness on the application',
     ],
     applyHref: '/register-minor',
-    downloadHref: '/Minor_Savings_Account_Application_Form.pdf',
+    downloadHref: '/New Minor Savings Application Form (1).pdf',
     downloadName: 'Minor-Savings-Account-Application-Form.pdf',
   },
   {
@@ -83,15 +83,44 @@ const ACCOUNT_TYPES: AccountType[] = [
     eyebrow: 'For groups & organizations',
     title: 'Corporate Membership',
     description: 'Register a registered group, church body, or organization as a single corporate member.',
-    benefits: [
-      'Group savings and lending under one account',
-      'Access to Development, Business & Church loans',
-      'At least two signatories required per transaction',
-      'Church-affiliated groups include the Parish Priest as signatory',
+    requirements: [
+      'A list of all group members',
+      'Copies of National ID/Passport and passport-size photographs for all signatories',
+      'Copy of your Registration Certificate, where applicable',
+      "Copy of your group's By-laws or Constitution",
+      'Church-affiliated groups must include the Parish Priest as a signatory',
     ],
     applyHref: '/register-corporate',
-    downloadHref: '/Corporate_Membership_Application_Form.pdf',
+    downloadHref: '/New Corporate Application Form (1).pdf',
     downloadName: 'Corporate-Membership-Application-Form.pdf',
+  },
+];
+
+const HOW_TO_JOIN_STEPS = [
+  {
+    icon: MousePointerClick,
+    title: 'Choose Your Membership',
+    description: 'Select the membership option that suits you.',
+  },
+  {
+    icon: FileEdit,
+    title: 'Complete Your Application',
+    description: 'Apply online or download and complete the membership form.',
+  },
+  {
+    icon: FolderInput,
+    title: 'Submit Your Documents',
+    description: 'Provide the required identification and supporting documents.',
+  },
+  {
+    icon: Search,
+    title: 'Verification',
+    description: 'Our team reviews your application and supporting information.',
+  },
+  {
+    icon: PartyPopper,
+    title: 'Start Your Journey',
+    description: 'Once approved, start saving and enjoy the benefits of membership.',
   },
 ];
 
@@ -105,13 +134,14 @@ function AccountCard({ account, delayMs }: { account: AccountType; delayMs: numb
 
         <p className="text-base lg:text-lg tracking-[0.15em] uppercase text-[#237A17] mb-2">{account.eyebrow}</p>
         <h3 className="text-2xl lg:text-3xl mb-4 text-[#16210E] font-bold">{account.title}</h3>
-        <p className="text-lg lg:text-xl text-gray-600 leading-relaxed mb-8">{account.description}</p>
+        <p className="text-lg lg:text-xl text-gray-600 leading-relaxed mb-6">{account.description}</p>
 
+        <p className="text-base tracking-[0.1em] uppercase text-[#16210E] font-bold mb-3">What You'll Need</p>
         <ul className="space-y-4 mb-10 flex-1">
-          {account.benefits.map((benefit) => (
-            <li key={benefit} className="flex items-start gap-3">
+          {account.requirements.map((requirement) => (
+            <li key={requirement} className="flex items-start gap-3">
               <CheckCircle2 className="text-[#237A17] shrink-0 mt-0.5" size={22} strokeWidth={1.5} />
-              <span className="text-base lg:text-lg text-gray-700 leading-relaxed">{benefit}</span>
+              <span className="text-base lg:text-lg text-gray-700 leading-relaxed">{requirement}</span>
             </li>
           ))}
         </ul>
@@ -141,9 +171,9 @@ export function Register() {
     <div className="min-h-screen bg-[#FAF9F5] font-sans">
       {/* Header */}
       <section className="pt-10 pb-8 md:pt-12 md:pb-10">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Reveal>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl mb-5 font-bold uppercase leading-tight text-[#16210E]">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl mb-5 font-bold uppercase leading-tight text-[#16210E] lg:whitespace-nowrap">
               Choose How You'd Like to Join
             </h1>
             <div className="w-14 h-1 bg-[#237A17] mx-auto mb-5" />
@@ -163,6 +193,35 @@ export function Register() {
           <div className="grid md:grid-cols-3 gap-10 lg:gap-14 xl:gap-16">
             {ACCOUNT_TYPES.map((account, index) => (
               <AccountCard key={account.title} account={account} delayMs={index * 120} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-14 md:py-16 border-t border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl md:text-3xl mb-10 text-center text-[#16210E] font-semibold uppercase">How to Join</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 md:gap-4">
+            {HOW_TO_JOIN_STEPS.map((step, index) => (
+              <Reveal key={step.title} delayMs={index * 100} className="relative text-center">
+                {index < HOW_TO_JOIN_STEPS.length - 1 && (
+                  <ArrowRight
+                    className="hidden md:block absolute top-6 -right-2 text-gray-300"
+                    size={18}
+                    strokeWidth={1.5}
+                  />
+                )}
+                <div className="relative w-14 h-14 mx-auto mb-4">
+                  <div className="w-14 h-14 rounded-full bg-[#F3F0E8] flex items-center justify-center">
+                    <step.icon className="text-[#237A17]" size={22} strokeWidth={1.5} />
+                  </div>
+                  <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-[#B00117] text-white text-sm flex items-center justify-center font-bold">
+                    {index + 1}
+                  </span>
+                </div>
+                <p className="text-base lg:text-lg font-bold text-[#16210E] mb-1">{step.title}</p>
+                <p className="text-sm text-gray-600 leading-relaxed">{step.description}</p>
+              </Reveal>
             ))}
           </div>
         </div>

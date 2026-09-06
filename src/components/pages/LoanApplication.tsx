@@ -6,7 +6,7 @@ import { Label } from '../ui/label';
 import { Checkbox } from '../ui/checkbox';
 import { toast } from 'sonner@2.0.3';
 import { verifyMemberByNationalId, submitLoanApplication } from '../../lib/registrationApi';
-import { AlertCircle, CheckCircle, Users, Download, Plus, Trash2, Loader2 } from 'lucide-react';
+import { AlertCircle, CheckCircle, Users, Download, Plus, Trash2, Loader2, IdCard, FileText, ShieldCheck, Info } from 'lucide-react';
 
 const LOAN_PRODUCTS = ['Development Loan', 'Business Loan', 'AgriBusiness Loan', 'Education Loan', 'Emergency Loan', 'Church Loan'];
 
@@ -311,9 +311,9 @@ export function LoanApplication() {
 
   if (step === 1) {
     return (
-      <div className="min-h-screen bg-[#FAF9F5] font-sans pt-8 pb-16 md:pt-12 md:pb-24 flex items-center">
-        <div className="max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl 2xl:max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="text-center mb-10 lg:mb-14">
+      <div className="min-h-screen bg-[#FAF9F5] font-sans pt-8 pb-16 md:pt-12 md:pb-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10 lg:mb-12">
             <p className="text-base lg:text-lg xl:text-xl tracking-[0.2em] uppercase text-[#237A17] mb-3">Caritas Nairobi</p>
             <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl mb-2 text-[#16210E]">Loan Application</h1>
             <p className="text-gray-600 lg:text-lg xl:text-xl">St Gabriel Catholic Church SHG</p>
@@ -329,7 +329,89 @@ export function LoanApplication() {
             </div>
           </div>
 
-          <div className="bg-white border border-gray-200 shadow-sm p-6 sm:p-8 lg:p-12 xl:p-16">
+          {/* Before You Apply - what to have ready, before the ID verification
+              gate below. Sourced from the loan FAQ / By-laws content already
+              established elsewhere on the site, not invented for this page. */}
+          <div className="mb-10 lg:mb-12">
+            <h2 className="text-xl lg:text-2xl text-[#16210E] font-bold uppercase mb-6 text-center">Before You Apply</h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="bg-white border border-gray-200 p-6">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <IdCard className="text-[#237A17]" size={22} strokeWidth={1.5} />
+                  <h3 className="text-lg font-bold text-[#16210E]">Identification & KYC</h3>
+                </div>
+                <ul className="space-y-2">
+                  {['National ID or Passport', 'KRA PIN Certificate'].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-base text-gray-700">
+                      <CheckCircle className="text-[#237A17] shrink-0 mt-0.5" size={16} />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-white border border-gray-200 p-6">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <FileText className="text-[#237A17]" size={22} strokeWidth={1.5} />
+                  <h3 className="text-lg font-bold text-[#16210E]">Loan Application Information</h3>
+                </div>
+                <ul className="space-y-2">
+                  {['Loan amount requested', 'Purpose of the loan', 'Preferred loan repayment period', 'Supporting documents required for your loan type'].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-base text-gray-700">
+                      <CheckCircle className="text-[#237A17] shrink-0 mt-0.5" size={16} />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-white border border-gray-200 p-6">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <Users className="text-[#237A17]" size={22} strokeWidth={1.5} />
+                  <h3 className="text-lg font-bold text-[#16210E]">Guarantors</h3>
+                </div>
+                <ul className="space-y-2">
+                  {['All loans require a 100% guarantee', 'Guarantors as applicable based on your loan product', 'Guarantors must meet the required membership criteria'].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-base text-gray-700">
+                      <CheckCircle className="text-[#237A17] shrink-0 mt-0.5" size={16} />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6 mt-6">
+              <div className="bg-[#F3F0E8] border-l-4 border-[#B00117] p-6">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <ShieldCheck className="text-[#B00117]" size={20} strokeWidth={1.5} />
+                  <h3 className="text-lg font-bold text-[#16210E]">Important Information</h3>
+                </div>
+                <ul className="space-y-2">
+                  {[
+                    'All loans require 100% guarantee.',
+                    "Loan eligibility and the amount approved are subject to your share contributions, credit scoring, affordability assessment, and applicable product requirements.",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-base text-gray-700">
+                      <CheckCircle className="text-[#B00117] shrink-0 mt-0.5" size={16} />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-[#F3F0E8] border-l-4 border-[#16210E] p-6">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <Info className="text-[#16210E]" size={20} strokeWidth={1.5} />
+                  <h3 className="text-lg font-bold text-[#16210E]">Please Note</h3>
+                </div>
+                <p className="text-base text-gray-700 leading-relaxed">
+                  Submitting a loan application does not guarantee approval. The amount approved and applicable
+                  terms are subject to credit scoring, affordability assessment, loan product requirements, and
+                  the Group's approval process.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="max-w-2xl mx-auto bg-white border border-gray-200 shadow-sm p-6 sm:p-8 lg:p-12">
             <div className="border-t-2 border-[#16210E] pt-8">
               <h2 className="text-xl lg:text-2xl xl:text-3xl text-[#16210E] mb-6">Member Verification</h2>
               <div className="space-y-5 lg:space-y-6">
@@ -414,14 +496,14 @@ export function LoanApplication() {
   });
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] font-sans py-12 md:py-20">
+    <div className="min-h-screen bg-[#FAF9F5] font-sans py-10 md:py-14">
       <div className="max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
+        <div className="mb-8">
           <p className="text-base lg:text-lg tracking-[0.2em] uppercase text-[#237A17] mb-3">Caritas Nairobi &middot; Caritas Registered Trustees</p>
           <h1 className="text-3xl md:text-4xl mb-2 text-[#16210E]">Loan Application and Agreement Form</h1>
           <div className="mt-4">
             <a
-              href="/LOAN_APPLICATION_FORM_.pdf"
+              href="/Loan-Application-Form-Digitized.pdf"
               download="Loan-Application-Form.pdf"
               className="inline-flex items-center gap-1.5 text-base lg:text-lg text-[#16210E] hover:text-[#237A17] underline underline-offset-4"
             >

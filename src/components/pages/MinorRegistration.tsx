@@ -212,7 +212,7 @@ export function MinorRegistration() {
           <p className="text-base lg:text-lg text-gray-400 mt-1">Opened on behalf of a minor, operated by a parent/guardian aged 18+</p>
           <div className="mt-4">
             <a
-              href="/Minor_Savings_Account_Application_Form.pdf"
+              href="/New Minor Savings Application Form (1).pdf"
               download="Minor-Savings-Account-Application-Form.pdf"
               className="inline-flex items-center gap-1.5 text-base lg:text-lg text-[#16210E] hover:text-[#237A17] underline underline-offset-4"
             >

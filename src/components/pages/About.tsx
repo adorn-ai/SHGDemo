@@ -180,9 +180,9 @@ export function About() {
 
       {/* Header */}
       <section className="pt-10 pb-8 md:pt-12 md:pb-10">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1
-            className="text-4xl md:text-5xl lg:text-6xl mb-5 leading-tight font-bold uppercase text-[#16210E] opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
+            className="text-3xl md:text-4xl mb-5 leading-tight font-bold uppercase text-[#16210E] lg:whitespace-nowrap opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
             style={{ animationDelay: '0ms' }}
           >
             About St Gabriel Catholic Church SHG

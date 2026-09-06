@@ -78,7 +78,7 @@ interface AccountType {
   eyebrow: string;
   title: string;
   description: string;
-  benefits: string[];
+  requirements: string[];
 }
 
 const ACCOUNT_TYPES: AccountType[] = [
@@ -87,11 +87,11 @@ const ACCOUNT_TYPES: AccountType[] = [
     eyebrow: 'For individuals 18+',
     title: 'Adult Membership',
     description: 'Full membership with savings, voting rights, and access to every loan product we offer.',
-    benefits: [
-      'Entitled to distributable surplus (dividends) on your share contributions',
-      'Eligible for a loan after 6 months of membership, up to 3 times your share contributions',
-      'Vote and guarantee loans for fellow members while your account stays active',
-      'Benevolent Fund support: KES 50,000 paid to your family if you pass away, after 6 months of contributions',
+    requirements: [
+      'Copy of your National ID or Passport',
+      'Copy of your KRA PIN certificate',
+      "Copy of your next of kin's National ID or Passport",
+      'One passport-size photograph',
     ],
   },
   {
@@ -99,11 +99,11 @@ const ACCOUNT_TYPES: AccountType[] = [
     eyebrow: 'Opened by a parent or guardian',
     title: 'Minor Savings Account',
     description: "A savings-only account opened on a child's behalf, operated by a member parent or guardian.",
-    benefits: [
-      'Pure savings account with a minimum monthly contribution of KES 300',
-      'Entitled to distributable surplus (dividends), the same as adult accounts',
-      "Can be used to guarantee a guardian's loan for the minor's school fees or hospital bills only",
-      'The parent or guardian serves as next of kin for this account',
+    requirements: [
+      "Copy of the guardian's National ID or Passport, and of the next of kin's",
+      "Copy of the minor's Birth Certificate, Notification of Birth, or Baptism Card",
+      'Passport-size photograph of both the minor and the guardian',
+      'Signatures from the guardian and a witness on the application',
     ],
   },
   {
@@ -111,11 +111,12 @@ const ACCOUNT_TYPES: AccountType[] = [
     eyebrow: 'For groups & organizations',
     title: 'Corporate Membership',
     description: 'Register a registered group, church body, or organization as a single corporate member.',
-    benefits: [
-      'Group savings and lending under one account',
-      'Access to Development, Business & Church loans',
-      'At least two signatories required per transaction',
-      'Church-affiliated groups include the Parish Priest as signatory',
+    requirements: [
+      'A list of all group members',
+      'Copies of National ID/Passport and passport-size photographs for all signatories',
+      'Copy of your Registration Certificate, where applicable',
+      "Copy of your group's By-laws or Constitution",
+      'Church-affiliated groups must include the Parish Priest as a signatory',
     ],
   },
 ];
@@ -227,8 +228,8 @@ export function Products() {
     <div className="min-h-screen bg-[#FAF9F5] font-sans">
       {/* Header */}
       <section className="pt-10 pb-8 md:pt-12 md:pb-10">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl mb-5 font-bold uppercase text-[#16210E]">Savings & Credit Products</h1>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl mb-5 font-bold uppercase text-[#16210E] lg:whitespace-nowrap">Savings & Credit Products</h1>
           <div className="w-14 h-1 bg-[#237A17] mx-auto mb-5" />
           <p className="text-gray-600 text-lg">
             Everything St Gabriel Catholic Church SHG offers members, from regular savings to affordable credit
@@ -240,7 +241,7 @@ export function Products() {
       {/* Membership Accounts - what each account type actually gets you */}
       <section className="py-12 md:py-14 xl:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl xl:text-5xl mb-3 text-[#16210E] font-semibold uppercase max-w-2xl">
+          <h2 className="text-3xl md:text-4xl xl:text-5xl mb-3 text-[#16210E] font-semibold uppercase">
             Three ways to save with us.
           </h2>
           <p className="text-gray-600 text-lg mb-12 xl:mb-16 max-w-2xl">
@@ -255,11 +256,12 @@ export function Products() {
                 <p className="text-base tracking-[0.15em] uppercase text-[#237A17] mb-1">{account.eyebrow}</p>
                 <h3 className="text-xl lg:text-2xl mb-2 text-[#16210E] font-bold">{account.title}</h3>
                 <p className="text-gray-600 text-base lg:text-lg leading-relaxed mb-4">{account.description}</p>
+                <p className="text-sm tracking-[0.1em] uppercase text-[#16210E] font-bold mb-2">What You'll Need</p>
                 <ul className="space-y-2.5 lg:space-y-3 mb-2 flex-1">
-                  {account.benefits.map((benefit) => (
-                    <li key={benefit} className="flex items-start gap-2.5">
+                  {account.requirements.map((requirement) => (
+                    <li key={requirement} className="flex items-start gap-2.5">
                       <CheckCircle2 className="text-[#237A17] shrink-0 mt-0.5" size={16} strokeWidth={1.5} />
-                      <span className="text-sm lg:text-base text-gray-700 leading-relaxed">{benefit}</span>
+                      <span className="text-sm lg:text-base text-gray-700 leading-relaxed">{requirement}</span>
                     </li>
                   ))}
                 </ul>
@@ -308,13 +310,12 @@ export function Products() {
       {/* Special Loan Products - subsidized-rate products for youth, elderly, and PLWD members */}
       <section className="py-10 md:py-12 xl:py-14 border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl xl:text-5xl mb-3 text-[#16210E] font-semibold uppercase max-w-2xl">
-            Special Loan Products
+          <h2 className="text-3xl md:text-4xl xl:text-5xl mb-3 text-[#16210E] font-semibold uppercase">
+            Special Loan Products (0.8% per month)
           </h2>
           <p className="text-gray-600 text-lg mb-6 xl:mb-8 max-w-2xl">
-            In line with Caritas Nairobi's socio-economic empowerment mission, these products offer a subsidized
-            0.8% per month rate to remove barriers to credit for youth, elderly, and PLWD members. Each requires
-            formal approval from Caritas Nairobi.
+            Special loan terms and approval requirements apply, aimed at removing barriers to credit for youth,
+            elderly, and PLWD members. Each requires formal approval from Caritas Nairobi.
           </p>
 
           <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
