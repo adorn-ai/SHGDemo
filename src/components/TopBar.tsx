@@ -3,7 +3,7 @@ import { Phone, Mail, MapPin } from 'lucide-react';
 
 const CONTACT_ITEMS = [
   { icon: Phone, label: '+254 715 590 028' },
-  { icon: Mail, label: 'shg@thomecaritasnairobi.org' },
+  { icon: Mail, label: 'shg@thome.caritasnairobishp.org' },
   { icon: MapPin, label: 'St. Gabriel Catholic Church, Thome' },
 ];
 

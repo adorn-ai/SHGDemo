@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   }
 
   const gmailUser = process.env.GMAIL_USER;
-  const gmailAppPassword = process.env.GMAIL_APP_PASSWORD; // NOTE: no VITE_ prefix - server-only
+  const gmailAppPassword = process.env.GMAIL_APP_PASSWORD; 
 
   if (!gmailUser || !gmailAppPassword) {
     console.error('GMAIL_USER or GMAIL_APP_PASSWORD is not set on the server');

@@ -11,7 +11,7 @@ export function Navbar() {
 
   const isActive = (path: string) => location.pathname === path;
   const isJoinActive = () =>
-    ["/join", "/register", "/register-minor", "/register-corporate"].includes(location.pathname);
+    ["/register", "/register-member", "/register-minor", "/register-corporate"].includes(location.pathname);
 
   return (
     <>
@@ -68,7 +68,7 @@ export function Navbar() {
                 Products
               </Link>
               <Link
-                to="/join"
+                to="/register"
                 className={`font-bold uppercase tracking-wide border-b-2 pb-1 transition-colors ${
                   isJoinActive()
                     ? "border-[#16210E] text-[#16210E]"
@@ -166,7 +166,7 @@ export function Navbar() {
                 Products
               </Link>
               <Link
-                to="/join"
+                to="/register"
                 className={`block px-3 py-2 border-l-2 font-bold uppercase tracking-wide transition-colors ${
                   isJoinActive()
                     ? "border-[#16210E] bg-[#16210E]/5 text-[#16210E]"

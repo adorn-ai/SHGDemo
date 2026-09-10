@@ -67,7 +67,7 @@ const HEADLINE_WORDS = ['Empowering', 'Communities', 'Through', 'Financial', 'Un
 
 function AnimatedHeadline() {
   return (
-    <h1 className="text-5xl md:text-6xl lg:text-7xl mb-6 drop-shadow-lg leading-tight font-bold">
+    <h1 className="text-4xl md:text-5xl lg:text-6xl mb-4 drop-shadow-lg leading-tight font-bold">
       {HEADLINE_WORDS.map((word, i) => (
         <span
           key={word}
@@ -186,7 +186,7 @@ export function Landing() {
 
     // Figures from the Strategic Plan 2026-2030 (FY2025 baseline):
     // 376 active members, KES 87,228,750 share capital, KES 19,381,000 loans issued in 2025
-    const targets = { members: 376, savings: 87228750, loans: 23065000 };
+    const targets = { members: 440, savings: 96076467, loans: 23065000 };
     const duration = 2000;
     const steps = 60;
     const increment = {
@@ -304,19 +304,21 @@ export function Landing() {
       `}</style>
 
       {/* Hero - intentionally left on the original dark green + gold palette.
-          Top padding trimmed (was py-24/36 symmetric) now that the eyebrow
-          label above the headline is gone sitewide - brings the headline up
-          into that space while keeping the original bottom spacing. */}
-      <section className="relative bg-[#2D5016] text-white pt-14 md:pt-20 pb-20 md:pb-28 overflow-hidden min-h-[480px] sm:min-h-[540px] md:min-h-[600px] lg:min-h-[680px]">
+          Padding and min-height trimmed further - the previous min-h values
+          (420-540px, layered on top of a 3-line 7xl headline + paragraph +
+          buttons) pushed the CTA buttons below the fold on common laptop/
+          mobile viewport heights. No min-h now - the section sizes to its
+          actual content instead of forcing extra empty space. */}
+      <section className="relative bg-[#2D5016] text-white pt-10 md:pt-12 pb-10 md:pb-12 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <HeroBackgroundCarousel images={HERO_BG_IMAGES} intervalMs={3000} />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
           <div className="max-w-3xl">
             <AnimatedHeadline />
             <p
-              className="text-base md:text-lg lg:text-xl mb-8 text-gray-100 max-w-xl opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
+              className="text-base md:text-lg lg:text-xl mb-5 text-gray-100 max-w-xl opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
               style={{ animationDelay: '850ms' }}
             >
               A leading Christian-based financial service provider committed to inclusive, ethical, and
@@ -344,29 +346,29 @@ export function Landing() {
       </section>
 
       {/* Mission, Vision & Values */}
-      <section className="py-14 md:py-20 xl:py-24 bg-[#FAF9F5]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-10 md:py-12 bg-[#FAF9F5]">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
           <Reveal>
-            <h2 className="text-3xl md:text-4xl mb-14 text-[#16210E] font-semibold uppercase">
+            <h2 className="text-3xl md:text-4xl mb-4 text-[#16210E] font-semibold uppercase">
               Our Mission, Vision & Values
             </h2>
           </Reveal>
 
-          <div className="grid md:grid-cols-2 gap-8 mb-10">
-            <Reveal className="rounded-lg border-2 border-[#C41230]/30 hover:border-[#C41230] bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-8 md:p-10">
-              <Eye className="text-[#237A17] mb-4" size={36} strokeWidth={1.5} />
-              <h3 className="text-2xl mb-3 text-[#16210E] font-semibold">Our Vision</h3>
+          <div className="grid md:grid-cols-2 gap-6 mb-4">
+            <Reveal className="rounded-lg border-2 border-[#C41230]/30 hover:border-[#C41230] bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-6 md:p-8">
+              <Eye className="text-[#237A17] mb-3" size={36} strokeWidth={1.5} />
+              <h3 className="text-2xl mb-2 text-[#16210E] font-semibold">Our Vision</h3>
               <p className="text-lg lg:text-xl text-gray-600 leading-relaxed">{faqData.organization.vision}</p>
             </Reveal>
-            <Reveal delayMs={150} className="rounded-lg border-2 border-[#C41230]/30 hover:border-[#C41230] bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-8 md:p-10">
-              <Icon iconNode={targetArrow} className="text-[#237A17] mb-4" size={36} strokeWidth={1.5} />
-              <h3 className="text-2xl mb-3 text-[#16210E] font-semibold">Our Mission</h3>
+            <Reveal delayMs={150} className="rounded-lg border-2 border-[#C41230]/30 hover:border-[#C41230] bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-6 md:p-8">
+              <Icon iconNode={targetArrow} className="text-[#237A17] mb-3" size={36} strokeWidth={1.5} />
+              <h3 className="text-2xl mb-2 text-[#16210E] font-semibold">Our Mission</h3>
               <p className="text-lg lg:text-xl text-gray-600 leading-relaxed">{faqData.organization.mission}</p>
             </Reveal>
           </div>
 
-          <Reveal className="pt-6 border-t border-gray-200">
-            <h3 className="text-xl lg:text-2xl mb-6 text-[#16210E] font-bold uppercase">Our Values</h3>
+          <Reveal className="pt-4 border-t border-gray-200">
+            <h3 className="text-xl lg:text-2xl mb-4 text-[#16210E] font-bold uppercase">Our Values</h3>
             <div className="flex flex-wrap justify-center gap-6">
               {VALUES.map((value, index) => (
                 <Reveal
@@ -386,13 +388,13 @@ export function Landing() {
       </section>
 
       {/* Stats - kept dark for contrast, but on the new near-black rather than forest green */}
-      <section ref={statsRef} className="py-14 md:py-16 bg-[#16210E] text-[#FAF9F5]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section ref={statsRef} className="py-10 md:py-12 bg-[#16210E] text-[#FAF9F5]">
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-10">
           <div className="grid md:grid-cols-3 gap-10 text-center">
             {[
-              { icon: Users, value: `${counts.members}+`, label: 'Active Members', delay: '' },
-              { icon: TrendingUp, value: `KES ${(counts.savings / 1000000).toFixed(1)}M`, label: 'Share Capital (Savings)', delay: 'delay-200' },
-              { icon: CheckCircle, value: `KES ${(counts.loans / 1000000).toFixed(1)}M`, label: 'Loans Disbursed (2025)', delay: 'delay-400' },
+              { icon: Users, value: `${counts.members}`, label: 'Active Members', delay: '' },
+              { icon: TrendingUp, value: `KES ${(counts.savings / 1000000).toFixed(1)}M`, label: 'Share Capital as of June 2026', delay: 'delay-200' },
+              { icon: CheckCircle, value: `KES ${(counts.loans / 1000000).toFixed(1)}M`, label: 'Loans Disbursed from January to June 2026', delay: 'delay-400' },
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -408,10 +410,10 @@ export function Landing() {
       </section>
 
       {/* How It Works - process-flow journey, 5 steps */}
-      <section className="py-14 md:py-20 bg-[#FAF9F5]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-10 md:py-12 bg-[#FAF9F5]">
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-10">
           <Reveal>
-            <h2 className="text-3xl md:text-4xl mb-10 text-[#16210E] text-center font-semibold uppercase">How It Works</h2>
+            <h2 className="text-3xl md:text-4xl mb-6 text-[#16210E] text-center font-semibold uppercase">How It Works</h2>
           </Reveal>
 
           {/* Desktop/tablet: circular badges connected by bold arrows - a real journey path, not a static grid */}
@@ -443,7 +445,7 @@ export function Landing() {
             </Carousel>
           </div>
 
-          <Reveal className="text-center mt-16">
+          <Reveal className="text-center mt-8">
             <Link to="/register">
               <Button size="lg" className="bg-[#16210E] hover:bg-[#237A17] rounded-none">
                 Get Started Today <ArrowRight className="ml-2" size={18} />
@@ -456,7 +458,7 @@ export function Landing() {
       {/* Why Join Us (formerly Member Benefits) - photo as full section background,
           same overlay treatment as the page heroes, with the accordion sitting on
           top in a translucent dark panel for legibility over the image. */}
-      <section className="relative py-14 md:py-20 overflow-hidden">
+      <section className="relative py-10 md:py-12 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <ImageWithFallback
             src={whyJoinUsPhoto}
@@ -465,9 +467,9 @@ export function Landing() {
           />
           <div className="absolute inset-0 bg-[#16210E]/88" />
         </div>
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative z-10 max-w-4xl mx-auto px-6 sm:px-8 lg:px-10">
           <Reveal>
-            <h2 className="text-4xl md:text-5xl mb-12 text-[#FAF9F5] text-center font-semibold uppercase">Why Join Us</h2>
+            <h2 className="text-4xl md:text-5xl mb-6 text-[#FAF9F5] text-center font-semibold uppercase">Why Join Us</h2>
           </Reveal>
           <Reveal delayMs={150}>
             <Accordion type="single" collapsible className="w-full">
@@ -487,18 +489,18 @@ export function Landing() {
       </section>
 
       {/* Testimonials - auto-advancing carousel */}
-      <section className="py-14 md:py-20 bg-[#FAF9F5]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-10 md:py-12 bg-[#FAF9F5]">
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-10">
           <Reveal>
-            <h2 className="text-3xl md:text-4xl mb-14 text-[#16210E] text-center font-semibold uppercase">What Our Members Say</h2>
+            <h2 className="text-3xl md:text-4xl mb-6 text-[#16210E] text-center font-semibold uppercase">What Our Members Say</h2>
           </Reveal>
 
           <Reveal delayMs={150}>
             <Carousel opts={{ align: 'start', loop: true, duration: 25 }} setApi={setTestimonialApi} className="w-full">
               <CarouselContent>
                 {testimonials.map((testimonial, index) => (
-                  <CarouselItem key={index} className="basis-full md:basis-1/2 lg:basis-1/3">
-                    <div className="h-full flex flex-col border-t-2 border-[#6B9E4D] pt-6 px-2">
+                  <CarouselItem key={index} className="basis-full md:basis-1/2 lg:basis-1/3 pl-4">
+                    <div className="h-full flex flex-col rounded-lg border-2 border-[#C41230]/30 hover:border-[#C41230] bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-6">
                       <p className="text-3xl text-[#237A17] leading-none mb-3">&ldquo;</p>
                       <p className="text-lg text-[#16210E] leading-relaxed mb-5 italic flex-1">
                         {testimonial.text}
@@ -515,8 +517,8 @@ export function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-[#16210E] text-[#FAF9F5] py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <footer className="bg-[#16210E] text-[#FAF9F5] py-12">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
           <div className="grid md:grid-cols-3 gap-x-12 gap-y-10 mb-10 items-start">
             <div>
               <h3 className="text-xl mb-4 font-bold">St Gabriel Catholic Church SHG</h3>
@@ -545,7 +547,7 @@ export function Landing() {
               <div className="space-y-3 text-gray-300 font-sans">
                 <p>St. Gabriel Catholic Church, Thome</p>
                 <p>1st Floor, above PMC Chapel</p>
-                <p>shg@thomecaritasnairobi.org</p>
+                <p>shg@thome.caritasnairobishp.org</p>
                 <p>+254 715 590 028</p>
                 <p>Mon-Fri: 8:00 AM - 5:00 PM</p>
                 <p>4th Sunday of the month till 1:00 PM</p>

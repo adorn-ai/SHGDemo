@@ -1,22 +1,3 @@
-// Shared between api/notify-loan-application.js (Vercel prod) and the Vite
-// dev-server proxy (vite.config.mts) - same dev/prod-parity pattern as the
-// other handlers in this folder.
-//
-// Sends three kinds of email once a loan application is successfully saved:
-//   1. To the SHG office - full loanee details, full loan details, and
-//      every guarantor, so staff have everything needed to review without
-//      needing to open the Admin Portal first.
-//   2. To the loanee (applicant) - a confirmation summarizing what was
-//      submitted.
-//   3. To each guarantor with a valid email AND national ID on file - a
-//      notice of what they're guaranteeing, PLUS a signed, time-limited
-//      link to accept or reject the guarantorship. Sending this link
-//      also creates the guarantor_response row it points to (status
-//      'pending') - see guarantorResponseHandler.js for what happens
-//      when the guarantor actually uses it.
-// Uses the same Gmail SMTP setup as the contact form and registration
-// notifications (GMAIL_USER / GMAIL_APP_PASSWORD).
-
 import nodemailer from 'nodemailer';
 import { getSupabaseAdmin } from './supabaseAdmin.js';
 import { signGuarantorToken, TOKEN_EXPIRY_DAYS } from './guarantorTokens.js';
@@ -26,11 +7,7 @@ import { signGuarantorToken, TOKEN_EXPIRY_DAYS } from './guarantorTokens.js';
 const ADMIN_EMAIL = 'shg@thome.caritasnairobishp.org';
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Base URL used to build the guarantor response link. Prefer an explicit
-// env var (set this in Vercel) over hardcoding a domain here - falls
-// back to the current known production URL only so local/preview
-// testing isn't silently blocked if the env var is missing, but you
-// should set SITE_URL explicitly rather than relying on the fallback.
+// this url should be changed during production
 const SITE_URL = process.env.SITE_URL || 'https://shg-demo.vercel.app';
 
 function createTransporter(gmailUser, gmailAppPassword) {

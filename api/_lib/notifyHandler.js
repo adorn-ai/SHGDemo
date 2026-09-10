@@ -1,12 +1,3 @@
-// Shared between api/notify-registration.js (Vercel prod) and the Vite
-// dev-server proxy (vite.config.mts) - same dev/prod-parity pattern as
-// api/_lib/chatHandler.js and api/_lib/contactHandler.js.
-//
-// Sends a short heads-up email to the SHG admin address whenever someone
-// submits a new membership application, so staff know to check the Admin
-// Portal and verify the applicant's details. Uses the same Gmail SMTP setup
-// as the contact form (GMAIL_USER / GMAIL_APP_PASSWORD).
-
 import nodemailer from 'nodemailer';
 
 // NOTE: as given - double-check this isn't a typo for shg@thomecaritasnairobi.org,

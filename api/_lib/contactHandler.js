@@ -11,7 +11,7 @@
 
 import nodemailer from 'nodemailer';
 
-const RECIPIENT_EMAIL = 'shg@thomecaritasnairobi.org';
+const RECIPIENT_EMAIL = 'shg@thome.caritasnairobishp.org';
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
