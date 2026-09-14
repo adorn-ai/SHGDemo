@@ -21,7 +21,7 @@ export function TopBar() {
   }, []);
 
   return (
-    <div className="sticky top-0 z-50 bg-[#16210E] text-[#FAF9F5] font-sans">
+    <div className="sticky top-0 z-50 bg-[#008000] text-[#FAF9F5] font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Desktop / tablet: all contact info shown at once, always visible, centered */}
         <div className="hidden sm:flex items-center justify-center gap-6 h-9 text-base md:text-base tracking-wide">

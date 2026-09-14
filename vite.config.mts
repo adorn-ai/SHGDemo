@@ -41,8 +41,20 @@ function mistralChatDevProxy(env: Record<string, string>): Plugin {
           try {
             const { messages } = JSON.parse(body || '{}');
 
-            const apiKey = env.MISTRAL_API_KEY;
-            if (!apiKey) {
+            // FIX: this proxy was only reading MISTRAL_API_KEY and calling
+            // handleChatRequest(messages, apiKey, clientId) - 3 arguments.
+            // The real handler signature is
+            // handleChatRequest(messages, mistralApiKey, groqApiKey, clientId)
+            // - 4 arguments - so `clientId` was silently sliding into the
+            // groqApiKey parameter slot (e.g. the string "local-dev" or a raw
+            // IP), which Groq correctly rejected as an invalid key (401), and
+            // the real clientId argument was left undefined. GROQ_API_KEY was
+            // never read here at all. Both are now read and passed in the
+            // correct positions.
+            const mistralApiKey = env.MISTRAL_API_KEY;
+            const groqApiKey = env.GROQ_API_KEY;
+
+            if (!mistralApiKey) {
               console.error(
                 '[mistral-chat-dev-proxy] MISTRAL_API_KEY is not set. Add it to a .env.local file at your project root (MISTRAL_API_KEY=your_key_here), no VITE_ prefix, then restart `npm run dev`.'
               );
@@ -50,9 +62,17 @@ function mistralChatDevProxy(env: Record<string, string>): Plugin {
               res.end(JSON.stringify({ error: 'Chat service is not configured' }));
               return;
             }
+            if (!groqApiKey) {
+              console.error(
+                '[mistral-chat-dev-proxy] GROQ_API_KEY is not set. Add it to .env.local (GROQ_API_KEY=your_key_here), no VITE_ prefix, then restart `npm run dev`. Without it, chat completion has no fallback once Mistral hits a 429.'
+              );
+              res.statusCode = 500;
+              res.end(JSON.stringify({ error: 'Chat service is not configured' }));
+              return;
+            }
 
             const clientId = (req.socket as any)?.remoteAddress || 'local-dev';
-            const { reply } = await handleChatRequest(messages, apiKey, clientId);
+            const { reply } = await handleChatRequest(messages, mistralApiKey, groqApiKey, clientId);
 
             res.setHeader('Content-Type', 'application/json');
             res.statusCode = 200;

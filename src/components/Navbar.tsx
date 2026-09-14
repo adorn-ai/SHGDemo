@@ -23,14 +23,17 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* No fixed h-* here on purpose - the row's height now follows the
               logo's natural size at each breakpoint (via py-*) instead of a
-              hard-coded pixel height that could clip a taller logo. */}
-          <div className="flex justify-between items-center py-2 md:py-3">
+              hard-coded pixel height that could clip a taller logo. Logo size
+              and vertical padding trimmed down a notch at every breakpoint so
+              the whole bar (TopBar + this nav) takes up less of the screen,
+              leaving more room below for the hero on shorter viewports. */}
+          <div className="flex justify-between items-center py-1.5 md:py-1.5">
             <div className="flex items-center">
               <Link to="/" className="flex items-center shrink-0">
                 <img
                   src={shgLogo}
                   alt="St Gabriel Catholic Church Thome Self Help Group"
-                  className="h-14 sm:h-16 md:h-20 lg:h-24 w-auto object-contain"
+                  className="h-11 sm:h-14 md:h-16 lg:h-21 w-auto object-contain"
                 />
               </Link>
             </div>

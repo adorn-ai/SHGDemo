@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 import { Button } from '../ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
-import { Carousel, CarouselContent, CarouselItem } from '../ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '../ui/carousel';
 import {
   Icon,
   Users, TrendingUp, CheckCircle, ArrowRight,
@@ -24,6 +24,12 @@ const HERO_BG_IMAGES = [
 
 // Full-bleed background carousel for the hero - crossfades between images on
 // a timer, no arrows/dots/manual controls, just ambient auto-rotation.
+// Deliberately kept as this small purpose-built component rather than the
+// shadcn Carousel primitive: that component is built for slide-through,
+// one-item-at-a-time content with a visible viewport/gap system, not a
+// full-bleed absolutely-positioned crossfade background, and forcing it here
+// would fight its default layout instead of leveraging it. shadcn's Carousel
+// is used everywhere it's actually the right fit (How It Works, Testimonials).
 function HeroBackgroundCarousel({
   images,
   intervalMs = 1500,
@@ -52,13 +58,19 @@ function HeroBackgroundCarousel({
           // without ever stretching/distorting the source photo - the browser
           // crops to fill instead. object-position is set per-image (not one
           // shared value) since a group photo and a building photo need
-          // different crop bias to keep their actual subject in frame.
+          // different crop bias to keep their actual subject in frame. Full
+          // opacity now (a separate overlay div handles legibility) - the old
+          // opacity-30 was applied to the photo itself, which washed it out.
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
-            i === index ? 'opacity-30' : 'opacity-0'
+            i === index ? 'opacity-100' : 'opacity-0'
           }`}
           style={{ objectPosition: image.position || 'center' }}
         />
       ))}
+      {/* Legibility overlay, separate from the photo itself - darkest on the
+          left where the text panel sits, fading out toward the right so the
+          photo itself reads clearly there. */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#16210E]/85 via-[#16210E]/50 to-[#16210E]/10" />
     </>
   );
 }
@@ -67,7 +79,7 @@ const HEADLINE_WORDS = ['Empowering', 'Communities', 'Through', 'Financial', 'Un
 
 function AnimatedHeadline() {
   return (
-    <h1 className="text-4xl md:text-5xl lg:text-6xl mb-4 drop-shadow-lg leading-tight font-bold">
+    <h1 className="text-3xl md:text-4xl lg:text-5xl mb-4 drop-shadow-lg leading-tight font-bold">
       {HEADLINE_WORDS.map((word, i) => (
         <span
           key={word}
@@ -304,21 +316,23 @@ export function Landing() {
       `}</style>
 
       {/* Hero - intentionally left on the original dark green + gold palette.
-          Padding and min-height trimmed further - the previous min-h values
-          (420-540px, layered on top of a 3-line 7xl headline + paragraph +
-          buttons) pushed the CTA buttons below the fold on common laptop/
-          mobile viewport heights. No min-h now - the section sizes to its
-          actual content instead of forcing extra empty space. */}
-      <section className="relative bg-[#2D5016] text-white pt-10 md:pt-12 pb-10 md:pb-12 overflow-hidden">
+          Height is viewport-relative (100svh minus an estimate of the
+          topbar+navbar height above it) rather than a flat set of px values,
+          so the hero always fits within one screen - phone, tablet, or
+          ultrawide - without pushing the buttons below the fold or
+          overflowing past the viewport. min-h/max-h clamp it so it's never
+          too cramped on a short window or absurdly tall on a big one.
+          Content is vertically centered and anchored to the left. */}
+      <section className="relative bg-[#2D5016] text-white overflow-hidden h-[calc(100svh-135px)] min-h-[420px] max-h-[620px]">
         <div className="absolute inset-0 z-0">
-          <HeroBackgroundCarousel images={HERO_BG_IMAGES} intervalMs={3000} />
+          <HeroBackgroundCarousel images={HERO_BG_IMAGES} intervalMs={6000} />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
-          <div className="max-w-3xl">
+        <div className="relative z-10 h-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 flex items-center justify-start">
+          <div className="max-w-xl w-full">
             <AnimatedHeadline />
             <p
-              className="text-base md:text-lg lg:text-xl mb-5 text-gray-100 max-w-xl opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
+              className="text-base md:text-lg lg:text-xl mb-5 text-gray-100 opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
               style={{ animationDelay: '850ms' }}
             >
               A leading Christian-based financial service provider committed to inclusive, ethical, and
@@ -349,25 +363,25 @@ export function Landing() {
       <section className="py-10 md:py-12 bg-[#FAF9F5]">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
           <Reveal>
-            <h2 className="text-3xl md:text-4xl mb-4 text-[#16210E] font-semibold uppercase">
+            <h2 className="text-3xl md:text-4xl mb-4 text-[#16210E] font-semibold uppercase text-center">
               Our Mission, Vision & Values
             </h2>
           </Reveal>
 
           <div className="grid md:grid-cols-2 gap-6 mb-4">
-            <Reveal className="rounded-lg border-2 border-[#C41230]/30 hover:border-[#C41230] bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-6 md:p-8">
+            <Reveal className="rounded-lg border-2 border-[#C41230]/30 hover:border-[#C41230] bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 py-6 md:py-8 pl-6 md:pl-8 pr-4 md:pr-5">
               <Eye className="text-[#237A17] mb-3" size={36} strokeWidth={1.5} />
               <h3 className="text-2xl mb-2 text-[#16210E] font-semibold">Our Vision</h3>
               <p className="text-lg lg:text-xl text-gray-600 leading-relaxed">{faqData.organization.vision}</p>
             </Reveal>
-            <Reveal delayMs={150} className="rounded-lg border-2 border-[#C41230]/30 hover:border-[#C41230] bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-6 md:p-8">
+            <Reveal delayMs={150} className="rounded-lg border-2 border-[#C41230]/30 hover:border-[#C41230] bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 py-6 md:py-8 pr-6 md:pr-8 pl-4 md:pl-5">
               <Icon iconNode={targetArrow} className="text-[#237A17] mb-3" size={36} strokeWidth={1.5} />
               <h3 className="text-2xl mb-2 text-[#16210E] font-semibold">Our Mission</h3>
               <p className="text-lg lg:text-xl text-gray-600 leading-relaxed">{faqData.organization.mission}</p>
             </Reveal>
           </div>
 
-          <Reveal className="pt-4 border-t border-gray-200">
+          <Reveal className="pt-4 border-t border-gray-200 text-center">
             <h3 className="text-xl lg:text-2xl mb-4 text-[#16210E] font-bold uppercase">Our Values</h3>
             <div className="flex flex-wrap justify-center gap-6">
               {VALUES.map((value, index) => (
@@ -388,7 +402,7 @@ export function Landing() {
       </section>
 
       {/* Stats - kept dark for contrast, but on the new near-black rather than forest green */}
-      <section ref={statsRef} className="py-10 md:py-12 bg-[#16210E] text-[#FAF9F5]">
+      <section ref={statsRef} className="py-10 md:py-12 bg-[#008000] text-[#FAF9F5]">
         <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-10">
           <div className="grid md:grid-cols-3 gap-10 text-center">
             {[
@@ -511,13 +525,15 @@ export function Landing() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
+              <CarouselPrevious className="-left-3 sm:-left-6 lg:-left-10 border-[#C41230]/40 text-[#C41230] hover:bg-[#C41230] hover:text-white" />
+              <CarouselNext className="-right-3 sm:-right-6 lg:-right-10 border-[#C41230]/40 text-[#C41230] hover:bg-[#C41230] hover:text-white" />
             </Carousel>
           </Reveal>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-[#16210E] text-[#FAF9F5] py-12">
+      <footer className="bg-[#008000] text-[#FAF9F5] py-12">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
           <div className="grid md:grid-cols-3 gap-x-12 gap-y-10 mb-10 items-start">
             <div>

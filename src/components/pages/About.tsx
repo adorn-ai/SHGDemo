@@ -6,6 +6,7 @@ import faqData from '../../faq.json';
 import caritasLogo from '../../assets/caritas-logo.png';
 import ourStoryPhoto from '../../assets/about-hero.jpg';
 import churchPhoto from '../../assets/church-building.jpg';
+import heroPhoto from '../../assets/luncheon-04.jpg';
 import samuelWainaina from '../../assets/board/samuel_wainaina.jpg';
 import raphaelKabando from '../../assets/board/raphael_kabando.jpeg';
 import josephineNjau from '../../assets/board/josephine_njau.png';
@@ -20,6 +21,8 @@ interface Leader {
   image: string;
   bio?: string;
 }
+
+const HERO_IMAGE = { src: heroPhoto, position: 'center' };
 
 const LEADERS: Leader[] = [
   {
@@ -178,35 +181,51 @@ export function About() {
         }
       `}</style>
 
-      {/* Header */}
-      <section className="pt-10 pb-8 md:pt-12 md:pb-10">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1
-            className="text-3xl md:text-4xl mb-5 leading-tight font-bold uppercase text-[#16210E] lg:whitespace-nowrap opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
-            style={{ animationDelay: '0ms' }}
-          >
-            About St Gabriel Catholic Church SHG
-          </h1>
-          <div
-            className="w-14 h-1 bg-[#237A17] mx-auto mb-5 opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
-            style={{ animationDelay: '100ms' }}
-          />
-          <div
-            className="flex items-center justify-center gap-4 font-sans text-base text-gray-500 opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
-            style={{ animationDelay: '200ms' }}
-          >
-            <span>Est. {faqData.organization.established}</span>
-            <span className="w-px h-4 bg-gray-300" />
-            <span>Registered {faqData.organization.registered}</span>
+      {/* Hero - same sizing/behavior as the Landing page hero: height is
+          viewport-relative (100svh minus the actual TopBar+Navbar height,
+          computed per breakpoint) with min-h/max-h clamps, so it fits one
+          screen at any device size without pushing content below the fold. */}
+      <section className="relative bg-[#16210E] text-white overflow-hidden h-[calc(100svh-89px)] sm:h-[calc(100svh-93px)] md:h-[calc(100svh-105px)] lg:h-[calc(100svh-113px)] min-h-[420px] max-h-[660px]">
+        <ImageWithFallback
+          src={HERO_IMAGE.src}
+          alt="St Gabriel Catholic Church SHG"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectPosition: HERO_IMAGE.position }}
+        />
+        {/* Legibility overlay, separate from the photo itself - darkest on
+            the left where the text sits, fading out toward the right so the
+            photo reads clearly there - matching the Landing hero treatment. */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#16210E]/85 via-[#16210E]/55 to-[#16210E]/20" />
+
+        <div className="relative z-10 h-full px-6 sm:px-8 lg:px-10 flex items-center justify-start">
+          <div className="max-w-xl">
+            <h1
+              className="text-3xl md:text-4xl lg:text-5xl mb-4 leading-tight font-bold uppercase drop-shadow-lg opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
+              style={{ animationDelay: '0ms' }}
+            >
+              About St Gabriel Catholic Church SHG
+            </h1>
+            <div
+              className="w-14 h-1 bg-[#D4A537] mb-5 opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
+              style={{ animationDelay: '150ms' }}
+            />
+            <div
+              className="flex items-center gap-4 font-sans text-base text-gray-200 opacity-0 animate-[fadeUp_0.6s_ease_forwards]"
+              style={{ animationDelay: '300ms' }}
+            >
+              <span>Est. {faqData.organization.established}</span>
+              <span className="w-px h-4 bg-gray-400" />
+              <span>Registered {faqData.organization.registered}</span>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Our Story */}
-      <section className="py-14 md:py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
-            <Reveal>
+      <section className="py-8 md:py-10">
+        <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20">
+          <div className="grid md:grid-cols-12 gap-12 md:gap-16 items-center">
+            <Reveal className="md:col-span-8">
               <h2 className="text-3xl md:text-4xl mb-6 text-[#16210E] font-semibold uppercase">29 members. KES 23,100.<br />A shared purpose.</h2>
               <div className="font-sans text-gray-700 space-y-4 leading-relaxed">
                 <p>
@@ -225,7 +244,7 @@ export function About() {
                 </p>
               </div>
             </Reveal>
-            <Reveal delayMs={150} className="aspect-[4/3] overflow-hidden">
+            <Reveal delayMs={150} className="md:col-span-4 aspect-[4/3] overflow-hidden">
               <ImageWithFallback
                 src={ourStoryPhoto}
                 alt="SHG leaders outside St Gabriel Catholic Church"
@@ -237,10 +256,10 @@ export function About() {
       </section>
 
       {/* Correlation 1: St Gabriel Catholic Church */}
-      <section className="py-16 md:py-20 border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
-            <Reveal>
+      <section className="py-8 md:py-10">
+        <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20">
+          <div className="grid md:grid-cols-12 gap-10 md:gap-20 items-center">
+            <Reveal className="md:col-span-8">
               <h2 className="text-3xl md:text-4xl mb-4 text-[#16210E] font-semibold uppercase">Rooted in St Gabriel Catholic Church</h2>
               <p className="font-sans text-lg text-gray-700 leading-relaxed max-w-xl">
                 The SHG is situated at St. Gabriel Catholic Church grounds along the Northern Bypass, operating
@@ -250,7 +269,7 @@ export function About() {
                 lives of the faithful we serve.
               </p>
             </Reveal>
-            <Reveal delayMs={150} className="aspect-[4/3] overflow-hidden">
+            <Reveal delayMs={150} className="md:col-span-4 aspect-[4/3] overflow-hidden">
               <img
                 src={churchPhoto}
                 alt="St Gabriel Catholic Church"
@@ -261,14 +280,16 @@ export function About() {
         </div>
       </section>
 
-      {/* Correlation 2: Caritas Nairobi - reframed as umbrella organization rather than a bank/funding relationship */}
-      <section className="py-16 md:py-20 border-t border-gray-100 bg-[#F3F0E8]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-[auto_1fr] gap-10 md:gap-16 items-center">
-            <Reveal className="flex items-center justify-start order-2 md:order-1">
+      {/* Correlation 2: Caritas Nairobi - reframed as umbrella organization rather than a bank/funding relationship.
+          Explicit 4/12-8/12 split (logo/text) instead of an auto-sized logo column, plus extra breathing
+          room (py-20/28, gap-20) so it reads as a clearly separate, deliberately spaced section from the one above. */}
+      <section className="py-20 md:py-28 border-t border-gray-100 bg-[#F3F0E8]">
+        <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20">
+          <div className="grid md:grid-cols-12 gap-10 md:gap-20 items-center">
+            <Reveal className="md:col-span-4 flex items-center justify-center md:justify-start order-2 md:order-1">
               <img src={caritasLogo} alt="Caritas Nairobi" className="h-24 sm:h-28 w-auto object-contain" />
             </Reveal>
-            <Reveal delayMs={150} className="order-1 md:order-2">
+            <Reveal delayMs={150} className="md:col-span-8 order-1 md:order-2">
               <h2 className="text-3xl md:text-4xl mb-4 text-[#16210E] font-semibold uppercase">Under the Umbrella of Caritas Nairobi</h2>
               <p className="font-sans text-lg text-gray-700 leading-relaxed max-w-xl">
                 Caritas Nairobi, the Aid and Development Department of the Catholic Archdiocese of Nairobi, serves
@@ -285,7 +306,7 @@ export function About() {
 
       {/* Signature moment: the motto */}
       <section className="bg-[#B00117] py-20 md:py-28">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="px-6 sm:px-8 lg:px-12 xl:px-20 text-center">
           <Reveal>
             <p className="italic text-3xl md:text-5xl text-[#FAF9F5] leading-tight">
               Save <span className="text-[#8FBF6B]">&middot;</span> Borrow <span className="text-[#8FBF6B]">&middot;</span> Grow
@@ -296,7 +317,7 @@ export function About() {
 
       {/* Management Committee */}
       <section className="py-20 md:py-28 bg-[#F3F0E8] border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20">
           <Reveal className="mb-12 md:mb-16">
             <h2 className="text-3xl md:text-4xl text-[#16210E] max-w-lg font-semibold uppercase">Management Committee</h2>
           </Reveal>

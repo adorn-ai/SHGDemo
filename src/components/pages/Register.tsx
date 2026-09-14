@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import { Button } from '../ui/button';
-import { UserPlus, Baby, Building2, CheckCircle2, FileEdit, Download, MousePointerClick, FolderInput, Search, PartyPopper, ArrowRight } from 'lucide-react';
+import { UserPlus, Baby, Building2, CheckCircle2, FileEdit, Download, MousePointerClick, FolderInput, Search, PartyPopper, ArrowRight, Coins } from 'lucide-react';
 
 // Scroll-triggered fade/slide-in wrapper, matching the entrance treatment used
 // site-wide (Landing, About) so this page feels like part of the same product.
@@ -41,6 +41,11 @@ interface AccountType {
   title: string;
   eyebrow: string;
   description: string;
+  // Minimum monthly contribution required to open/hold this account type,
+  // as shown on the product flyer. Omitted for Corporate Membership - the
+  // flyer doesn't state a flat KES minimum for that type, just group-level
+  // requirements, so nothing is invented here.
+  minContribution?: string;
   requirements: string[];
   applyHref: string;
   downloadHref: string;
@@ -53,13 +58,14 @@ const ACCOUNT_TYPES: AccountType[] = [
     eyebrow: 'For individuals 18+',
     title: 'Adult Membership',
     description: 'Full membership with savings, voting rights, and access to every loan product we offer.',
+    minContribution: 'KES 600/month (inclusive of KES 50 Benevolent Fund)',
     requirements: [
       'Copy of your National ID or Passport',
       'Copy of your KRA PIN certificate',
       "Copy of your next of kin's National ID or Passport",
       'One passport-size photograph',
     ],
-    applyHref: '/register',
+    applyHref: '/register-member',
     downloadHref: '/MEMBERSHIP APPLICATION FORM (2).pdf',
     downloadName: 'Membership-Application-Form.pdf',
   },
@@ -68,6 +74,7 @@ const ACCOUNT_TYPES: AccountType[] = [
     eyebrow: 'Opened by a parent or guardian',
     title: 'Minor Savings Account',
     description: "A savings-only account opened on a child's behalf, operated by a member parent or guardian.",
+    minContribution: 'KES 300/month',
     requirements: [
       "Copy of the guardian's National ID or Passport, and of the next of kin's",
       "Copy of the minor's Birth Certificate, Notification of Birth, or Baptism Card",
@@ -126,7 +133,7 @@ const HOW_TO_JOIN_STEPS = [
 
 function AccountCard({ account, delayMs }: { account: AccountType; delayMs: number }) {
   return (
-    <Reveal delayMs={delayMs} className="flex flex-col h-full">
+    <Reveal delayMs={delayMs} className="md:col-span-4 flex flex-col h-full">
       <div className="flex flex-col h-full rounded-lg border-2 border-[#C41230]/30 hover:border-[#C41230] bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-8">
         <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-[#16210E] flex items-center justify-center mb-6">
           <account.icon className="text-[#FAF9F5]" size={32} strokeWidth={1.5} />
@@ -134,7 +141,19 @@ function AccountCard({ account, delayMs }: { account: AccountType; delayMs: numb
 
         <p className="text-base lg:text-lg tracking-[0.15em] uppercase text-[#237A17] mb-2">{account.eyebrow}</p>
         <h3 className="text-2xl lg:text-3xl mb-4 text-[#16210E] font-bold">{account.title}</h3>
-        <p className="text-lg lg:text-xl text-gray-600 leading-relaxed mb-6">{account.description}</p>
+        <p className="text-lg lg:text-xl text-gray-600 leading-relaxed mb-4">{account.description}</p>
+
+        {account.minContribution && (
+          <div className="flex items-center gap-3 bg-[#F3F0E8] rounded-lg p-4 mb-6">
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0">
+              <Coins className="text-[#237A17]" size={20} strokeWidth={1.5} />
+            </div>
+            <div>
+              <p className="text-xs tracking-[0.1em] uppercase text-gray-500 font-semibold">Minimum Contribution</p>
+              <p className="text-base lg:text-lg font-bold text-[#16210E] leading-snug">{account.minContribution}</p>
+            </div>
+          </div>
+        )}
 
         <p className="text-base tracking-[0.1em] uppercase text-[#16210E] font-bold mb-3">What You'll Need</p>
         <ul className="space-y-4 mb-10 flex-1">
@@ -171,13 +190,13 @@ export function Register() {
     <div className="min-h-screen bg-[#FAF9F5] font-sans">
       {/* Header */}
       <section className="pt-10 pb-8 md:pt-12 md:pb-10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20 text-center">
           <Reveal>
             <h1 className="text-3xl md:text-4xl lg:text-5xl mb-5 font-bold uppercase leading-tight text-[#16210E] lg:whitespace-nowrap">
               Choose How You'd Like to Join
             </h1>
             <div className="w-14 h-1 bg-[#237A17] mx-auto mb-5" />
-            <p className="text-gray-600 text-base lg:text-lg">
+            <p className="text-gray-600 text-base lg:text-lg max-w-2xl mx-auto">
               St Gabriel Catholic Church SHG offers three types of membership. Pick the one that fits you, apply
               online in minutes, or download the form to fill by hand.
             </p>
@@ -185,12 +204,11 @@ export function Register() {
         </div>
       </section>
 
-      {/* Larger, more generous card layout on big screens: wider max-width
-          container, bigger gaps, and a cap so cards don't stretch absurdly
-          wide on ultrawide monitors while still using the freed-up space. */}
+      {/* Account cards laid out on a 12-column grid (4/4/4 split) rather than
+          a plain 3-up grid, matching the About Us and Products pages. */}
       <section className="py-10 md:py-14">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-10 lg:gap-14 xl:gap-16">
+        <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20">
+          <div className="grid md:grid-cols-12 gap-10 lg:gap-14 xl:gap-16">
             {ACCOUNT_TYPES.map((account, index) => (
               <AccountCard key={account.title} account={account} delayMs={index * 120} />
             ))}
@@ -199,8 +217,8 @@ export function Register() {
       </section>
 
       <section className="py-14 md:py-16 border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl md:text-3xl mb-10 text-center text-[#16210E] font-semibold uppercase">How to Join</h2>
+        <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20">
+          <h2 className="text-2xl md:text-3xl mb-10 text-center text-[#16210E] font-semibold uppercase lg:whitespace-nowrap">How to Join</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 md:gap-4">
             {HOW_TO_JOIN_STEPS.map((step, index) => (
               <Reveal key={step.title} delayMs={index * 100} className="relative text-center">
@@ -227,16 +245,33 @@ export function Register() {
         </div>
       </section>
 
-      <section className="py-16 md:py-20 bg-[#F3F0E8] border-t border-gray-100">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Reveal>
-            <p className="text-gray-600 text-base lg:text-lg mb-4">Not sure which type is right for you?</p>
-            <Link to="/contact">
-              <Button variant="outline" className="border-[#16210E] text-[#16210E] rounded-none">
-                Get in Touch
-              </Button>
-            </Link>
-          </Reveal>
+      {/* Bottom CTA - full-bleed band in the same #008000 used on the
+          Products page CTA, spanning edge to edge rather than being boxed
+          into a centered card. */}
+      <section className="bg-[#008000] py-10 md:py-12">
+        <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div>
+              <h2 className="text-2xl md:text-3xl text-white font-bold uppercase mb-1 lg:whitespace-nowrap">
+                Not sure which membership is right for you?
+              </h2>
+              <p className="text-white/90 text-base lg:text-lg">
+                Our team is happy to help you choose and walk you through the application.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3 shrink-0">
+              <Link to="/contact">
+                <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white/10 rounded-none">
+                  Get in Touch
+                </Button>
+              </Link>
+              <Link to="/products">
+                <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white/10 rounded-none">
+                  View All Products
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </div>

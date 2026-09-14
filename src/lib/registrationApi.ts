@@ -155,9 +155,32 @@ export async function submitMemberRegistration({ formData, beneficiaries, files 
 // =====================================================================
 // Minor Savings Account Registration
 // =====================================================================
+//
+// UPDATED for the Appendix V (Data Protection Act 2019) policy change: the
+// paper form now carries an explicit, separate Guardian's Membership No
+// field (guardianShgNo - already existed here) and, more importantly, two
+// distinct consent declarations rather than one generic "I agree to the
+// by-laws" checkbox:
+//   1. Truthfulness of the information + consent to the collection,
+//      processing and storage of personal data (of the guardian and the
+//      minor) for account management and legal compliance - required to
+//      open the account.
+//   2. Consent to receive communications about the account via e-mail or
+//      phone - kept separate and optional, since marketing/communications
+//      consent is a distinct, revocable consent from the consent needed to
+//      actually operate the account.
+// Both are now persisted on the row (data_consent, communications_consent)
+// rather than only checked client-side and discarded, since they're now a
+// compliance record the Group needs to be able to show, not just a form
+// gate. See the note at the bottom of this function for the required
+// database migration this depends on.
 
 interface MinorRegistrationInput {
   formData: Record<string, string>;
+  consent: {
+    dataConsent: boolean;
+    communicationsConsent: boolean;
+  };
   files: {
     minorPhoto?: File;
     guardianPhoto?: File;
@@ -166,7 +189,7 @@ interface MinorRegistrationInput {
   };
 }
 
-export async function submitMinorRegistration({ formData, files }: MinorRegistrationInput) {
+export async function submitMinorRegistration({ formData, consent, files }: MinorRegistrationInput) {
   const orderedFiles = [files.minorPhoto, files.guardianPhoto, files.guardianIdCopy, files.birthCertificate].filter(
     (f): f is File => Boolean(f)
   );
@@ -204,6 +227,12 @@ export async function submitMinorRegistration({ formData, files }: MinorRegistra
       guardian_id_copy_path: guardianIdCopyPath,
       birth_certificate_path: birthCertificatePath,
 
+      // NEW - Data Protection Act 2019 consent record (see comment above).
+      // Requires the `data_consent` and `communications_consent` boolean
+      // columns to exist on `minor_registration` - see migration note below.
+      data_consent: consent.dataConsent,
+      communications_consent: consent.communicationsConsent,
+
       is_kyc_submitted: true,
     });
 
@@ -217,9 +246,27 @@ export async function submitMinorRegistration({ formData, files }: MinorRegistra
   return data;
 }
 
+// -----------------------------------------------------------------------
+// REQUIRED MIGRATION (not yet run - no DB access from here):
+//
+//   alter table minor_registration
+//     add column data_consent boolean not null default false,
+//     add column communications_consent boolean not null default false;
+//
+// The `anon` INSERT-only policy on minor_registration already covers new
+// columns on the same table (Postgres RLS policies apply at the row level,
+// not per-column), so no RLS change is needed - only the ALTER TABLE above.
+// -----------------------------------------------------------------------
+
 // =====================================================================
 // Corporate Membership Registration
 // =====================================================================
+//
+// UPDATED for the Appendix III (Data Protection Act 2019) policy change,
+// same shape as the Minor Registration update above: two distinct consents
+// (data processing - required; communications - optional) are now captured
+// and persisted, rather than a single generic "I agree" checkbox that was
+// never saved. See the migration note at the bottom of this function.
 
 interface Signatory {
   role: string;
@@ -231,6 +278,10 @@ interface CorporateRegistrationInput {
   formData: Record<string, string>;
   isChurchGroup: boolean;
   signatories: Signatory[];
+  consent: {
+    dataConsent: boolean;
+    communicationsConsent: boolean;
+  };
   files: {
     memberList?: File;
     signatoryIdCopies: File[];
@@ -241,7 +292,7 @@ interface CorporateRegistrationInput {
   };
 }
 
-export async function submitCorporateRegistration({ formData, isChurchGroup, signatories, files }: CorporateRegistrationInput) {
+export async function submitCorporateRegistration({ formData, isChurchGroup, signatories, consent, files }: CorporateRegistrationInput) {
   // No natural unique ID for a group at submission time - fall back to a timestamp.
   const uniqueId = Date.now().toString();
   const displayName = formData.registeredGroupName;
@@ -287,6 +338,13 @@ export async function submitCorporateRegistration({ formData, isChurchGroup, sig
       by_laws_path: byLawsPath,
       patron_endorsement_path: patronEndorsementPath,
 
+      // NEW - Data Protection Act 2019 consent record, same pattern as
+      // Minor Registration above. Requires the `data_consent` and
+      // `communications_consent` boolean columns to exist on
+      // `corporate_registration` - see migration note below.
+      data_consent: consent.dataConsent,
+      communications_consent: consent.communicationsConsent,
+
       is_kyc_submitted: true,
     });
 
@@ -306,6 +364,18 @@ export async function submitCorporateRegistration({ formData, isChurchGroup, sig
 
   return data;
 }
+
+// -----------------------------------------------------------------------
+// REQUIRED MIGRATION (not yet run - no DB access from here):
+//
+//   alter table corporate_registration
+//     add column data_consent boolean not null default false,
+//     add column communications_consent boolean not null default false;
+//
+// Same reasoning as the minor_registration migration above - the existing
+// `anon` INSERT-only policy already covers new columns on the same table,
+// so no RLS change is needed, only the ALTER TABLE above.
+// -----------------------------------------------------------------------
 
 // =====================================================================
 // Loan Application (no document uploads in this form - typed signatures only)

@@ -31,10 +31,11 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Too many messages in conversation history' });
   }
 
-  const apiKey = process.env.MISTRAL_API_KEY; // NOTE: no VITE_ prefix - server-only, never bundled to the client
+  const mistralApiKey = process.env.MISTRAL_API_KEY; // embeddings/retrieval - NOTE: no VITE_ prefix, server-only
+  const groqApiKey = process.env.GROQ_API_KEY; // chat completion - Groq has no embeddings API, so retrieval stays on Mistral
 
-  if (!apiKey) {
-    console.error('MISTRAL_API_KEY is not set on the server');
+  if (!mistralApiKey || !groqApiKey) {
+    console.error('MISTRAL_API_KEY or GROQ_API_KEY is not set on the server');
     return res.status(500).json({ error: 'Chat service is not configured' });
   }
 
@@ -44,7 +45,7 @@ export default async function handler(req, res) {
     (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || 'unknown';
 
   try {
-    const { reply } = await handleChatRequest(messages, apiKey, clientId);
+    const { reply } = await handleChatRequest(messages, mistralApiKey, groqApiKey, clientId);
     return res.status(200).json({ reply });
   } catch (error) {
     console.error('Chat proxy error:', error);

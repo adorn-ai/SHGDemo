@@ -7,7 +7,7 @@ import { Textarea } from '../ui/textarea';
 import { Checkbox } from '../ui/checkbox';
 import { toast } from 'sonner@2.0.3';
 import { submitMinorRegistration } from '../../lib/registrationApi';
-import { Upload, FileText, User, Download, Baby, Loader2 } from 'lucide-react';
+import { Upload, FileText, User, Download, Baby, Loader2, ShieldCheck } from 'lucide-react';
 
 // Calculates age in whole years as of today from a YYYY-MM-DD date string.
 function calculateAge(dateOfBirth: string): number {
@@ -97,7 +97,15 @@ export function MinorRegistration() {
     witnessSignatureName: '',
   });
 
+  // Two distinct consents, matching the updated Appendix V form (Data
+  // Protection Act 2019): agreeDeclaration covers truthfulness of the
+  // information plus consent to the collection/processing/storage of
+  // personal data - required to open the account. agreeCommunications is
+  // kept separate and optional, since consenting to receive communications
+  // is a distinct, revocable consent from what's needed to operate the
+  // account itself.
   const [agreeDeclaration, setAgreeDeclaration] = useState(false);
+  const [agreeCommunications, setAgreeCommunications] = useState(false);
 
   const [uploadedFiles, setUploadedFiles] = useState<{
     minorPhoto?: File;
@@ -147,7 +155,7 @@ export function MinorRegistration() {
     if (!formData.religion.trim()) newErrors.religion = 'Religion is required';
 
     if (!formData.guardianName.trim()) newErrors.guardianName = "Guardian's name is required";
-    if (!formData.guardianShgNo.trim()) newErrors.guardianShgNo = "Guardian's SHG number is required";
+    if (!formData.guardianShgNo.trim()) newErrors.guardianShgNo = "Guardian's SHG/Membership number is required";
     if (!formData.guardianIdNo.match(/^[0-9]{7,8}$/)) newErrors.guardianIdNo = "Valid guardian ID (7-8 digits) is required";
     if (!formData.guardianPhone.match(/^(07|01)[0-9]{8}$/)) newErrors.guardianPhone = 'Valid Kenyan phone number (07XX or 01XX) is required';
     if (!formData.currentAddress.trim()) newErrors.currentAddress = 'Current address is required';
@@ -161,7 +169,9 @@ export function MinorRegistration() {
     if (!uploadedFiles.guardianIdCopy) newErrors.guardianIdCopy = "Copy of guardian's National ID/Passport is required";
     if (!uploadedFiles.birthCertificate) newErrors.birthCertificate = "Birth certificate / notification of birth / baptism card is required";
 
-    if (!agreeDeclaration) newErrors.declaration = 'You must agree to the declaration to proceed';
+    // Communications consent is intentionally NOT validated here - it's an
+    // optional, separate consent (see state comment above).
+    if (!agreeDeclaration) newErrors.declaration = 'You must agree to the declaration and consent to proceed';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -177,7 +187,11 @@ export function MinorRegistration() {
 
     setIsSubmitting(true);
     try {
-      await submitMinorRegistration({ formData, files: uploadedFiles });
+      await submitMinorRegistration({
+        formData,
+        consent: { dataConsent: agreeDeclaration, communicationsConsent: agreeCommunications },
+        files: uploadedFiles,
+      });
 
       toast.success('Minor account application submitted! It is now pending guardian verification and approval.');
 
@@ -201,7 +215,15 @@ export function MinorRegistration() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F5] font-sans py-12 md:py-20">
-      <div className="max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Full-bleed page like the rest of the site (About Us, Products,
+          Register): no max-w cap, and the form itself now runs the full
+          width of the page too (rather than being centered in a narrow
+          column) so it doesn't read as an island floating in the middle of
+          a big screen. Each section's fields are already grouped into their
+          own 2-3 column sub-grids below, so widening the outer container
+          spreads those out evenly instead of leaving one long single
+          column of inputs. */}
+      <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20">
         <div className="text-center mb-12">
           <div className="flex justify-center mb-3">
             <Baby className="text-[#237A17]" size={32} strokeWidth={1.5} />
@@ -223,331 +245,356 @@ export function MinorRegistration() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-14">
-          <Notice>
-            Documents you'll need: copy of guardian's National ID/Passport, copy of Birth Certificate /
-            Notification of Birth / Baptism Card of the minor, and passport-size photographs of the minor and
-            the guardian.
-          </Notice>
+              <Notice>
+                Documents you'll need: copy of guardian's National ID/Passport, copy of Birth Certificate /
+                Notification of Birth / Baptism Card of the minor, and passport-size photographs of the minor and
+                the guardian.
+              </Notice>
 
-          {/* Passport Photos */}
-          <div className="border-t-2 border-[#16210E] pt-8">
-            <SectionHeading eyebrow="Required" title="Passport Photographs" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <div className="border border-dashed border-[#6B9E4D] p-6 hover:bg-[#F3F0E8] transition-colors">
-                  <Label htmlFor="minorPhoto" className="cursor-pointer">
-                    <div className="flex flex-col items-center space-y-3">
-                      {uploadedFiles.minorPhoto ? (
-                        <>
-                          <img
-                            src={URL.createObjectURL(uploadedFiles.minorPhoto)}
-                            alt="Minor"
-                            className="w-28 h-28 object-cover"
-                          />
-                          <p className="text-base lg:text-lg text-[#237A17]">&#10003; {uploadedFiles.minorPhoto.name}</p>
-                        </>
-                      ) : (
-                        <>
-                          <Baby className="text-[#237A17]" size={32} strokeWidth={1.5} />
-                          <div className="text-center">
-                            <p className="text-[#16210E]">Minor's Photo</p>
-                            <p className="text-base lg:text-lg text-gray-500">JPG, PNG - Max 5MB</p>
-                          </div>
-                        </>
-                      )}
+              {/* Passport Photos */}
+              <div className="border-t-2 border-[#16210E] pt-8">
+                <SectionHeading eyebrow="Required" title="Passport Photographs" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <div className="border border-dashed border-[#6B9E4D] p-6 hover:bg-[#F3F0E8] transition-colors">
+                      <Label htmlFor="minorPhoto" className="cursor-pointer">
+                        <div className="flex flex-col items-center space-y-3">
+                          {uploadedFiles.minorPhoto ? (
+                            <>
+                              <img
+                                src={URL.createObjectURL(uploadedFiles.minorPhoto)}
+                                alt="Minor"
+                                className="w-28 h-28 object-cover"
+                              />
+                              <p className="text-base lg:text-lg text-[#237A17]">&#10003; {uploadedFiles.minorPhoto.name}</p>
+                            </>
+                          ) : (
+                            <>
+                              <Baby className="text-[#237A17]" size={32} strokeWidth={1.5} />
+                              <div className="text-center">
+                                <p className="text-[#16210E]">Minor's Photo</p>
+                                <p className="text-base lg:text-lg text-gray-500">JPG, PNG - Max 5MB</p>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </Label>
+                      <Input
+                        id="minorPhoto"
+                        type="file"
+                        accept="image/jpeg,image/png,image/jpg"
+                        onChange={(e) => handleFileUpload('minorPhoto', e.target.files?.[0])}
+                        className="hidden"
+                      />
                     </div>
-                  </Label>
-                  <Input
-                    id="minorPhoto"
-                    type="file"
-                    accept="image/jpeg,image/png,image/jpg"
-                    onChange={(e) => handleFileUpload('minorPhoto', e.target.files?.[0])}
-                    className="hidden"
-                  />
-                </div>
-                {errors.minorPhoto && <p className="text-base lg:text-lg text-red-500 mt-2">{errors.minorPhoto}</p>}
-              </div>
+                    {errors.minorPhoto && <p className="text-base lg:text-lg text-red-500 mt-2">{errors.minorPhoto}</p>}
+                  </div>
 
-              <div>
-                <div className="border border-dashed border-[#6B9E4D] p-6 hover:bg-[#F3F0E8] transition-colors">
-                  <Label htmlFor="guardianPhoto" className="cursor-pointer">
-                    <div className="flex flex-col items-center space-y-3">
-                      {uploadedFiles.guardianPhoto ? (
-                        <>
-                          <img
-                            src={URL.createObjectURL(uploadedFiles.guardianPhoto)}
-                            alt="Guardian"
-                            className="w-28 h-28 object-cover"
-                          />
-                          <p className="text-base lg:text-lg text-[#237A17]">&#10003; {uploadedFiles.guardianPhoto.name}</p>
-                        </>
-                      ) : (
-                        <>
-                          <User className="text-[#237A17]" size={32} strokeWidth={1.5} />
-                          <div className="text-center">
-                            <p className="text-[#16210E]">Guardian's Photo</p>
-                            <p className="text-base lg:text-lg text-gray-500">JPG, PNG - Max 5MB</p>
-                          </div>
-                        </>
-                      )}
+                  <div>
+                    <div className="border border-dashed border-[#6B9E4D] p-6 hover:bg-[#F3F0E8] transition-colors">
+                      <Label htmlFor="guardianPhoto" className="cursor-pointer">
+                        <div className="flex flex-col items-center space-y-3">
+                          {uploadedFiles.guardianPhoto ? (
+                            <>
+                              <img
+                                src={URL.createObjectURL(uploadedFiles.guardianPhoto)}
+                                alt="Guardian"
+                                className="w-28 h-28 object-cover"
+                              />
+                              <p className="text-base lg:text-lg text-[#237A17]">&#10003; {uploadedFiles.guardianPhoto.name}</p>
+                            </>
+                          ) : (
+                            <>
+                              <User className="text-[#237A17]" size={32} strokeWidth={1.5} />
+                              <div className="text-center">
+                                <p className="text-[#16210E]">Guardian's Photo</p>
+                                <p className="text-base lg:text-lg text-gray-500">JPG, PNG - Max 5MB</p>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </Label>
+                      <Input
+                        id="guardianPhoto"
+                        type="file"
+                        accept="image/jpeg,image/png,image/jpg"
+                        onChange={(e) => handleFileUpload('guardianPhoto', e.target.files?.[0])}
+                        className="hidden"
+                      />
                     </div>
-                  </Label>
-                  <Input
-                    id="guardianPhoto"
-                    type="file"
-                    accept="image/jpeg,image/png,image/jpg"
-                    onChange={(e) => handleFileUpload('guardianPhoto', e.target.files?.[0])}
-                    className="hidden"
-                  />
-                </div>
-                {errors.guardianPhoto && <p className="text-base lg:text-lg text-red-500 mt-2">{errors.guardianPhoto}</p>}
-              </div>
-            </div>
-          </div>
-
-          {/* Minor Details */}
-          <div className="border-t-2 border-[#6B9E4D] pt-8">
-            <SectionHeading eyebrow="Step 1" title="Applicant's Details (Name of the Child)" />
-            <div className="space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="childFirstName">First Name *</Label>
-                  <Input
-                    id="childFirstName"
-                    value={formData.childFirstName}
-                    onChange={(e) => handleChange('childFirstName', e.target.value)}
-                    className={errors.childFirstName ? 'border-red-500' : ''}
-                  />
-                  {errors.childFirstName && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.childFirstName}</p>}
-                </div>
-                <div>
-                  <Label htmlFor="childMiddleName">Middle Name</Label>
-                  <Input
-                    id="childMiddleName"
-                    value={formData.childMiddleName}
-                    onChange={(e) => handleChange('childMiddleName', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="childLastName">Last Name *</Label>
-                  <Input
-                    id="childLastName"
-                    value={formData.childLastName}
-                    onChange={(e) => handleChange('childLastName', e.target.value)}
-                    className={errors.childLastName ? 'border-red-500' : ''}
-                  />
-                  {errors.childLastName && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.childLastName}</p>}
+                    {errors.guardianPhoto && <p className="text-base lg:text-lg text-red-500 mt-2">{errors.guardianPhoto}</p>}
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="dateOfBirth">Date of Birth *</Label>
-                  <Input
-                    id="dateOfBirth"
-                    type="date"
-                    value={formData.dateOfBirth}
-                    onChange={(e) => handleChange('dateOfBirth', e.target.value)}
-                    className={errors.dateOfBirth ? 'border-red-500' : ''}
-                  />
-                  {errors.dateOfBirth && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.dateOfBirth}</p>}
-                </div>
-                <div>
-                  <Label htmlFor="religion">Religion *</Label>
-                  <Input
-                    id="religion"
-                    value={formData.religion}
-                    onChange={(e) => handleChange('religion', e.target.value)}
-                    className={errors.religion ? 'border-red-500' : ''}
-                  />
-                  {errors.religion && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.religion}</p>}
-                </div>
-              </div>
-            </div>
-          </div>
+              {/* Minor Details */}
+              <div className="border-t-2 border-[#6B9E4D] pt-8">
+                <SectionHeading eyebrow="Step 1" title="Applicant's Details (Name of the Child)" />
+                <div className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="childFirstName">First Name *</Label>
+                      <Input
+                        id="childFirstName"
+                        value={formData.childFirstName}
+                        onChange={(e) => handleChange('childFirstName', e.target.value)}
+                        className={errors.childFirstName ? 'border-red-500' : ''}
+                      />
+                      {errors.childFirstName && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.childFirstName}</p>}
+                    </div>
+                    <div>
+                      <Label htmlFor="childMiddleName">Middle Name</Label>
+                      <Input
+                        id="childMiddleName"
+                        value={formData.childMiddleName}
+                        onChange={(e) => handleChange('childMiddleName', e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="childLastName">Last Name *</Label>
+                      <Input
+                        id="childLastName"
+                        value={formData.childLastName}
+                        onChange={(e) => handleChange('childLastName', e.target.value)}
+                        className={errors.childLastName ? 'border-red-500' : ''}
+                      />
+                      {errors.childLastName && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.childLastName}</p>}
+                    </div>
+                  </div>
 
-          {/* Guardian Details */}
-          <div className="border-t-2 border-[#6B9E4D] pt-8">
-            <SectionHeading eyebrow="Step 2" title="Guardian's Details" />
-            <div className="space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="guardianName">Guardian's Name *</Label>
-                  <Input
-                    id="guardianName"
-                    value={formData.guardianName}
-                    onChange={(e) => handleChange('guardianName', e.target.value)}
-                    className={errors.guardianName ? 'border-red-500' : ''}
-                  />
-                  {errors.guardianName && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.guardianName}</p>}
-                </div>
-                <div>
-                  <Label htmlFor="guardianShgNo">Guardian's SHG No *</Label>
-                  <Input
-                    id="guardianShgNo"
-                    value={formData.guardianShgNo}
-                    onChange={(e) => handleChange('guardianShgNo', e.target.value)}
-                    className={errors.guardianShgNo ? 'border-red-500' : ''}
-                  />
-                  {errors.guardianShgNo && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.guardianShgNo}</p>}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="guardianIdNo">Guardian's ID No *</Label>
-                  <Input
-                    id="guardianIdNo"
-                    value={formData.guardianIdNo}
-                    onChange={(e) => handleChange('guardianIdNo', e.target.value)}
-                    placeholder="12345678"
-                    className={errors.guardianIdNo ? 'border-red-500' : ''}
-                  />
-                  {errors.guardianIdNo && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.guardianIdNo}</p>}
-                </div>
-                <div>
-                  <Label htmlFor="guardianPhone">Phone No *</Label>
-                  <Input
-                    id="guardianPhone"
-                    value={formData.guardianPhone}
-                    onChange={(e) => handleChange('guardianPhone', e.target.value)}
-                    placeholder="0712345678"
-                    className={errors.guardianPhone ? 'border-red-500' : ''}
-                  />
-                  {errors.guardianPhone && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.guardianPhone}</p>}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="dateOfBirth">Date of Birth *</Label>
+                      <Input
+                        id="dateOfBirth"
+                        type="date"
+                        value={formData.dateOfBirth}
+                        onChange={(e) => handleChange('dateOfBirth', e.target.value)}
+                        className={errors.dateOfBirth ? 'border-red-500' : ''}
+                      />
+                      {errors.dateOfBirth && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.dateOfBirth}</p>}
+                    </div>
+                    <div>
+                      <Label htmlFor="religion">Religion *</Label>
+                      <Input
+                        id="religion"
+                        value={formData.religion}
+                        onChange={(e) => handleChange('religion', e.target.value)}
+                        className={errors.religion ? 'border-red-500' : ''}
+                      />
+                      {errors.religion && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.religion}</p>}
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="currentAddress">Current Address *</Label>
-                <Textarea
-                  id="currentAddress"
-                  value={formData.currentAddress}
-                  onChange={(e) => handleChange('currentAddress', e.target.value)}
-                  rows={3}
-                  className={errors.currentAddress ? 'border-red-500' : ''}
+              {/* Guardian Details */}
+              <div className="border-t-2 border-[#6B9E4D] pt-8">
+                <SectionHeading eyebrow="Step 2" title="Guardian's Details" />
+                <div className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="guardianName">Guardian's Name *</Label>
+                      <Input
+                        id="guardianName"
+                        value={formData.guardianName}
+                        onChange={(e) => handleChange('guardianName', e.target.value)}
+                        className={errors.guardianName ? 'border-red-500' : ''}
+                      />
+                      {errors.guardianName && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.guardianName}</p>}
+                    </div>
+                    <div>
+                      <Label htmlFor="guardianShgNo">Guardian's Membership No *</Label>
+                      <Input
+                        id="guardianShgNo"
+                        value={formData.guardianShgNo}
+                        onChange={(e) => handleChange('guardianShgNo', e.target.value)}
+                        className={errors.guardianShgNo ? 'border-red-500' : ''}
+                      />
+                      {errors.guardianShgNo && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.guardianShgNo}</p>}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="guardianIdNo">Guardian's ID No *</Label>
+                      <Input
+                        id="guardianIdNo"
+                        value={formData.guardianIdNo}
+                        onChange={(e) => handleChange('guardianIdNo', e.target.value)}
+                        placeholder="12345678"
+                        className={errors.guardianIdNo ? 'border-red-500' : ''}
+                      />
+                      {errors.guardianIdNo && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.guardianIdNo}</p>}
+                    </div>
+                    <div>
+                      <Label htmlFor="guardianPhone">Phone No *</Label>
+                      <Input
+                        id="guardianPhone"
+                        value={formData.guardianPhone}
+                        onChange={(e) => handleChange('guardianPhone', e.target.value)}
+                        placeholder="0712345678"
+                        className={errors.guardianPhone ? 'border-red-500' : ''}
+                      />
+                      {errors.guardianPhone && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.guardianPhone}</p>}
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="currentAddress">Current Address *</Label>
+                    <Textarea
+                      id="currentAddress"
+                      value={formData.currentAddress}
+                      onChange={(e) => handleChange('currentAddress', e.target.value)}
+                      rows={3}
+                      className={errors.currentAddress ? 'border-red-500' : ''}
+                    />
+                    {errors.currentAddress && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.currentAddress}</p>}
+                  </div>
+
+                  <Dropzone
+                    id="guardianIdCopy"
+                    label="Copy of Guardian's National ID/Passport *"
+                    hint="JPG, PNG, or PDF - Max 5MB"
+                    error={errors.guardianIdCopy}
+                    fileName={uploadedFiles.guardianIdCopy?.name}
+                    onChange={(file) => handleFileUpload('guardianIdCopy', file)}
+                    accept="image/jpeg,image/png,image/jpg,application/pdf"
+                  />
+                </div>
+              </div>
+
+              {/* Birth Certificate */}
+              <div className="border-t-2 border-[#6B9E4D] pt-8">
+                <SectionHeading eyebrow="Step 3" title="Proof of Identity for the Minor" />
+                <Dropzone
+                  id="birthCertificate"
+                  label="Birth Certificate / Notification of Birth / Baptism Card *"
+                  hint="JPG, PNG, or PDF - Max 5MB"
+                  error={errors.birthCertificate}
+                  fileName={uploadedFiles.birthCertificate?.name}
+                  onChange={(file) => handleFileUpload('birthCertificate', file)}
+                  accept="image/jpeg,image/png,image/jpg,application/pdf"
                 />
-                {errors.currentAddress && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.currentAddress}</p>}
               </div>
 
-              <Dropzone
-                id="guardianIdCopy"
-                label="Copy of Guardian's National ID/Passport *"
-                hint="JPG, PNG, or PDF - Max 5MB"
-                error={errors.guardianIdCopy}
-                fileName={uploadedFiles.guardianIdCopy?.name}
-                onChange={(file) => handleFileUpload('guardianIdCopy', file)}
-                accept="image/jpeg,image/png,image/jpg,application/pdf"
-              />
-            </div>
-          </div>
+              {/* Account terms */}
+              <div className="border-t-2 border-[#6B9E4D] pt-8">
+                <SectionHeading eyebrow="Good to know" title="Minor Account Terms" />
+                <ul className="text-base lg:text-lg text-gray-700 list-disc pl-6 space-y-1 leading-relaxed">
+                  <li>Opened on behalf of the minor, operated by the guardian (18+ years).</li>
+                  <li>Reverts to the minor at 18 years of age, after consultation with the guardian.</li>
+                  <li>Savings-only account, entitled to surplus.</li>
+                  <li>Can guarantee a guardian's loan for the minor's school fees or hospital bills only.</li>
+                  <li>The account holder cannot take a loan on their own.</li>
+                  <li>No voting rights, either directly or by proxy.</li>
+                  <li>Exempted from all charges.</li>
+                </ul>
+              </div>
 
-          {/* Birth Certificate */}
-          <div className="border-t-2 border-[#6B9E4D] pt-8">
-            <SectionHeading eyebrow="Step 3" title="Proof of Identity for the Minor" />
-            <Dropzone
-              id="birthCertificate"
-              label="Birth Certificate / Notification of Birth / Baptism Card *"
-              hint="JPG, PNG, or PDF - Max 5MB"
-              error={errors.birthCertificate}
-              fileName={uploadedFiles.birthCertificate?.name}
-              onChange={(file) => handleFileUpload('birthCertificate', file)}
-              accept="image/jpeg,image/png,image/jpg,application/pdf"
-            />
-          </div>
+              {/* Declaration, Data Protection Consent & Signatures */}
+              <div className="border-t-2 border-[#16210E] pt-8">
+                <SectionHeading eyebrow="Final Step" title="Declaration & Data Protection Consent" />
+                <div className="space-y-5">
+                  <p className="text-base lg:text-lg text-gray-700 leading-relaxed">
+                    I hereby declare that the information provided is true and correct to the best of my knowledge.
+                    I acknowledge that St Gabriel Catholic Church SHG complies with the Data Protection Act 2019
+                    and will handle my personal data and that of the minor responsibly.
+                  </p>
 
-          {/* Account terms */}
-          <div className="border-t-2 border-[#6B9E4D] pt-8">
-            <SectionHeading eyebrow="Good to know" title="Minor Account Terms" />
-            <ul className="text-base lg:text-lg text-gray-700 list-disc pl-6 space-y-1 leading-relaxed">
-              <li>Opened on behalf of the minor, operated by the guardian (18+ years).</li>
-              <li>Reverts to the minor at 18 years of age, after consultation with the guardian.</li>
-              <li>Savings-only account, entitled to surplus.</li>
-              <li>Can guarantee a guardian's loan for the minor's school fees or hospital bills only.</li>
-              <li>The account holder cannot take a loan on their own.</li>
-              <li>No voting rights, either directly or by proxy.</li>
-              <li>Exempted from all charges.</li>
-            </ul>
-          </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="guardianSignatureName">Guardian's Signature (type full name) *</Label>
+                      <Input
+                        id="guardianSignatureName"
+                        value={formData.guardianSignatureName}
+                        onChange={(e) => handleChange('guardianSignatureName', e.target.value)}
+                        className={errors.guardianSignatureName ? 'border-red-500' : ''}
+                      />
+                      {errors.guardianSignatureName && (
+                        <p className="text-base lg:text-lg text-red-500 mt-1">{errors.guardianSignatureName}</p>
+                      )}
+                    </div>
+                    <div>
+                      <Label htmlFor="witnessName">Witness Name *</Label>
+                      <Input
+                        id="witnessName"
+                        value={formData.witnessName}
+                        onChange={(e) => handleChange('witnessName', e.target.value)}
+                        className={errors.witnessName ? 'border-red-500' : ''}
+                      />
+                      {errors.witnessName && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.witnessName}</p>}
+                    </div>
+                  </div>
 
-          {/* Declaration & Signatures */}
-          <div className="border-t-2 border-[#16210E] pt-8">
-            <SectionHeading eyebrow="Final Step" title="Declaration" />
-            <div className="space-y-5">
-              <p className="text-base lg:text-lg text-gray-700 leading-relaxed">
-                I hereby apply for membership and agree to conform and abide by the self-help group's by-laws,
-                regulations, guidelines and amendments thereof. I declare all the information given herein is true
-                and I shall abide by all the terms and conditions laid down by the self-help group.
-                (Note: Giving false information is an offence under the laws of Kenya.)
-              </p>
+                  <div>
+                    <Label htmlFor="witnessSignatureName">Witness Signature (type full name) *</Label>
+                    <Input
+                      id="witnessSignatureName"
+                      value={formData.witnessSignatureName}
+                      onChange={(e) => handleChange('witnessSignatureName', e.target.value)}
+                      className={errors.witnessSignatureName ? 'border-red-500' : ''}
+                    />
+                    {errors.witnessSignatureName && (
+                      <p className="text-base lg:text-lg text-red-500 mt-1">{errors.witnessSignatureName}</p>
+                    )}
+                  </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="guardianSignatureName">Guardian's Signature (type full name) *</Label>
-                  <Input
-                    id="guardianSignatureName"
-                    value={formData.guardianSignatureName}
-                    onChange={(e) => handleChange('guardianSignatureName', e.target.value)}
-                    className={errors.guardianSignatureName ? 'border-red-500' : ''}
-                  />
-                  {errors.guardianSignatureName && (
-                    <p className="text-base lg:text-lg text-red-500 mt-1">{errors.guardianSignatureName}</p>
+                  {/* Required: truthfulness + data processing consent */}
+                  <div className="flex items-start space-x-2 pt-2">
+                    <Checkbox
+                      id="agreeDeclaration"
+                      checked={agreeDeclaration}
+                      onCheckedChange={(checked) => {
+                        setAgreeDeclaration(checked === true);
+                        if (errors.declaration) setErrors({ ...errors, declaration: '' });
+                      }}
+                    />
+                    <Label htmlFor="agreeDeclaration" className="text-base lg:text-lg text-gray-700 cursor-pointer leading-relaxed">
+                      I consent to the collection, processing, and storage of my personal information and that of
+                      the minor for account management and compliance with legal obligations. I understand I have
+                      the right to be informed, access, amend, object to, or request deletion of this data as
+                      permitted by applicable law. *
+                    </Label>
+                  </div>
+                  {errors.declaration && <p className="text-base lg:text-lg text-red-500">{errors.declaration}</p>}
+
+                  {/* Optional: separate, revocable communications consent */}
+                  <div className="flex items-start space-x-2">
+                    <Checkbox
+                      id="agreeCommunications"
+                      checked={agreeCommunications}
+                      onCheckedChange={(checked) => setAgreeCommunications(checked === true)}
+                    />
+                    <Label htmlFor="agreeCommunications" className="text-base lg:text-lg text-gray-700 cursor-pointer leading-relaxed">
+                      I consent to receive communications about this account via e-mail or phone.{' '}
+                      <span className="text-gray-500">(Optional)</span>
+                    </Label>
+                  </div>
+
+                  <div className="flex items-start gap-2.5 bg-[#F3F0E8] p-4 mt-2">
+                    <ShieldCheck className="text-[#237A17] shrink-0 mt-0.5" size={18} strokeWidth={1.5} />
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      Your personal information will be processed in accordance with the Data Protection Act and
+                      relevant Data Protection regulations, and will not be shared with third parties without your
+                      consent, except as required by law.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-center pt-4">
+                <Button type="submit" disabled={isSubmitting} className="bg-[#16210E] hover:bg-[#237A17] rounded-none w-full sm:w-auto px-10">
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 animate-spin" size={16} /> Submitting...
+                    </>
+                  ) : (
+                    'Submit Minor Account Application'
                   )}
-                </div>
-                <div>
-                  <Label htmlFor="witnessName">Witness Name *</Label>
-                  <Input
-                    id="witnessName"
-                    value={formData.witnessName}
-                    onChange={(e) => handleChange('witnessName', e.target.value)}
-                    className={errors.witnessName ? 'border-red-500' : ''}
-                  />
-                  {errors.witnessName && <p className="text-base lg:text-lg text-red-500 mt-1">{errors.witnessName}</p>}
-                </div>
+                </Button>
               </div>
-
-              <div>
-                <Label htmlFor="witnessSignatureName">Witness Signature (type full name) *</Label>
-                <Input
-                  id="witnessSignatureName"
-                  value={formData.witnessSignatureName}
-                  onChange={(e) => handleChange('witnessSignatureName', e.target.value)}
-                  className={errors.witnessSignatureName ? 'border-red-500' : ''}
-                />
-                {errors.witnessSignatureName && (
-                  <p className="text-base lg:text-lg text-red-500 mt-1">{errors.witnessSignatureName}</p>
-                )}
-              </div>
-
-              <div className="flex items-start space-x-2 pt-2">
-                <Checkbox
-                  id="agreeDeclaration"
-                  checked={agreeDeclaration}
-                  onCheckedChange={(checked) => {
-                    setAgreeDeclaration(checked === true);
-                    if (errors.declaration) setErrors({ ...errors, declaration: '' });
-                  }}
-                />
-                <Label htmlFor="agreeDeclaration" className="text-base lg:text-lg text-gray-700 cursor-pointer">
-                  I confirm the above declaration is true and I agree to the terms of this minor savings account. *
-                </Label>
-              </div>
-              {errors.declaration && <p className="text-base lg:text-lg text-red-500">{errors.declaration}</p>}
-            </div>
-          </div>
-
-          <div className="flex justify-center pt-4">
-            <Button type="submit" disabled={isSubmitting} className="bg-[#16210E] hover:bg-[#237A17] rounded-none w-full sm:w-auto px-10">
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 animate-spin" size={16} /> Submitting...
-                </>
-              ) : (
-                'Submit Minor Account Application'
-              )}
-            </Button>
-          </div>
-        </form>
+            </form>
       </div>
     </div>
   );

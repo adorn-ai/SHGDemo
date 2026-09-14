@@ -36,6 +36,29 @@ async function fetchWithTimeout(url, options) {
   }
 }
 
+// Retries a request once or twice specifically on 429 (rate limited) - a
+// 429 is often transient (a burst of traffic clearing within a second or
+// two), so a short automatic retry can turn a would-be failure into a
+// successful response the user never notices, without needing a different
+// provider or a paid tier. Honors the API's own Retry-After header when
+// present; falls back to a short exponential backoff otherwise. Does NOT
+// retry on other error statuses (400s, 500s) - those aren't transient in
+// the same way, and retrying them just wastes time before the same error.
+async function fetchWithRetry(url, options, maxRetries = 2) {
+  let response;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    response = await fetchWithTimeout(url, options);
+    if (response.status !== 429 || attempt === maxRetries) {
+      return response;
+    }
+    const retryAfterHeader = response.headers.get('retry-after');
+    const waitMs = retryAfterHeader ? Number(retryAfterHeader) * 1000 : 400 * 2 ** attempt;
+    console.warn(`Rate limited (429) on attempt ${attempt + 1}/${maxRetries + 1}, retrying in ${waitMs}ms`);
+    await new Promise((resolve) => setTimeout(resolve, waitMs));
+  }
+  return response;
+}
+
 // ---------------------------------------------------------------------------
 // Best-effort rate limiting. HONEST LIMITATION: Vercel serverless functions
 // are stateless between cold starts, and can run across multiple regions/
@@ -80,12 +103,12 @@ function cosineSimilarity(a, b) {
   return dot / (Math.sqrt(normA) * Math.sqrt(normB));
 }
 
-async function embedQuery(apiKey, text) {
-  const response = await fetchWithTimeout('https://api.mistral.ai/v1/embeddings', {
+async function embedQuery(mistralApiKey, text) {
+  const response = await fetchWithRetry('https://api.mistral.ai/v1/embeddings', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
+      Authorization: `Bearer ${mistralApiKey}`,
     },
     body: JSON.stringify({ model: 'mistral-embed', input: [text] }),
   });
@@ -196,13 +219,91 @@ END OF EXAMPLES
 =====================================================================`;
 }
 
+// Tries Mistral's chat completion first; falls back to Groq on ANY failure -
+// not just a 429, since a 500, a timeout, or a network error all leave the
+// user in the same position (no reply) and Groq is sitting there as a
+// working alternative regardless of which specific way Mistral failed.
+//
+// Mistral gets a single attempt with NO retry-with-backoff - the whole
+// point of having a fallback provider is to fail over fast, not to sit
+// through a backoff delay against a provider we already know has a working
+// alternative available immediately. Groq, as the last line of defense
+// with nowhere further to fall back to, DOES get retry-with-backoff.
+async function completeWithFailover(mistralApiKey, groqApiKey, systemPrompt, messages) {
+  const requestMessages = [{ role: 'system', content: systemPrompt }, ...messages];
+
+  try {
+    const mistralResponse = await fetchWithTimeout('https://api.mistral.ai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${mistralApiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'mistral-small-latest',
+        messages: requestMessages,
+        temperature: 0.1,
+        max_tokens: 500,
+      }),
+    });
+
+    if (mistralResponse.ok) {
+      return { response: mistralResponse, provider: 'mistral' };
+    }
+
+    const errorText = await mistralResponse.text();
+    console.warn(`Mistral completion returned ${mistralResponse.status}, failing over to Groq:`, errorText);
+  } catch (networkError) {
+    const isTimeout = networkError.name === 'AbortError';
+    console.warn(`Mistral completion ${isTimeout ? 'timed out' : 'had a network error'}, failing over to Groq:`, networkError.message);
+  }
+
+  // Llama 3.3 70B specifically (not a smaller/faster Llama variant) - this
+  // project already learned the hard way, with mistral-tiny-latest, that a
+  // weak model doesn't reliably follow a long strict system prompt (the
+  // "no outside knowledge" rule, the decline-topics list) under
+  // conversational pressure. Don't reach for a smaller/cheaper Groq model
+  // to save latency here.
+  const groqResponse = await fetchWithRetry('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${groqApiKey}`,
+    },
+    body: JSON.stringify({
+      model: 'openai/gpt-oss-120b',
+      messages: requestMessages,
+      temperature: 0.1,
+      max_tokens: 500,
+    }),
+  });
+
+  return { response: groqResponse, provider: 'groq' };
+}
+
 /**
  * @param {Array<{role: 'user'|'assistant', content: string}>} messages - conversation history, NOT including a system message
- * @param {string} apiKey - Mistral API key
+ * @param {string} mistralApiKey - Mistral API key. Used for embeddings/retrieval always, and
+ *   tried first for the chat completion itself before falling back to Groq.
+ * @param {string} groqApiKey - Groq API key. Used as the chat completion fallback if Mistral's
+ *   completion call fails for any reason (429, other error status, timeout, network error).
+ *   Groq has no embeddings API of its own, so retrieval always stays on Mistral regardless of
+ *   which provider ends up serving the completion.
  * @param {string} [clientId] - best-effort client identifier (e.g. IP address) for rate limiting; optional, skipped if not provided
  * @returns {Promise<{reply: string}>}
  */
-export async function handleChatRequest(messages, apiKey, clientId) {
+export async function handleChatRequest(messages, mistralApiKey, groqApiKey, clientId) {
+  // Defensive check, even though chat.js already validates this before
+  // calling in - protects against this function ever being called from
+  // somewhere else (a test script, a future route) without that same
+  // guard, which would otherwise surface as a confusing 401 buried inside
+  // a provider's error response rather than a clear message here.
+  if (!mistralApiKey || !groqApiKey) {
+    const err = new Error('Chat service is not configured');
+    err.status = 500;
+    throw err;
+  }
+
   checkRateLimit(clientId);
 
   if (!Array.isArray(messages) || messages.length === 0) {
@@ -227,7 +328,7 @@ export async function handleChatRequest(messages, apiKey, clientId) {
 
   if (lastUserMessage) {
     try {
-      const queryEmbedding = await embedQuery(apiKey, lastUserMessage.content);
+      const queryEmbedding = await embedQuery(mistralApiKey, lastUserMessage.content);
       retrievedChunks = retrieveRelevantChunks(queryEmbedding);
     } catch (error) {
       // If retrieval itself fails (network hiccup, embeddings API down),
@@ -272,38 +373,31 @@ export async function handleChatRequest(messages, apiKey, clientId) {
 
   const systemPrompt = buildSystemPrompt(retrievedChunks);
 
-  let mistralResponse;
+  let completionResult;
   try {
-    mistralResponse = await fetchWithTimeout('https://api.mistral.ai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: 'mistral-small-latest',
-        messages: [{ role: 'system', content: systemPrompt }, ...messages],
-        temperature: 0.1,
-        max_tokens: 500,
-      }),
-    });
+    completionResult = await completeWithFailover(mistralApiKey, groqApiKey, systemPrompt, messages);
   } catch (networkError) {
+    // Reaches here only if Groq (the last resort) also failed at the
+    // network level - Mistral's own network failures are already caught
+    // and handled inside completeWithFailover as a trigger to try Groq.
     const isTimeout = networkError.name === 'AbortError';
-    console.error(isTimeout ? 'Mistral chat completion timed out' : 'Mistral chat completion network error:', networkError);
+    console.error('Both Mistral and Groq chat completion failed:', networkError);
     const err = new Error(isTimeout ? 'Chat service took too long to respond. Please try again.' : 'Chat service is temporarily unavailable');
     err.status = 504;
     throw err;
   }
 
-  if (!mistralResponse.ok) {
-    const errorText = await mistralResponse.text();
-    console.error('Mistral API error:', mistralResponse.status, errorText);
+  const { response: completionResponse, provider } = completionResult;
+
+  if (!completionResponse.ok) {
+    const errorText = await completionResponse.text();
+    console.error(`${provider} API error (no further fallback available):`, completionResponse.status, errorText);
     const err = new Error('Chat service is temporarily unavailable');
     err.status = 502;
     throw err;
   }
 
-  const data = await mistralResponse.json();
+  const data = await completionResponse.json();
   const reply = data.choices?.[0]?.message?.content;
 
   if (!reply) {
@@ -311,6 +405,11 @@ export async function handleChatRequest(messages, apiKey, clientId) {
     err.status = 502;
     throw err;
   }
+
+  // Visible in Vercel's runtime logs - confirms whether failover actually
+  // triggered for a given request, useful when verifying this behaves as
+  // intended in practice rather than just in theory.
+  console.log(`[chat] completion served by: ${provider}`);
 
   return { reply };
 }
