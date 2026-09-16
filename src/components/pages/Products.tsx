@@ -76,7 +76,13 @@ interface AccountType {
   eyebrow: string;
   title: string;
   description: string;
-  requirements: string[];
+  // What the account holder actually gets - sourced from the SHG By-Laws
+  // (Membership and Share Contribution / Loans / Benevolent Fund sections)
+  // for Adult and Minor. The By-Laws don't cover Corporate Membership at
+  // all, so that card keeps its original document checklist rather than
+  // inventing benefits with no source.
+  listLabel: string;
+  listItems: string[];
 }
 
 const ACCOUNT_TYPES: AccountType[] = [
@@ -85,11 +91,15 @@ const ACCOUNT_TYPES: AccountType[] = [
     eyebrow: 'For individuals 18+',
     title: 'Adult Membership',
     description: 'Full membership with savings, voting rights, and access to every loan product we offer.',
-    requirements: [
-      'Copy of your National ID or Passport',
-      'Copy of your KRA PIN certificate',
-      "Copy of your next of kin's National ID or Passport",
-      'One passport-size photograph',
+    listLabel: 'Member Benefits',
+    listItems: [
+      'Minimum monthly contribution of KES 600 (inclusive of KES 50 Benevolent Fund)',
+      'Loan eligibility after 6 months of membership, subject to requirements',
+      'Access loans of up to 5x your share contributions, once fully guaranteed',
+      'Voting rights',
+      "Ability to guarantee fellow members' loans",
+      'Benevolent Fund support of KES 50,000 to your family upon demise',
+      'Entitled to your share of distributable surplus (dividends)',
     ],
   },
   {
@@ -97,11 +107,13 @@ const ACCOUNT_TYPES: AccountType[] = [
     eyebrow: 'Opened by a parent or guardian',
     title: 'Minor Savings Account',
     description: "A savings-only account opened on a child's behalf, operated by a member parent or guardian.",
-    requirements: [
-      "Copy of the guardian's National ID or Passport, and of the next of kin's",
-      "Copy of the minor's Birth Certificate, Notification of Birth, or Baptism Card",
-      'Passport-size photograph of both the minor and the guardian',
-      'Signatures from the guardian and a witness on the application',
+    listLabel: 'Member Benefits',
+    listItems: [
+      'Minimum savings of KES 300 per month',
+      'Savings-only account - not used to take a loan directly',
+      "May be used to guarantee a guardian's loan for the minor's school fees or hospital bills",
+      'Entitled to distributable surplus (dividends)',
+      'Guardian must be an existing SHG member',
     ],
   },
   {
@@ -109,7 +121,8 @@ const ACCOUNT_TYPES: AccountType[] = [
     eyebrow: 'For groups & organizations',
     title: 'Corporate Membership',
     description: 'Register a registered group, church body, or organization as a single corporate member.',
-    requirements: [
+    listLabel: "What You'll Need",
+    listItems: [
       'A list of all group members',
       'Copies of National ID/Passport and passport-size photographs for all signatories',
       'Copy of your Registration Certificate, where applicable',
@@ -151,14 +164,22 @@ const CARD_CLASSES =
 export function Products() {
   return (
     <div className="min-h-screen bg-[#FAF9F5] font-sans">
-      {/* Header */}
-      <section className="pt-10 pb-8 md:pt-12 md:pb-10">
-        <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20 text-center">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl mb-5 font-bold uppercase text-[#16210E] lg:whitespace-nowrap">Savings & Credit Products</h1>
-          <div className="w-14 h-1 bg-[#237A17] mx-auto mb-5" />
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+      {/* Header - heading + accent bar stay centered, but the supporting
+          paragraph now runs full-width (left-aligned, no max-w/mx-auto
+          centering) instead of being boxed into a narrow centered block.
+          Wording updated to call out both the standard 1% rate and the
+          0.8% preferential rate on Special Loan Products, rather than only
+          mentioning the standard rate. */}
+      <section className="pt-10 pb-8 md:pt-12 md:pb-10 border-b-2 border-gray-300">
+        <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20">
+          <div className="text-center">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl mb-5 font-bold uppercase text-[#16210E] lg:whitespace-nowrap">Savings & Credit Products</h1>
+            <div className="w-14 h-1 bg-[#237A17] mx-auto mb-5" />
+          </div>
+          <p className="text-gray-600 text-lg">
             Everything St Gabriel Catholic Church SHG offers members, from regular savings to affordable credit
-            for life's needs. Interest on all loans is 1% per month on a reducing balance.
+            for life's needs. Interest is 1% per month on a reducing balance for standard loan products, and a
+            preferential 0.8% per month for Special Loan Products (Youth, Senior Citizens, and PLWD).
           </p>
         </div>
       </section>
@@ -166,27 +187,23 @@ export function Products() {
       {/* Membership Accounts - what each account type actually gets you */}
       <section className="py-12 md:py-14 xl:py-16">
         <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20">
-          <h2 className="text-3xl md:text-4xl xl:text-5xl mb-3 text-[#16210E] font-semibold uppercase">
+          <h2 className="text-3xl md:text-4xl xl:text-4xl mb-3 text-[#16210E] font-semibold uppercase text-center">
             Three ways to save with us.
           </h2>
-          <p className="text-gray-600 text-lg mb-12 xl:mb-16 lg:whitespace-nowrap">
-            Every membership type builds savings and earns dividends - pick the one that fits you, your child, or
-            your organization.
-          </p>
 
-          <div className="grid md:grid-cols-3 gap-8 lg:gap-10 xl:gap-12">
+          <div className="grid md:grid-cols-3 gap-8 lg:gap-10 xl:gap-12 mt-6 md:mt-8">
             {ACCOUNT_TYPES.map((account) => (
               <div key={account.title} className={`${CARD_CLASSES} p-6 lg:p-8 flex flex-col h-full`}>
                 <account.icon className="text-[#237A17] mb-3" size={36} strokeWidth={1.5} />
                 <p className="text-base tracking-[0.15em] uppercase text-[#237A17] mb-1">{account.eyebrow}</p>
                 <h3 className="text-xl lg:text-2xl mb-2 text-[#16210E] font-bold">{account.title}</h3>
                 <p className="text-gray-600 text-base lg:text-lg leading-relaxed mb-4">{account.description}</p>
-                <p className="text-sm tracking-[0.1em] uppercase text-[#16210E] font-bold mb-2">What You'll Need</p>
+                <p className="text-sm tracking-[0.1em] uppercase text-[#16210E] font-bold mb-2">{account.listLabel}</p>
                 <ul className="space-y-2.5 lg:space-y-3 mb-2 flex-1">
-                  {account.requirements.map((requirement) => (
-                    <li key={requirement} className="flex items-start gap-2.5">
+                  {account.listItems.map((item) => (
+                    <li key={item} className="flex items-start gap-2.5">
                       <CheckCircle2 className="text-[#237A17] shrink-0 mt-0.5" size={16} strokeWidth={1.5} />
-                      <span className="text-sm lg:text-base text-gray-700 leading-relaxed">{requirement}</span>
+                      <span className="text-sm lg:text-base text-gray-700 leading-relaxed">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -204,10 +221,13 @@ export function Products() {
         </div>
       </section>
 
-      {/* Loan Products */}
-      <section className="py-16 md:py-20 xl:py-24 bg-[#F3F0E8] border-t border-gray-100">
+      {/* Loan Products - bottom padding removed entirely so the "Apply for
+          a Loan" button sits right at the border separating this section
+          from Special Loan Products, rather than floating above it with a
+          gap. Top padding kept as-is. */}
+      <section className="pt-16 md:pt-20 xl:pt-24 bg-[#F3F0E8] border-t border-gray-100">
         <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20">
-          <h2 className="text-3xl md:text-4xl xl:text-5xl mb-12 xl:mb-16 text-[#16210E] font-semibold uppercase lg:whitespace-nowrap">
+          <h2 className="text-2xl md:text-2xl xl:text-3xl mb-12 xl:mb-16 text-[#16210E] font-semibold uppercase lg:whitespace-nowrap">
             Six loan products designed for different needs.
           </h2>
 
@@ -222,7 +242,7 @@ export function Products() {
             ))}
           </div>
 
-          <div className="text-center mt-16">
+          <div className="text-center mt-16 pb-6 md:pb-8">
             <Link to="/apply-loan">
               <Button size="lg" className="bg-[#16210E] hover:bg-[#237A17] rounded-none">
                 Apply for a Loan <ArrowRight className="ml-2" size={18} />
@@ -256,12 +276,10 @@ export function Products() {
         </div>
       </section>
 
-      {/* Loan Repayment Periods & Loan Refinancing - replaces the old full
-          product-comparison table with the two pieces of practical
-          information a member weighing a loan actually needs at this point:
-          how long they'll have to repay based on amount, and what it takes
-          to refinance an existing one. Side-by-side on a 6/6 split of the
-          12-column grid. */}
+      {/* Loan Repayment Periods & Loan Refinancing - a simple black
+          divider line now runs between the two columns (border-l on the
+          Refinancing column) to visually separate them, nothing fancier
+          than a plain 1px rule. */}
       <section className="py-14 md:py-16 xl:py-20 border-t border-gray-100">
         <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20">
           <div className="grid md:grid-cols-12 gap-12 md:gap-16">
@@ -303,7 +321,7 @@ export function Products() {
             </div>
 
             {/* Loan Refinancing */}
-            <div className="md:col-span-6">
+            <div className="md:col-span-6 md:border-l md:border-black md:pl-12">
               <h2 className="text-3xl md:text-4xl mb-2 text-[#16210E] font-semibold uppercase">Loan Refinancing</h2>
               <p className="text-gray-600 text-lg mb-6">Need to refinance an existing loan?</p>
               <p className="text-gray-700 font-semibold mb-4">

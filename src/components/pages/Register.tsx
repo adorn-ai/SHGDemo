@@ -65,7 +65,7 @@ const ACCOUNT_TYPES: AccountType[] = [
       "Copy of your next of kin's National ID or Passport",
       'One passport-size photograph',
     ],
-    applyHref: '/register-member',
+    applyHref: '/register',
     downloadHref: '/MEMBERSHIP APPLICATION FORM (2).pdf',
     downloadName: 'Membership-Application-Form.pdf',
   },
@@ -188,25 +188,31 @@ function AccountCard({ account, delayMs }: { account: AccountType; delayMs: numb
 export function Register() {
   return (
     <div className="min-h-screen bg-[#FAF9F5] font-sans">
-      {/* Header */}
-      <section className="pt-10 pb-8 md:pt-12 md:pb-10">
-        <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20 text-center">
+      {/* Header - divider line added below matching the Products page treatment.
+          Heading + accent bar stay centered, but the subheading now runs
+          full-width (left-aligned, no max-w/mx-auto centering) instead of
+          being boxed into a narrow centered block, matching Products.tsx. */}
+      <section className="pt-10 pb-8 md:pt-12 md:pb-10 border-b-2 border-gray-300">
+        <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20">
           <Reveal>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl mb-5 font-bold uppercase leading-tight text-[#16210E] lg:whitespace-nowrap">
-              Choose How You'd Like to Join
-            </h1>
-            <div className="w-14 h-1 bg-[#237A17] mx-auto mb-5" />
-            <p className="text-gray-600 text-base lg:text-lg max-w-2xl mx-auto">
-              St Gabriel Catholic Church SHG offers three types of membership. Pick the one that fits you, apply
-              online in minutes, or download the form to fill by hand.
+            <div className="text-center">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl mb-5 font-bold uppercase leading-tight text-[#16210E] lg:whitespace-nowrap">
+                Choose How You'd Like to Join
+              </h1>
+              <div className="w-14 h-1 bg-[#237A17] mx-auto mb-5" />
+            </div>
+            <p className="text-gray-600 text-base lg:text-lg">
+              Three ways in. One shared goal: helping you save with purpose and borrow with confidence. Find your
+              fit below, then apply online in minutes or download the form to fill by hand.
             </p>
           </Reveal>
         </div>
       </section>
 
       {/* Account cards laid out on a 12-column grid (4/4/4 split) rather than
-          a plain 3-up grid, matching the About Us and Products pages. */}
-      <section className="py-10 md:py-14">
+          a plain 3-up grid, matching the About Us and Products pages.
+          Bottom padding trimmed so there's less gap before How to Join. */}
+      <section className="pt-10 md:pt-14 pb-6 md:pb-8">
         <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20">
           <div className="grid md:grid-cols-12 gap-10 lg:gap-14 xl:gap-16">
             {ACCOUNT_TYPES.map((account, index) => (
@@ -216,7 +222,7 @@ export function Register() {
         </div>
       </section>
 
-      <section className="py-14 md:py-16 border-t border-gray-100">
+      <section className="pt-6 md:pt-8 pb-14 md:pb-16 border-t border-gray-100">
         <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20">
           <h2 className="text-2xl md:text-3xl mb-10 text-center text-[#16210E] font-semibold uppercase lg:whitespace-nowrap">How to Join</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 md:gap-4">
