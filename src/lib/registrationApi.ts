@@ -398,9 +398,28 @@ interface LoanApplicationInput {
   formData: Record<string, string>;
   loanProducts: string[];
   guarantors: Guarantor[];
+  // Conditional supporting documents per the Terms and Conditions on the
+  // official Loan Application and Agreement Form: a bank statement is
+  // required for loans of KES 1,000,000+, and a fee structure is required
+  // when Education Loan is one of the selected products. Both optional at
+  // the type level since neither applies to every application - the
+  // component enforces "required when applicable" before calling this.
+  files?: {
+    bankStatement?: File;
+    feeStructure?: File;
+  };
 }
 
-export async function submitLoanApplication({ memberId, formData, loanProducts, guarantors }: LoanApplicationInput) {
+export async function submitLoanApplication({ memberId, formData, loanProducts, guarantors, files = {} }: LoanApplicationInput) {
+  const orderedFiles = [files.bankStatement, files.feeStructure].filter((f): f is File => Boolean(f));
+  const uploadedPaths = orderedFiles.length
+    ? await uploadDocuments('Loan Applications', formData.fullName, formData.nationalId, orderedFiles)
+    : [];
+
+  let i = 0;
+  const bankStatementPath = files.bankStatement ? uploadedPaths[i++] : null;
+  const feeStructurePath = files.feeStructure ? uploadedPaths[i++] : null;
+
   const { data, error } = await supabase
     .from('loan_registration')
     .insert({
@@ -446,6 +465,12 @@ export async function submitLoanApplication({ memberId, formData, loanProducts, 
         { description: formData.otherDebt2, amount: Number(formData.otherDebtAmount2) || 0 },
       ],
 
+      // NEW - conditional supporting documents (see LoanApplicationInput
+      // comment above). Requires bank_statement_path and fee_structure_path
+      // columns on loan_registration - see migration note below.
+      bank_statement_path: bankStatementPath,
+      fee_structure_path: feeStructurePath,
+
       applicant_signature_name: formData.applicantSignatureName,
 
       self_guaranteed_amount: Number(formData.selfGuaranteedAmount) || 0,
@@ -464,7 +489,12 @@ export async function submitLoanApplication({ memberId, formData, loanProducts, 
     .select('id')
     .single();
 
-  if (error) throw new Error(`Loan application failed: ${error.message}`);
+  if (error) {
+    if (bankStatementPath || feeStructurePath) {
+      await deleteDocuments([bankStatementPath, feeStructurePath]);
+    }
+    throw new Error(`Loan application failed: ${error.message}`);
+  }
 
   await notifyLoanApplicationSubmitted({
     loanRegistrationId: data.id,
@@ -489,6 +519,20 @@ export async function submitLoanApplication({ memberId, formData, loanProducts, 
 
   return data;
 }
+
+// -----------------------------------------------------------------------
+// REQUIRED MIGRATION (not yet run - no DB access from here):
+//
+//   alter table loan_registration
+//     add column bank_statement_path text,
+//     add column fee_structure_path text;
+//
+// Same reasoning as the consent-field migrations above - the existing
+// anon INSERT-only policy already covers new columns on the same table,
+// so no RLS change is needed, only the ALTER TABLE above. Until this runs,
+// submissions that include either file will fail with a "column does not
+// exist" error.
+// -----------------------------------------------------------------------
 
 // =====================================================================
 // Member verification (loan application Step 1) - checks the real

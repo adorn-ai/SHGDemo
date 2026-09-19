@@ -239,7 +239,11 @@ export function MemberRegistration() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F5] font-sans py-12 md:py-20">
-      <div className="max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Full-bleed page like the rest of the site (About Us, Products,
+          Register, Minor & Corporate Registration): no max-w cap, content
+          runs the full width of the screen rather than being centered in a
+          narrow fixed-width column. */}
+      <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20">
         <div className="text-center mb-12">
           <p className="text-base lg:text-lg tracking-[0.2em] uppercase text-[#237A17] mb-3">Adult Membership</p>
           <h1 className="text-3xl md:text-4xl mb-2 text-[#16210E]">Membership Application Form</h1>
@@ -247,7 +251,7 @@ export function MemberRegistration() {
           <p className="text-base lg:text-lg text-gray-400 mt-1">Complete all fields marked with *</p>
           <div className="mt-4">
             <a
-              href="/MEMBERSHIP APPLICATION FORM (2).pdf"
+              href="/New Member Application Form.pdf"
               download="Membership-Application-Form.pdf"
               className="inline-flex items-center gap-1.5 text-base lg:text-lg text-[#16210E] hover:text-[#237A17] underline underline-offset-4"
             >

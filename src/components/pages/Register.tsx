@@ -65,8 +65,8 @@ const ACCOUNT_TYPES: AccountType[] = [
       "Copy of your next of kin's National ID or Passport",
       'One passport-size photograph',
     ],
-    applyHref: '/register',
-    downloadHref: '/MEMBERSHIP APPLICATION FORM (2).pdf',
+    applyHref: '/register-member',
+    downloadHref: '/New Member Application Form.pdf',
     downloadName: 'Membership-Application-Form.pdf',
   },
   {
@@ -82,7 +82,7 @@ const ACCOUNT_TYPES: AccountType[] = [
       'Signatures from the guardian and a witness on the application',
     ],
     applyHref: '/register-minor',
-    downloadHref: '/New Minor Savings Application Form (1).pdf',
+    downloadHref: '/New Minor Savings Application Form.pdf',
     downloadName: 'Minor-Savings-Account-Application-Form.pdf',
   },
   {
@@ -98,7 +98,7 @@ const ACCOUNT_TYPES: AccountType[] = [
       'Church-affiliated groups must include the Parish Priest as a signatory',
     ],
     applyHref: '/register-corporate',
-    downloadHref: '/New Corporate Application Form (1).pdf',
+    downloadHref: '/New Corporate Application Form.pdf',
     downloadName: 'Corporate-Membership-Application-Form.pdf',
   },
 ];

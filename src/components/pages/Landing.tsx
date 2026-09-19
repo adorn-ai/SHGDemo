@@ -261,22 +261,7 @@ export function Landing() {
       name: 'Elizabeth Gitau',
       text: 'The Self Help Group takes in new members well, while operating and serving the community as one family.',
       role: 'Active Member',
-    },
-    {
-      name: 'Esther Wairimu',
-      text: "The education loan meant my daughter never missed a term of school. I didn't have to choose between her fees and our rent.",
-      role: 'Teacher',
-    },
-    {
-      name: 'Daniel Otieno',
-      text: 'The Agribusiness loan let me expand my poultry farm right before the festive season. Best decision I made all year.',
-      role: 'Farmer',
-    },
-    {
-      name: 'Lucy Chebet',
-      text: "I've saved consistently for six years now. Watching my shares grow while knowing my neighbours are growing too - that's the real value.",
-      role: 'Tailor \u00b7 Member since 2018',
-    },
+    }
   ];
 
   const benefits = [

@@ -6,7 +6,7 @@ import { Label } from '../ui/label';
 import { Checkbox } from '../ui/checkbox';
 import { toast } from 'sonner@2.0.3';
 import { verifyMemberByNationalId, submitLoanApplication } from '../../lib/registrationApi';
-import { AlertCircle, CheckCircle, Users, Download, Plus, Trash2, Loader2, IdCard, FileText, ShieldCheck, Info } from 'lucide-react';
+import { AlertCircle, CheckCircle, Users, Download, Plus, Trash2, Loader2, IdCard, FileText, ShieldCheck, Info, Upload } from 'lucide-react';
 
 const LOAN_PRODUCTS = ['Development Loan', 'Business Loan', 'AgriBusiness Loan', 'Education Loan', 'Emergency Loan', 'Church Loan'];
 
@@ -47,6 +47,47 @@ function Notice({ children }: { children: React.ReactNode }) {
   return (
     <div className="border-l-2 border-[#237A17] pl-4 py-1 font-sans text-base lg:text-lg text-gray-700 leading-relaxed">
       {children}
+    </div>
+  );
+}
+
+// Matches the Dropzone pattern used on the other registration forms
+// (Minor/Corporate) so document uploads look and behave consistently
+// site-wide.
+function Dropzone({
+  id,
+  label,
+  hint,
+  error,
+  fileName,
+  onChange,
+  accept,
+}: {
+  id: string;
+  label: string;
+  hint: string;
+  error?: string;
+  fileName?: string;
+  onChange: (file: File | undefined) => void;
+  accept: string;
+}) {
+  return (
+    <div>
+      <div className="border border-dashed border-[#6B9E4D] p-4 hover:bg-[#F3F0E8] transition-colors">
+        <Label htmlFor={id} className="cursor-pointer">
+          <div className="flex items-center space-x-3">
+            <Upload className="text-[#237A17]" size={20} strokeWidth={1.5} />
+            <div className="flex-1">
+              <p className="text-[#16210E]">{label}</p>
+              <p className="text-base lg:text-lg text-gray-500">{hint}</p>
+            </div>
+            {fileName && <FileText className="text-[#237A17]" size={20} />}
+          </div>
+        </Label>
+        <Input id={id} type="file" accept={accept} onChange={(e) => onChange(e.target.files?.[0])} className="hidden" />
+        {fileName && <p className="text-base lg:text-lg text-[#237A17] mt-2">&#10003; {fileName}</p>}
+      </div>
+      {error && <p className="text-base lg:text-lg text-red-500 mt-1">{error}</p>}
     </div>
   );
 }
@@ -118,9 +159,20 @@ export function LoanApplication() {
   const [loanProducts, setLoanProducts] = useState<string[]>([]);
   const [guarantors, setGuarantors] = useState<Guarantor[]>([{ ...EMPTY_GUARANTOR }, { ...EMPTY_GUARANTOR }]);
 
+  // Supporting documents - only required conditionally, per the Terms and
+  // Conditions on the official form: a bank statement for loans of KES
+  // 1,000,000+, and a fee structure when Education Loan is selected.
+  // Neither is a blanket KYC requirement (that was already done at
+  // membership registration), so both stay optional in state and are only
+  // enforced in validate() when the relevant condition is met.
+  const [uploadedFiles, setUploadedFiles] = useState<{ bankStatement?: File; feeStructure?: File }>({});
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isVerifying, setIsVerifying] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const needsBankStatement = Number(formData.amountRequested) >= 1000000;
+  const needsFeeStructure = loanProducts.includes('Education Loan');
 
   const verifyMember = async () => {
     setIsVerifying(true);
@@ -158,6 +210,22 @@ export function LoanApplication() {
   const toggleLoanProduct = (product: string) => {
     setLoanProducts((prev) => (prev.includes(product) ? prev.filter((p) => p !== product) : [...prev, product]));
     if (errors.loanProducts) setErrors({ ...errors, loanProducts: '' });
+  };
+
+  const handleFileUpload = (field: 'bankStatement' | 'feeStructure', file: File | undefined) => {
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File size must be less than 5MB');
+      return;
+    }
+    const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+    if (!validTypes.includes(file.type)) {
+      toast.error('Only JPG, PNG, and PDF files are allowed');
+      return;
+    }
+    setUploadedFiles((prev) => ({ ...prev, [field]: file }));
+    if (errors[field]) setErrors({ ...errors, [field]: '' });
+    toast.success(`${file.name} uploaded successfully`);
   };
 
   const handleGuarantorChange = (index: number, field: keyof Guarantor, value: string) => {
@@ -203,6 +271,15 @@ export function LoanApplication() {
 
     if (loanProducts.includes('Emergency Loan') && amount > 100000) {
       newErrors.amountRequested = 'Emergency loans are capped at KES 100,000';
+    }
+
+    // Conditional supporting documents - only enforced when the
+    // corresponding condition on the form is actually met.
+    if (amount >= 1000000 && !uploadedFiles.bankStatement) {
+      newErrors.bankStatement = 'A current 6-month bank statement is required for loans of KES 1,000,000 or more';
+    }
+    if (loanProducts.includes('Education Loan') && !uploadedFiles.feeStructure) {
+      newErrors.feeStructure = 'A valid school fees structure is required for Education Loan applications';
     }
 
     if (!formData.incomeDescription1.trim() || !formData.incomeAmount1) {
@@ -294,6 +371,7 @@ export function LoanApplication() {
         formData,
         loanProducts,
         guarantors,
+        files: uploadedFiles,
       });
 
       toast.success('Loan application submitted successfully! You and your guarantors will receive a confirmation email.');
@@ -922,6 +1000,46 @@ export function LoanApplication() {
             </div>
           </div>
           </div>
+
+          {/* Supporting Documents - only shown/required when the relevant
+              condition from the official form's Terms and Conditions is
+              met: a bank statement for loans of KES 1,000,000+, a fee
+              structure for Education Loan applications. Not a blanket KYC
+              requirement - that was already satisfied at membership
+              registration. */}
+          {(needsBankStatement || needsFeeStructure) && (
+            <div className="border-t-2 border-[#6B9E4D] pt-8">
+              <SectionHeading eyebrow="Supporting Documents" title="Documents Required For Your Application" />
+              <div className="space-y-5">
+                <Notice>
+                  Based on what you've entered above, the following document{needsBankStatement && needsFeeStructure ? 's are' : ' is'} required
+                  before you can submit this application.
+                </Notice>
+                {needsBankStatement && (
+                  <Dropzone
+                    id="bankStatement"
+                    label="Current 6-Month Bank Statement *"
+                    hint="Required for loans of KES 1,000,000 or more - JPG, PNG, or PDF - Max 5MB"
+                    error={errors.bankStatement}
+                    fileName={uploadedFiles.bankStatement?.name}
+                    onChange={(file) => handleFileUpload('bankStatement', file)}
+                    accept="image/jpeg,image/png,image/jpg,application/pdf"
+                  />
+                )}
+                {needsFeeStructure && (
+                  <Dropzone
+                    id="feeStructure"
+                    label="Valid School Fees Structure *"
+                    hint="Required for Education Loan applications - JPG, PNG, or PDF - Max 5MB"
+                    error={errors.feeStructure}
+                    fileName={uploadedFiles.feeStructure?.name}
+                    onChange={(file) => handleFileUpload('feeStructure', file)}
+                    accept="image/jpeg,image/png,image/jpg,application/pdf"
+                  />
+                )}
+              </div>
+            </div>
+          )}
 
           <div className="border-t-2 border-[#16210E] pt-8">
             <SectionHeading eyebrow="Step 6" title="Guarantors" />
