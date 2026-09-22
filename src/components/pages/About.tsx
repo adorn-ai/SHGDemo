@@ -24,7 +24,19 @@ interface Leader {
 
 const HERO_IMAGE = { src: heroPhoto, position: 'center' };
 
+// PLACEHOLDER - Fr Mumo's photo, full profile, and exact title are pending
+// confirmation. Listed first (before the Chairman) as the Patron, per
+// request. image is deliberately left blank so ImageWithFallback renders
+// its built-in placeholder until a real photo is supplied.
+const PATRON: Leader = {
+  name: 'Fr Mumo',
+  role: 'Patron',
+  image: '',
+  bio: 'Full profile to be added.',
+};
+
 const LEADERS: Leader[] = [
+  PATRON,
   {
     name: 'Samuel Wainaina',
     role: 'Chairman, Management Committee',
@@ -64,6 +76,24 @@ const LEADERS: Leader[] = [
     role: 'Secretary, Finance and Budget Committee',
     image: maryNjoroge,
     bio: 'A seasoned professional and accomplished businesswoman with over 30 years of experience as an Executive Secretary in the oil industry. Today, she channels that experience and entrepreneurial spirit into her own ventures, with a primary focus on farming and real estate, driven by a passion for sustainable growth and lasting value.',
+  },
+];
+
+// PLACEHOLDER - Faith Esaabu's and Daniel's photos, full profiles, and
+// exact position titles are pending confirmation. Positions below are
+// explicitly marked TBC rather than guessed.
+const STAFF: Leader[] = [
+  {
+    name: 'Faith Esaabu',
+    role: 'Position to be confirmed',
+    image: '',
+    bio: 'Full profile to be added.',
+  },
+  {
+    name: 'Daniel',
+    role: 'Position to be confirmed',
+    image: '',
+    bio: 'Full profile to be added.',
   },
 ];
 
@@ -315,7 +345,12 @@ export function About() {
         </div>
       </section>
 
-      {/* Management Committee */}
+      {/* Management Committee - Fr Mumo (Patron) now leads the list, ahead
+          of the Chairman. With the Patron added, the group is exactly 8
+          people, which divides evenly into 4 columns x 2 rows - so the
+          desktop layout goes back to a plain 4-column grid instead of the
+          flex-wrap/justify-center workaround the previous odd count (7)
+          needed to center its incomplete last row. */}
       <section className="py-20 md:py-28 bg-[#F3F0E8] border-t border-gray-100">
         <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20">
           <Reveal className="mb-12 md:mb-16">
@@ -339,12 +374,35 @@ export function About() {
             </Carousel>
           </div>
 
-          {/* Desktop: flex-wrap so an incomplete last row (7 leaders in 4 columns) centers
-              itself instead of sticking to the left edge - same fix as the Values grid. */}
-          <div className="hidden md:flex md:flex-wrap md:justify-center gap-x-8 gap-y-12">
+          {/* Desktop: even 4x4 grid now that the Patron makes the count 8. */}
+          <div className="hidden md:grid md:grid-cols-4 gap-x-8 gap-y-12">
             {LEADERS.map((leader, index) => (
-              <Reveal key={index} delayMs={index * 80} className="md:w-[calc(25%-1.5rem)]">
+              <Reveal key={index} delayMs={index * 80}>
                 <LeaderProfile leader={leader} onSelect={setSelectedLeader} />
+              </Reveal>
+            ))}
+          </div>
+
+          {/* Divider marking the end of the Management Committee grid, ahead of Our Staff below. */}
+          <div className="border-t border-gray-300 mt-16 md:mt-20" />
+        </div>
+      </section>
+
+      {/* Our Staff - Faith Esaabu and Daniel, placeholder entries pending
+          confirmed photos, profiles and exact position titles. Kept as its
+          own section (not folded into Management Committee) since staff are
+          a distinct group from the elected/appointed committee above. Just
+          two people, so a simple 2-column grid rather than a carousel. */}
+      <section className="py-20 md:py-28 border-t border-gray-100">
+        <div className="mx-auto px-6 sm:px-8 lg:px-12 xl:px-20">
+          <Reveal className="mb-12 md:mb-16">
+            <h2 className="text-3xl md:text-4xl text-[#16210E] max-w-lg font-semibold uppercase">Our Staff</h2>
+          </Reveal>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:max-w-2xl gap-x-8 gap-y-12">
+            {STAFF.map((member, index) => (
+              <Reveal key={index} delayMs={index * 80}>
+                <LeaderProfile leader={member} onSelect={setSelectedLeader} />
               </Reveal>
             ))}
           </div>
