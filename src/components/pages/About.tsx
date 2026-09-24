@@ -14,6 +14,7 @@ import elizabethThiaka from '../../assets/board/elizabeth_thiaka.jpeg';
 import sulemanChege from '../../assets/board/suleman_chege.jpeg';
 import naomiMungai from '../../assets/board/naomi_mungai.jpeg';
 import maryNjoroge from '../../assets/board/mary_njoroge.jpeg';
+import danielMwendwa from '../../assets/board/daniel_mwendwa.jpeg'
 
 interface Leader {
   name: string;
@@ -85,15 +86,15 @@ const LEADERS: Leader[] = [
 const STAFF: Leader[] = [
   {
     name: 'Faith Esaabu',
-    role: 'Position to be confirmed',
+    role: 'Accountant',
     image: '',
     bio: 'Full profile to be added.',
   },
   {
-    name: 'Daniel',
-    role: 'Position to be confirmed',
-    image: '',
-    bio: 'Full profile to be added.',
+    name: 'Daniel Mwendwa',
+    role: 'Accounts Assistant',
+    image: danielMwendwa,
+    bio: 'Finance graduate with a Bachelor of Commerce (Finance option). Equipped with strong numerical and problem solving skills gained through academic training and practical experience.',
   },
 ];
 
